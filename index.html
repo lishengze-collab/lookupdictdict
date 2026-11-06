@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="DICTIONARY">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest?v=4">
+<link rel="icon" type="image/svg+xml" href="./icon.svg?v=4">
+<link rel="apple-touch-icon" sizes="192x192" href="./dict-icon-192.png?v=4">
 <title>DICTIONARY · 单词记忆助手</title>
 <style>
 :root{
@@ -444,7 +444,7 @@ button{font-family:inherit;}
 .modal-close{border:0;background:transparent;color:#aab3ae;font-size:26px;line-height:1;padding:0 3px;}
 .modal-body{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-size:16px;line-height:1.75;margin-bottom:12px;}
 .modal-footer{flex-shrink:0;}
-.delete-confirm{position:absolute;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:300;display:flex;align-items:center;gap:7px;padding:12px;background:#fff;border:1px solid #f0e1df;border-radius:15px;box-shadow:0 8px 28px rgba(31,40,35,.18);}
+.delete-confirm{display:flex;align-items:center;gap:7px;padding:12px;background:#fff;border:1px solid #f0e1df;border-radius:15px;box-shadow:0 8px 28px rgba(31,40,35,.18);}
 .delete-confirm-copy{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
 .delete-confirm-copy strong{font-size:13px;color:#513b39;}
 .delete-confirm-copy span{font-size:10px;color:#9c8e8c;}
@@ -494,6 +494,50 @@ button{font-family:inherit;}
 #infoBody{touch-action:pan-y;}
 .card-detail-view{touch-action:pan-y;}
 @media (max-width:370px){.group-create-row{grid-template-columns:70px minmax(0,1fr) 66px 48px;gap:4px}.group-create-row input,.group-create-row select{font-size:11px;padding:8px 5px}.grammar-topic-grid{grid-template-columns:1fr;}}
+
+
+#infoModal .modal-content{height:86vh;height:86dvh;}
+#infoBody.card-detail-carousel{display:flex;flex-direction:row;align-items:stretch;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:6%;padding:8px 6%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+#infoBody.card-detail-carousel::-webkit-scrollbar{display:none;}
+.card-detail-slide{flex:0 0 88%;width:88%;min-width:0;height:100%;scroll-snap-align:center;scroll-snap-stop:always;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;background:#fff;border-radius:18px;box-shadow:0 4px 18px rgba(31,74,61,.07);}
+.card-detail-view{min-height:100%;padding:5px 13px 12px;}
+.card-detail-view .card-body{overflow:visible;min-height:0;}
+.card-detail-view .word-phonetic{font-size:18px;}
+.card-detail-view .word-syllable{font-size:17px;}
+.card-detail-view .sec-label{font-size:14px;}
+.card-detail-view .sec-body{font-size:18px;line-height:1.75;}
+.card-detail-view .card-body{font-size:18px;line-height:1.75;}
+.card-detail-view .card-footer{font-size:14px;}
+.card-detail-group{font-size:14px;}
+.card-detail-group select{font-size:13px;}
+.card-directory-word{font-size:16px;}
+.card-directory-desc{font-size:13px;}
+.cards-bulk-toolbar{display:flex;align-items:center;justify-content:flex-end;min-height:38px;margin:-4px 0 10px;}
+.cards-bulk-toolbar>button,#bulkModeActions button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:12px;font-weight:700;padding:8px 12px;}
+#bulkModeActions{width:100%;display:flex;align-items:center;gap:7px;}
+#bulkSelectedCount{margin-right:auto;font-size:12px;color:var(--text-sub);}
+#bulkModeActions button:disabled{opacity:.4;}
+#bulkModeActions button.bulk-cancel{color:#8a9690;border-color:#e4e9e6;}
+.card-select{width:19px;height:19px;flex:none;accent-color:var(--primary);margin:0 2px 0 0;}
+.card-directory-item.select-mode{cursor:default;}
+.card-directory-item.select-mode .card-directory-main{pointer-events:none;}
+#deleteHoldIndicator{position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;z-index:1200!important;}
+#deleteConfirm{position:fixed!important;inset:0!important;z-index:1300!important;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(20,29,24,.48);}
+#deleteConfirm .delete-confirm{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;z-index:auto!important;width:min(100%,330px);margin:0;}
+.check-photo{cursor:zoom-in;}
+.photo-preview-overlay{position:fixed;inset:0;z-index:1400;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(12,18,15,.92);}
+.photo-preview-overlay img{display:block;max-width:96vw;max-height:86vh;object-fit:contain;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.32);}
+.photo-preview-close{position:absolute;top:calc(16px + env(safe-area-inset-top));right:18px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;}
+.group-choice-caption{font-size:12px;color:var(--text-muted);margin:5px 0 8px;}
+.group-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.group-choice{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:70px;padding:10px;border:1px solid #e3ebe6;border-radius:12px;background:#fbfcfb;color:#33443a;text-align:left;}
+.group-choice.selected{border:2px solid var(--primary);background:#edf5f1;padding:9px;}
+.group-choice:disabled{opacity:.4;}
+.group-choice-category{font-size:10px;color:var(--primary);font-weight:750;}
+.group-choice strong{font-size:13px;}
+.group-choice small{font-size:10px;color:var(--text-muted);}
+.group-picker-empty{font-size:12px;line-height:1.6;color:var(--text-muted);padding:10px 0;}
+.group-picker-create{padding:10px 14px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;}
 
 </style>
 </head>
@@ -546,22 +590,27 @@ button{font-family:inherit;}
       <div id="groupManagerList"></div>
     </details>
     <div class="card-directory-title">卡片目录</div>
+    <div class="cards-bulk-toolbar" id="cardsBulkToolbar">
+      <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
+      <div id="bulkModeActions" style="display:none;">
+        <span id="bulkSelectedCount">已选 0 张</span>
+        <button type="button" onclick="selectAllCards()">全选</button>
+        <button type="button" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
+        <button type="button" class="bulk-cancel" onclick="toggleBatchDeleteMode(false)">取消</button>
+      </div>
+    </div>
     <div id="cardsContainer"></div>
   </div>
 
   <!-- ================= TAB 4 清单 ================= -->
   <div class="content" id="tab-checklist">
-    <div class="clock-card">
-      <div class="clock-time" id="live-clock">--:--:--</div>
-      <div class="clock-date" id="live-date">--</div>
-      <div class="clock-log" id="clock-log">今日暂无出入记录</div>
-      <div class="clock-actions">
-        <button onclick="recordOut()">出门</button>
-        <button onclick="recordHome()">回家</button>
-        <button onclick="resetClock()">重置</button>
-      </div>
+    <div class="rest-card">
+      <div class="rest-head"><div><div class="rest-title">休息记录</div><div class="rest-sub" id="restStatus">今天还没有休息记录</div></div><span class="rest-icon">☕</span></div>
+      <div class="rest-summary" id="restSummary">今日 0 次 · 共 0 分钟</div>
+      <button class="rest-action" id="restButton" onclick="toggleBreak()">开始休息</button>
+      <div class="rest-history" id="restHistory"></div>
+      <button class="w-ai" onclick="analyzeWork()">AI 分析休息习惯</button>
     </div>
-
     <div class="add-check-row">
       <input type="text" id="checkInput" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…" onkeypress="if(event.key==='Enter')addCheckItem()">
       <button onclick="addCheckItem()">添加</button>
@@ -571,17 +620,6 @@ button{font-family:inherit;}
       <button class="ghost" onclick="analyzeChecklist()">AI 分析</button>
     </div>
     <div id="checklistContainer"></div>
-
-    <!-- 保留休息记录，移至清单事项之后；移除上下班打卡及工时统计 -->
-    <div class="rest-card">
-      <div class="rest-head"><div><div class="rest-title">休息记录</div><div class="rest-sub" id="restStatus">今天还没有休息记录</div></div><span class="rest-icon">☕</span></div>
-      <div class="rest-summary" id="restSummary">今日 0 次 · 共 0 分钟</div>
-      <button class="rest-action" id="restButton" onclick="toggleBreak()">开始休息</button>
-      <div class="rest-history" id="restHistory"></div>
-      <button class="w-ai" onclick="analyzeWork()">AI 分析休息习惯</button>
-    </div>
-
-    <!-- 设置与统计移至第四个 TAB 底部 -->
     <details class="fold" id="settingsFold">
       <summary>设置与统计</summary>
       <div class="stats-box">
@@ -596,8 +634,8 @@ button{font-family:inherit;}
       </div>
       <button class="btn-primary" onclick="saveApiKey()" style="width:100%; margin-bottom:12px;">保存 API Key</button>
       <div class="install-home-card">
-        <div class="install-app-icon"><span>DICTIONARY</span></div>
-        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>绿色 DICTIONARY 应用图标</span></div>
+        <div class="install-app-icon"><span>DICT</span></div>
+        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>绿色 DICT 应用图标</span></div>
         <button type="button" class="install-home-button" onclick="addToHomeScreen()">添加</button>
       </div>
       <div style="display:flex; gap:10px;">
@@ -639,6 +677,11 @@ button{font-family:inherit;}
     </div>
   </div>
 
+  <div class="photo-preview-overlay" id="photoPreviewModal" style="display:none;" onclick="closePhotoPreview()">
+    <button type="button" class="photo-preview-close" onclick="closePhotoPreview()" aria-label="关闭">×</button>
+    <img id="photoPreviewImage" alt="清单照片放大预览" onclick="event.stopPropagation()">
+  </div>
+
   <!-- 信息弹窗（AI 分析等） -->
   <div class="modal" id="infoModal">
     <div class="modal-content">
@@ -663,7 +706,7 @@ button{font-family:inherit;}
   <div class="delete-confirm-overlay" id="deleteConfirm" style="display:none;">
     <div class="delete-confirm" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
       <div class="delete-confirm-symbol">!</div>
-      <div class="delete-confirm-copy"><strong id="deleteConfirmTitle">确认删除这张卡片？</strong><span>卡片将从当前分组和目录中移除。</span></div>
+      <div class="delete-confirm-copy"><strong id="deleteConfirmTitle">确认删除这张卡片？</strong><span id="deleteConfirmDescription">卡片将从当前分组和目录中移除。</span></div>
       <div class="delete-confirm-actions">
         <button type="button" class="delete-cancel" onclick="cancelDeleteCard()">取消</button>
         <button type="button" class="delete-accept" onclick="confirmDeleteCard()">确认删除</button>
@@ -1153,7 +1196,7 @@ function renderChecklist() {
     }
 
     container.innerHTML = checklist.map(item => {
-        let photoHtml = item.photo ? `<img src="${item.photo}" class="check-photo">` : '';
+        let photoHtml = item.photo ? `<img src="${item.photo}" class="check-photo" role="button" tabindex="0" alt="清单照片" onclick="openPhotoPreview(this.src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.src)">` : '';
         let metaHtml = item.doneTime ? `<div class="check-meta">完成于 ${esc(item.doneTime)}</div>` : '';
 
         return `
@@ -1172,6 +1215,9 @@ function renderChecklist() {
         </div>`;
     }).join('');
 }
+
+function openPhotoPreview(src){if(!src)return;$('photoPreviewImage').src=src;$('photoPreviewModal').style.display='flex';}
+function closePhotoPreview(){$('photoPreviewModal').style.display='none';$('photoPreviewImage').removeAttribute('src');}
 
 function addCheckItem() {
     const text = $('checkInput').value.trim();
@@ -1666,8 +1712,13 @@ function importData(event) {
 ========================================================= */
 let cardGroups = load('wm_card_groups', []);
 let pendingPreviewCards = [];
-let pendingDeleteCardId = null;
+let pendingDeleteCardIds = [];
 let currentModalCardId = null;
+let pendingGroupSelections = [];
+let batchDeleteMode = false;
+let selectedCardIds = new Set();
+let carouselScrollTimer = null;
+let deleteHoldStartedAt = 0;
 let toastTimer = null;
 let cardGesture = null;
 let deleteHoldTimer = null;
@@ -1727,9 +1778,10 @@ function init(){
   });
   const gestureHost = $('infoBody');
   gestureHost.addEventListener('touchstart', onCardTouchStart, {passive:true});
-  gestureHost.addEventListener('touchmove', onCardTouchMove, {passive:true});
+  gestureHost.addEventListener('touchmove', onCardTouchMove, {passive:false});
   gestureHost.addEventListener('touchend', onCardTouchEnd, {passive:true});
   gestureHost.addEventListener('touchcancel', cancelCardGesture, {passive:true});
+  gestureHost.addEventListener('scroll', onCardCarouselScroll, {passive:true});
 }
 
 function switchTab(tabId){
@@ -1824,62 +1876,51 @@ function showGeneratedPreview(title,cards){
   $('infoAdd').style.display = 'none';
 }
 function openCardGroupPicker(){
-  if (!pendingPreviewCards.length) { showToast('没有待收藏的预览内容'); return; }
-  ensureCardGroups();
-  const host = $('groupPickerList');
-  host.innerHTML = pendingPreviewCards.map((card,index) => {
-    const groups = groupsFor(card.category);
-    const options = groups.map(g => {
-      const full = g.limit > 0 && !groupHasRoom(g.id);
-      const meta = g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : '';
-      return `<option value="${esc(g.id)}" ${full ? 'disabled' : ''}>${esc(g.name)}${meta}${full ? ' · 已满' : ''}</option>`;
+  if(!pendingPreviewCards.length){showToast('没有待收藏的预览内容');return;}
+  ensureCardGroups();pendingGroupSelections=pendingPreviewCards.map(()=>'');
+  const host=$('groupPickerList'),destinations=cardGroups.filter(g=>!g.isDefault);
+  host.innerHTML=pendingPreviewCards.map((card,index)=>{
+    const choices=destinations.map(g=>{
+      const full=g.limit>0&&!groupHasRoom(g.id),n=countInGroup(g.id),capacity=g.limit?`${n}/${g.limit}`:`${n} 张`;
+      return `<button type="button" class="group-choice" data-group-id="${esc(g.id)}" ${full?'disabled':''} onclick="selectPendingGroup(${index},'${esc(g.id)}')"><span class="group-choice-category">${esc(g.category)}</span><strong>${esc(g.name)}</strong><small>${full?'已满':capacity}</small></button>`;
     }).join('');
-    return `<div class="group-picker-item"><strong>${index+1}. ${esc(card.word)}</strong><label for="pendingGroup${index}">${esc(card.category)} · 选择保存位置</label><select class="group-picker-select" id="pendingGroup${index}" data-index="${index}"><option value="">请选择分组</option>${options}</select></div>`;
+    const empty=destinations.length?'':'<div class="group-picker-empty">还没有自定义分组。请先在「卡片」页创建分组，再回来选择收藏位置。</div><button type="button" class="group-picker-create" onclick="closeCardGroupPicker();switchTab(\'cards\');document.querySelector(\'.group-manager\')?.setAttribute(\'open\',\'\')">前往创建分组</button>';
+    return `<div class="group-picker-item"><strong>${index+1}. ${esc(card.word)}</strong><div class="group-choice-caption">选择保存位置（可选单词、语法或其它类别的任意自定义分组）</div><div class="group-choice-grid">${choices}</div>${empty}</div>`;
   }).join('');
-  $('groupPickerModal').style.display = 'flex';
+  $('groupPickerModal').style.display='flex';
 }
-function closeCardGroupPicker(){ $('groupPickerModal').style.display = 'none'; }
-function savePendingCards(){ openCardGroupPicker(); }
+function selectPendingGroup(index,id){
+  const g=getCardGroup(id);if(!g||g.isDefault||!groupHasRoom(id)){showToast('该分组当前不可用');return;}
+  pendingGroupSelections[index]=id;
+  const item=$('groupPickerList').children[index];
+  if(item)item.querySelectorAll('.group-choice').forEach(btn=>btn.classList.toggle('selected',btn.dataset.groupId===id));
+}
+function closeCardGroupPicker(){$('groupPickerModal').style.display='none';}
+function savePendingCards(){openCardGroupPicker();}
 function confirmSavePendingCards(){
-  if (!pendingPreviewCards.length) { closeCardGroupPicker(); return; }
-  const selections = pendingPreviewCards.map((card,index) => {
-    const select = $('pendingGroup' + index);
-    return select ? select.value : '';
-  });
-  const missingIndex = selections.findIndex(v => !v);
-  if (missingIndex >= 0) { showToast(`请先为「${pendingPreviewCards[missingIndex].word}」选择分组`); $('pendingGroup'+missingIndex)?.focus(); return; }
-
-  // 先校验整批容量，避免收藏到一半才发现分组已满。
-  const projected = {};
-  const seen = new Set();
-  for (let i=0;i<pendingPreviewCards.length;i++){
-    const card = pendingPreviewCards[i];
-    const group = getCardGroup(selections[i]);
-    if (!group || group.category !== card.category) { showToast('分组与卡片类别不匹配，请重新选择'); return; }
-    const duplicateKey = card.category + '::' + String(card.word).toLowerCase();
-    if (seen.has(duplicateKey) || words.some(w => String(w.word).toLowerCase() === String(card.word).toLowerCase() && (w.category || '单词') === card.category)) continue;
-    seen.add(duplicateKey);
-    projected[group.id] = (Object.prototype.hasOwnProperty.call(projected, group.id) ? projected[group.id] : countInGroup(group.id)) + 1;
-    if (group.limit > 0 && projected[group.id] > group.limit) {
-      showToast(`「${group.name}」容量不足，请为相关卡片选择其他分组`);
-      return;
-    }
+  if(!pendingPreviewCards.length){closeCardGroupPicker();return;}
+  const selections=pendingGroupSelections.slice(0,pendingPreviewCards.length);
+  if(selections.some(v=>!v)){showToast('还有卡片未指定保存位置');return;}
+  const projected={},seen=new Set();
+  for(let i=0;i<pendingPreviewCards.length;i++){
+    const card=pendingPreviewCards[i],g=getCardGroup(selections[i]);
+    if(!g||g.isDefault){showToast('所选分组不可用');return;}
+    const category=g.category,key=category+'::'+String(card.word).toLowerCase();
+    if(seen.has(key)||words.some(w=>String(w.word).toLowerCase()===String(card.word).toLowerCase()&&(w.category||'单词')===category))continue;
+    seen.add(key);projected[g.id]=(Object.prototype.hasOwnProperty.call(projected,g.id)?projected[g.id]:countInGroup(g.id))+1;
+    if(g.limit>0&&projected[g.id]>g.limit){showToast(`「${g.name}」容量不足，请选择其它分组`);return;}
   }
-
-  let saved = 0, skipped = 0;
-  pendingPreviewCards.forEach((item,index) => {
-    const data = normalizeCardData(item, item.category || '单词');
-    data.groupId = selections[index];
-    if (saveWord(data)) saved++; else skipped++;
+  let saved=0,skipped=0;
+  pendingPreviewCards.forEach((item,i)=>{
+    const g=getCardGroup(selections[i]);if(!g){skipped++;return;}
+    const data=normalizeCardData(item,item.category||'单词');data.category=g.category;data.groupId=g.id;
+    if(saveWord(data))saved++;else skipped++;
   });
-  if (saved) showToast(`已收藏 ${saved} 张卡片${skipped ? `，${skipped} 项重复` : ''}`);
-  else showToast(skipped ? '卡片已存在或未能保存' : '没有可收藏的内容');
-  closeCardGroupPicker();
-  renderCards(); renderGroupManager(); updateStatsUI();
-  pendingPreviewCards = [];
-  $('infoFavorite').disabled = true;
-  $('infoFavorite').style.opacity = '.45';
-  if (saved) $('infoFavorite').innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>';
+  if(saved)showToast(`已收藏 ${saved} 张卡片${skipped?`，${skipped} 项重复或未保存`:''}`);
+  else showToast(skipped?'卡片已存在或未能保存':'没有可收藏的内容');
+  closeCardGroupPicker();renderCards();renderGroupManager();updateStatsUI();pendingPreviewCards=[];pendingGroupSelections=[];
+  $('infoFavorite').disabled=true;$('infoFavorite').style.opacity='.45';
+  if(saved)$('infoFavorite').innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>';
 }
 /* 图片：OCR 结果回填统一输入框，不直接跳过预览创建卡片 */
 async function handleImageUpload(event){
@@ -1974,7 +2015,7 @@ function saveWord(data){
   data = normalizeCardData(data, data.category || '单词');
   if (words.find(w => String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category)) return false;
   const targetGroup = getCardGroup(data.groupId);
-  if (!targetGroup || targetGroup.category !== data.category) { showToast('请先选择卡片分组'); return false; }
+  if (!targetGroup || targetGroup.isDefault || targetGroup.category !== data.category) { showToast('卡片保存位置无效，请重新选择自定义分组'); return false; }
   if (!groupHasRoom(data.groupId)) { showToast(`“${targetGroup.name}”已达到数量上限`); return false; }
   data.id = Date.now() + Math.floor(Math.random() * 1000);
   data.time = nowStr();
@@ -1984,142 +2025,152 @@ function saveWord(data){
   return true;
 }
 function renderCards(){
-  const container = $('cardsContainer'); if (!container) return;
+  const container=$('cardsContainer'); if(!container)return;
   ensureCardGroups();
-  if (!words.length) { container.innerHTML = '<div class="empty-state" style="margin-top:48px;">暂无卡片，去录入或语法中生成内容吧</div>'; return; }
-  container.innerHTML = CARD_CATEGORIES.map(category => {
-    const categoryCards = words.filter(w => (w.category || '单词') === category);
-    if (!categoryCards.length) return '';
-    const groupHtml = groupsFor(category).map(group => {
-      const entries = categoryCards.filter(w => (w.groupId || defaultGroupId(category)) === group.id).slice().reverse();
-      if (!entries.length) return '';
-      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></div>${entries.map(w => `<div class="card-directory-item" role="button" tabindex="0" onclick="openCardDetail(${Number(w.id)})" onkeydown="if(event.key==='Enter')openCardDetail(${Number(w.id)})"><div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(w.cn || w.summary || w.collins || w.example || '点击查看卡片内容')}</div></div><div class="card-directory-arrow">›</div></div>`).join('')}</div>`;
+  selectedCardIds=new Set([...selectedCardIds].filter(id=>words.some(w=>Number(w.id)===Number(id))));
+  if(!words.length){container.innerHTML='<div class="empty-state" style="margin-top:48px;">暂无卡片，去录入或语法中生成内容吧</div>';updateBulkDeleteUI();return;}
+  container.innerHTML=CARD_CATEGORIES.map(category=>{
+    const categoryCards=words.filter(w=>(w.category||'单词')===category);
+    if(!categoryCards.length)return '';
+    const groupHtml=groupsFor(category).map(group=>{
+      const entries=categoryCards.filter(w=>(w.groupId||defaultGroupId(category))===group.id).slice().reverse();
+      if(!entries.length)return '';
+      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit?'/'+group.limit:''}</span></div>${entries.map(w=>{
+        const id=Number(w.id),checked=selectedCardIds.has(id)?'checked':'';
+        const check=batchDeleteMode?`<input class="card-select" type="checkbox" ${checked} aria-label="选择 ${esc(w.word)}" onclick="event.stopPropagation()" onchange="toggleCardSelection(${id},this.checked)">`:'';
+        const arrow=batchDeleteMode?'':'<div class="card-directory-arrow">›</div>';
+        return `<div class="card-directory-item ${batchDeleteMode?'select-mode':''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(w.cn||w.summary||w.collins||w.example||'点击查看卡片内容')}</div></div>${arrow}</div>`;
+      }).join('')}</div>`;
     }).join('');
     return `<section class="card-category"><div class="card-category-head">${category}<span>${categoryCards.length} 张</span></div>${groupHtml}</section>`;
   }).join('');
+  updateBulkDeleteUI();
+}
+function handleCardDirectoryClick(id){if(batchDeleteMode)toggleCardSelection(id,!selectedCardIds.has(Number(id)));else openCardDetail(id);}
+function toggleBatchDeleteMode(force){batchDeleteMode=typeof force==='boolean'?force:!batchDeleteMode;selectedCardIds.clear();renderCards();}
+function toggleCardSelection(id,checked){id=Number(id);if(checked)selectedCardIds.add(id);else selectedCardIds.delete(id);updateBulkDeleteUI();}
+function selectAllCards(){selectedCardIds=new Set(words.map(w=>Number(w.id)));renderCards();}
+function updateBulkDeleteUI(){
+  const actions=$('bulkModeActions'),trigger=$('bulkModeButton'),count=$('bulkSelectedCount'),del=$('bulkDeleteButton');
+  if(!actions||!trigger)return;
+  trigger.style.display=batchDeleteMode?'none':'';
+  actions.style.display=batchDeleteMode?'flex':'none';
+  if(count)count.textContent=`已选 ${selectedCardIds.size} 张`;
+  if(del)del.disabled=selectedCardIds.size===0;
+}
+function requestDeleteSelectedCards(){
+  const ids=[...selectedCardIds].filter(id=>words.some(w=>Number(w.id)===Number(id)));
+  if(!ids.length){showToast('请先选择要删除的卡片');return;}
+  requestDeleteCards(ids);
 }
 function cardDetailHtml(card){
-  const category = card.category || '单词';
-  const groupOpts = groupsFor(category).map(g => `<option value="${esc(g.id)}" ${g.id === (card.groupId || defaultGroupId(category)) ? 'selected' : ''}>${esc(g.name)}${g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : ''}</option>`).join('');
-  const fields = [
-    ['柯林斯释义',card.collins,'en'],['中文释义',card.cn,''],['例句',card.example,'en'],['同义词',card.syn,''],['反义词',card.ant,''],
-    ['知识概要',card.summary,''],['结构',card.structure,'en'],['用法',card.usage,''],['注意事项',card.notes,'']
-  ].filter(x => x[1]);
-  return `<div class="card-detail-view" data-card-id="${card.id}"><div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic ? `<div class="word-phonetic">${esc(card.phonetic)}</div>` : ''}${card.syllable ? `<div class="word-syllable">${esc(card.syllable)}</div>` : ''}${category === '单词' ? `<div class="pron-row"><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,2)">美音</button><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,1)">英音</button></div>` : ''}</div></div><div class="card-body">${fields.map(([label,value,lang]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div><div class="card-detail-group"><span>分类分组</span><select onchange="changeCardGroup(${card.id},this.value)">${groupOpts}</select></div><div class="card-footer">${esc(card.time || '')}</div><div class="swipe-delete-hint">左右滑动浏览本分组 · 上滑到底并停留 5 秒可申请删除</div></div>`;
-}
-function openCardDetail(id){
-  const card = words.find(w => Number(w.id) === Number(id)); if (!card) return;
-  cancelCardGesture();
-  currentModalCardId = Number(id); pendingPreviewCards = [];
-  $('infoTitle').textContent = card.word;
-  $('infoBody').innerHTML = cardDetailHtml(card);
-  $('infoModal').classList.add('active');
-  $('infoFavorite').style.display = 'none';
-  $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
+  const category=card.category||'单词';
+  const currentGroup=cardGroups.find(g=>g.id===card.groupId&&!g.isDefault);
+  const customGroups=cardGroups.filter(g=>!g.isDefault);
+  const opts=customGroups.map(g=>`<option value="${esc(g.id)}" ${g.id===card.groupId?'selected':''}>${esc(g.category)} · ${esc(g.name)}${g.limit?` · ${countInGroup(g.id)}/${g.limit}`:''}</option>`).join('');
+  const fields=[['柯林斯释义',card.collins,'en'],['中文释义',card.cn,''],['例句',card.example,'en'],['同义词',card.syn,''],['反义词',card.ant,''],['知识概要',card.summary,''],['结构',card.structure,'en'],['用法',card.usage,''],['注意事项',card.notes,'']].filter(x=>x[1]);
+  const groupControl=customGroups.length?`<select aria-label="移动卡片到分组" onchange="changeCardGroup(${Number(card.id)},this.value)"><option value="" disabled ${currentGroup?'':'selected'}>未加入自定义分组</option>${opts}</select>`:'<span>尚无自定义分组</span>';
+  return `<div class="card-detail-view" data-card-id="${Number(card.id)}">
+    <div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic?`<div class="word-phonetic">${esc(card.phonetic)}</div>`:''}${card.syllable?`<div class="word-syllable">${esc(card.syllable)}</div>`:''}${category==='单词'?`<div class="pron-row"><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,2)">美音</button><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,1)">英音</button></div>`:''}</div></div>
+    <div class="card-body">${fields.map(([label,value,lang])=>`<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div>
+    <div class="card-detail-group"><span>分类分组</span>${groupControl}</div><div class="card-footer">${esc(card.time||'')}</div>
+    <div class="swipe-delete-hint">左右滑动切换本分组卡片 · 上滑并保持 5 秒可删除</div>
+  </div>`;
 }
 function cardsInSameGroup(card){
-  const category = card.category || '单词';
-  const groupId = card.groupId || defaultGroupId(category);
-  return words.filter(w => (w.category || '单词') === category && (w.groupId || defaultGroupId(category)) === groupId).slice().reverse();
+  const gid=card.groupId||defaultGroupId(card.category||'单词');
+  return words.filter(w=>(w.groupId||defaultGroupId(w.category||'单词'))===gid).slice().reverse();
 }
-function navigateCardInGroup(direction){
-  if (currentModalCardId == null) return;
-  const current = words.find(w => Number(w.id) === Number(currentModalCardId)); if (!current) return;
-  const list = cardsInSameGroup(current);
-  const index = list.findIndex(w => Number(w.id) === Number(current.id));
-  const next = list[index + direction];
-  if (!next) { showToast(direction > 0 ? '已到本分组最后一张' : '已到本分组第一张'); return; }
-  openCardDetail(next.id);
+function openCardDetail(id){
+  const card=words.find(w=>Number(w.id)===Number(id));if(!card)return;
+  cancelCardGesture();currentModalCardId=Number(id);pendingPreviewCards=[];
+  const list=cardsInSameGroup(card),host=$('infoBody');
+  host.classList.add('card-detail-carousel');
+  host.innerHTML=list.map(w=>`<div class="card-detail-slide" data-carousel-card-id="${Number(w.id)}">${cardDetailHtml(w)}</div>`).join('');
+  $('infoTitle').textContent=card.word;$('infoModal').classList.add('active');
+  $('infoFavorite').style.display='none';$('infoSpeak').style.display='none';$('infoAdd').style.display='none';
+  requestAnimationFrame(()=>{const slide=host.querySelector(`[data-carousel-card-id="${Number(id)}"]`);if(slide)host.scrollLeft=slide.offsetLeft;currentModalCardId=Number(id);});
+}
+function onCardCarouselScroll(){
+  if(!$('infoBody').classList.contains('card-detail-carousel'))return;
+  clearTimeout(carouselScrollTimer);
+  carouselScrollTimer=setTimeout(()=>{
+    const host=$('infoBody'),slides=[...host.querySelectorAll('.card-detail-slide')];
+    if(!slides.length)return;
+    const center=host.getBoundingClientRect().left+host.clientWidth/2;
+    let nearest=slides[0],dist=Infinity;
+    slides.forEach(slide=>{const r=slide.getBoundingClientRect(),d=Math.abs((r.left+r.right)/2-center);if(d<dist){dist=d;nearest=slide;}});
+    const id=Number(nearest.dataset.carouselCardId),active=words.find(w=>Number(w.id)===id);
+    if(active){currentModalCardId=id;$('infoTitle').textContent=active.word;}
+  },70);
 }
 function changeCardGroup(id,newGroupId){
-  const card = words.find(w => Number(w.id) === Number(id)); const group = getCardGroup(newGroupId);
-  if (!card || !group || group.category !== (card.category || '单词')) return;
-  if (!groupHasRoom(newGroupId,id)) { showToast('目标分组已达到数量上限'); openCardDetail(id); return; }
-  card.groupId = newGroupId; safeSet('wm_words',JSON.stringify(words)); renderCards(); renderGroupManager();
-  if (currentModalCardId === Number(id)) openCardDetail(id);
-  showToast('卡片分组已更新');
+  const card=words.find(w=>Number(w.id)===Number(id)),group=getCardGroup(newGroupId);
+  if(!card||!group||group.isDefault)return;
+  if(!groupHasRoom(newGroupId,id)){showToast('目标分组已达到数量上限');return;}
+  if(words.some(w=>Number(w.id)!==Number(id)&&(w.category||'单词')===group.category&&String(w.word).toLowerCase()===String(card.word).toLowerCase())){showToast('目标类别中已有同名卡片');return;}
+  card.category=group.category;card.groupId=newGroupId;
+  safeSet('wm_words',JSON.stringify(words));renderCards();renderGroupManager();openCardDetail(id);showToast('卡片分组已更新');
 }
 function showDeleteHoldIndicator(){
-  const indicator = $('deleteHoldIndicator');
-  indicator.style.display = 'flex';
-  const started = Date.now();
-  const update = () => {
-    const left = Math.max(0, 5 - Math.floor((Date.now()-started)/1000));
-    $('deleteHoldSeconds').textContent = left;
-  };
-  update();
-  deleteHoldTicker = setInterval(update,150);
+  const el=$('deleteHoldIndicator');el.style.display='flex';deleteHoldStartedAt=Date.now();
+  const update=()=>{$('deleteHoldSeconds').textContent=Math.max(0,5-Math.floor((Date.now()-deleteHoldStartedAt)/1000));};
+  update();deleteHoldTicker=setInterval(update,100);
 }
-function hideDeleteHoldIndicator(){
-  $('deleteHoldIndicator').style.display = 'none';
-  if (deleteHoldTicker) clearInterval(deleteHoldTicker);
-  deleteHoldTicker = null;
-}
-function cancelCardGesture(){
-  if (deleteHoldTimer) clearTimeout(deleteHoldTimer);
-  deleteHoldTimer = null;
-  hideDeleteHoldIndicator();
-  cardGesture = null;
-}
+function hideDeleteHoldIndicator(){$('deleteHoldIndicator').style.display='none';if(deleteHoldTicker)clearInterval(deleteHoldTicker);deleteHoldTicker=null;}
+function cancelCardGesture(){if(deleteHoldTimer)clearTimeout(deleteHoldTimer);deleteHoldTimer=null;hideDeleteHoldIndicator();cardGesture=null;}
 function onCardTouchStart(e){
-  const touch = e.touches && e.touches[0];
-  const target = e.target && e.target.closest ? e.target.closest('button,select,input,textarea,a') : null;
-  const detail = $('infoBody').querySelector('.card-detail-view[data-card-id]');
-  if (!touch || !detail || target) return;
-  cancelCardGesture();
-  cardGesture = {id:Number(detail.dataset.cardId),startX:touch.clientX,startY:touch.clientY,lastX:touch.clientX,lastY:touch.clientY,holdStarted:false,horizontal:false};
+  const t=e.touches&&e.touches[0],blocked=e.target&&e.target.closest?e.target.closest('button,select,input,textarea,a'):null;
+  const detail=e.target&&e.target.closest?e.target.closest('.card-detail-view[data-card-id]'):null;
+  if(!t||!detail||blocked)return;
+  cancelCardGesture();cardGesture={id:Number(detail.dataset.cardId),startX:t.clientX,startY:t.clientY,holdStarted:false};
 }
 function onCardTouchMove(e){
-  if (!cardGesture || !e.touches || !e.touches.length) return;
-  const touch=e.touches[0], dx=touch.clientX-cardGesture.startX, dy=touch.clientY-cardGesture.startY;
-  if (!cardGesture.holdStarted && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.25){ cardGesture.horizontal=true; return; }
-  if (cardGesture.horizontal) return;
-  if (!cardGesture.holdStarted && dy < -115 && Math.abs(dx)<55){
-    cardGesture.holdStarted=true;
-    cardGesture.holdX=touch.clientX; cardGesture.holdY=touch.clientY;
-    showDeleteHoldIndicator();
-    const targetId=cardGesture.id;
-    deleteHoldTimer=setTimeout(()=>{
-      hideDeleteHoldIndicator();
-      cardGesture=null;
-      requestDeleteCard(targetId);
-    },5000);
-  } else if (cardGesture.holdStarted){
-    const drift=Math.hypot(touch.clientX-cardGesture.holdX,touch.clientY-cardGesture.holdY);
-    if (drift>22) cancelCardGesture();
-  }
-}
-function onCardTouchEnd(e){
-  if (!cardGesture) return;
-  const gesture=cardGesture;
-  const touch=e.changedTouches && e.changedTouches[0];
-  if (gesture.holdStarted){ cancelCardGesture(); return; }
-  if (touch && gesture.horizontal){
-    const dx=touch.clientX-gesture.startX;
-    cancelCardGesture();
-    if (Math.abs(dx)>55) navigateCardInGroup(dx<0 ? 1 : -1);
+  if(!cardGesture||!e.touches||!e.touches.length)return;
+  const t=e.touches[0],dx=t.clientX-cardGesture.startX,dy=t.clientY-cardGesture.startY;
+  if(cardGesture.holdStarted){
+    if(e.cancelable)e.preventDefault();
+    if(Math.hypot(t.clientX-cardGesture.holdX,t.clientY-cardGesture.holdY)>34)cancelCardGesture();
     return;
   }
-  cancelCardGesture();
+  if(Math.abs(dx)>34&&Math.abs(dx)>Math.abs(dy)*1.15)return;
+  if(dy< -58&&Math.abs(dx)<68){
+    if(e.cancelable)e.preventDefault();
+    cardGesture.holdStarted=true;cardGesture.holdX=t.clientX;cardGesture.holdY=t.clientY;showDeleteHoldIndicator();
+    const targetId=cardGesture.id;
+    deleteHoldTimer=setTimeout(()=>{
+      if(!cardGesture||!cardGesture.holdStarted||Number(cardGesture.id)!==Number(targetId))return;
+      cardGesture=null;deleteHoldTimer=null;hideDeleteHoldIndicator();requestDeleteCard(targetId);
+    },5000);
+  }
 }
-function requestDeleteCard(id){
-  if (!words.some(w => Number(w.id) === Number(id))) return;
-  pendingDeleteCardId = Number(id); $('deleteConfirm').style.display = 'flex';
+function onCardTouchEnd(){if(cardGesture)cancelCardGesture();}
+function setDeleteDialog(ids){
+  pendingDeleteCardIds=ids.map(Number).filter(id=>words.some(w=>Number(w.id)===id));
+  if(!pendingDeleteCardIds.length)return;
+  const multi=pendingDeleteCardIds.length>1;
+  $('deleteConfirmTitle').textContent=multi?`确认删除选中的 ${pendingDeleteCardIds.length} 张卡片？`:'确认删除这张卡片？';
+  $('deleteConfirmDescription').textContent=multi?'这些卡片将从目录中移除，删除后无法在本地恢复。':'卡片将从当前分组和目录中移除。';
+  $('deleteConfirm').style.display='flex';
 }
-function cancelDeleteCard(){ pendingDeleteCardId = null; $('deleteConfirm').style.display = 'none'; }
+function requestDeleteCard(id){if(!words.some(w=>Number(w.id)===Number(id)))return;setDeleteDialog([Number(id)]);}
+function requestDeleteCards(ids){setDeleteDialog(ids);}
+function cancelDeleteCard(){pendingDeleteCardIds=[];$('deleteConfirm').style.display='none';}
 function confirmDeleteCard(){
-  if (pendingDeleteCardId == null) return;
-  const id = pendingDeleteCardId;
-  words = words.filter(w => Number(w.id) !== id);
-  safeSet('wm_words',JSON.stringify(words));
-  pendingDeleteCardId = null; $('deleteConfirm').style.display = 'none';
-  $('infoModal').classList.remove('active'); currentModalCardId = null; cancelCardGesture();
-  renderCards(); renderGroupManager(); updateStatsUI(); showToast('卡片已删除');
+  if(!pendingDeleteCardIds.length)return;
+  const ids=new Set(pendingDeleteCardIds.map(Number)),count=ids.size;
+  words=words.filter(w=>!ids.has(Number(w.id)));safeSet('wm_words',JSON.stringify(words));
+  pendingDeleteCardIds=[];$('deleteConfirm').style.display='none';
+  const activeDeleted=currentModalCardId!=null&&ids.has(Number(currentModalCardId));
+  if(activeDeleted){$('infoModal').classList.remove('active');$('infoBody').classList.remove('card-detail-carousel');$('infoBody').innerHTML='';currentModalCardId=null;}
+  selectedCardIds.clear();batchDeleteMode=false;cancelCardGesture();
+  renderCards();renderGroupManager();updateStatsUI();showToast(`已删除 ${count} 张卡片`);
 }
-function deleteWord(id){ requestDeleteCard(id); }
+function deleteWord(id){requestDeleteCard(id);}
 
 /* 通用信息弹窗，兼容原有单词查询/清单分析 */
 function showInfo(title,html,word){
+  $('infoBody').classList.remove('card-detail-carousel');
   $('infoTitle').innerText = title;
   $('infoBody').innerHTML = html;
   $('infoModal').classList.add('active');
@@ -2131,6 +2182,7 @@ function showInfo(title,html,word){
 }
 function closeInfoModal(){
   $('infoModal').classList.remove('active');
+  $('infoBody').classList.remove('card-detail-carousel');
   $('infoFavorite').style.display = 'none';
   stopSpeak();
 }
@@ -2173,20 +2225,7 @@ function renderRestUI(){
   }
   $('restHistory').textContent = breaks.length ? breaks.map((b,i) => `${i+1}. ${fmtHM(b.s)} – ${b.e ? fmtHM(b.e) : '进行中'}（${fmtDur(((b.e || now)-b.s)/60000)}）`).join('　') : '开始休息后，将自动记录每次休息的时间与时长。';
 }
-function tick(){
-  const d = new Date();
-  $('live-clock').innerText = d.toLocaleTimeString('zh-CN',{hour12:false});
-  $('live-date').innerText = d.toLocaleDateString('zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const fmt = ts => ts ? new Date(ts).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false}) : '--:--';
-  let log = '今日暂无出入记录';
-  if (outTs || homeTs){
-    log = `出门：${fmt(outTs)} | 回家：${fmt(homeTs)}`;
-    if (outTs && homeTs && homeTs > outTs){ const diff=Math.floor((homeTs-outTs)/60000); log += `<br>在外时长：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`; }
-    else if (outTs && (!homeTs || homeTs < outTs)){ const diff=Math.floor((Date.now()-outTs)/60000); log += `<br>已出门：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`; }
-  }
-  $('clock-log').innerHTML = log;
-  renderRestUI();
-}
+function tick(){renderRestUI();}
 function buildAttendanceLines(){
   const keys = Object.keys(attendance).sort().slice(-30); const now = Date.now();
   return keys.map(k => { const rec=attendance[k]; const bt=breakTotals(rec,rec.out||now); return `${k}：休息 ${bt.n} 次，共 ${Math.round(bt.ms/60000)} 分钟`; });
