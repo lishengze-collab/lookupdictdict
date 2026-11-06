@@ -157,6 +157,11 @@ button{font-family:inherit;}
 .rd .sec.cmp .sec-label{background:var(--blue-soft);color:var(--blue);}
 .rd .sec.def .sec-label{background:#eef1f0;color:var(--text-sub);}
 .rd .card-footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:16px;color:var(--text-muted);text-align:center;}
+.hd-right{display:flex;align-items:center;gap:8px;flex:none;}
+.pv-star{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;color:var(--primary);cursor:pointer;}
+.pv-star:active{background:var(--primary-soft);}
+.pv-star.on{color:var(--amber);cursor:default;}
+.pv-star.on svg{fill:currentColor;}
 .cat-chip{flex:none;font-size:13px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--primary-soft);color:var(--primary);}
 mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;font-weight:700;padding:0 1px;border-radius:2px;}
 .pron-row{display:flex;gap:6px;margin-top:10px;}
@@ -330,7 +335,10 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .modal-body{flex:1;min-height:0;overflow-y:auto;font-size:16px;line-height:1.75;color:#333;margin-bottom:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .modal-footer{display:flex;gap:10px;flex-shrink:0;}
 .modal-footer .btn-outline{flex:1;}
-#infoModal .modal-content{height:80vh;height:80dvh;}
+#infoModal .modal-content{height:90vh;height:90dvh;}
+#infoModal.preview-mode .modal-header,#infoModal.preview-mode .modal-footer{display:none;}
+#infoModal.preview-mode .modal-content{padding-top:14px;padding-bottom:14px;}
+#infoModal.preview-mode .modal-body{margin-bottom:0;}
 #infoBody.rd{font-size:20px;}
 .app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:350;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center;}
 .app-toast.show{opacity:1;transform:translate(-50%,0);}
@@ -505,7 +513,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
   <!-- 信息弹窗（预览、AI 分析、查词） -->
   <div class="modal" id="infoModal" onclick="if(event.target===this)closeInfoModal()">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" id="infoHeader">
         <span id="infoTitle">分析</span>
         <div class="modal-head-actions">
           <button class="modal-icon-action" id="infoFavorite" type="button" title="全部收藏" aria-label="全部收藏" onclick="savePendingCards('modal')" style="display:none;">
@@ -900,14 +908,14 @@ function renderSections(c){
     return `<div class="sec ${secCls}"><div class="sec-label">${esc(label)}</div><div class="sec-body ${bodyCls}">${rich(value, keys)}</div></div>`;
   }).join('');
 }
-function renderCardHeader(c){
+function renderCardHeader(c, lead){
   const cat = c.category || '单词';
   return `<div class="card-header"><div>
     <div class="word-big ${wordSizeClass(c.word)}">${esc(c.word)}</div>
     ${c.phonetic ? `<div class="word-phonetic">${esc(toText(c.phonetic))}</div>` : ''}
     ${c.syllable ? `<div class="word-syllable">${esc(toText(c.syllable))}</div>` : ''}
     ${cat === '单词' ? `<div class="pron-row"><button class="pron-btn" type="button" data-word="${esc(c.word)}" onclick="speak(this.dataset.word,2)">美音</button><button class="pron-btn" type="button" data-word="${esc(c.word)}" onclick="speak(this.dataset.word,1)">英音</button></div>` : ''}
-  </div><span class="cat-chip">${esc(cat)}</span></div>`;
+  </div><div class="hd-right">${lead || ''}<span class="cat-chip">${esc(cat)}</span></div></div>`;
 }
 function groupOptionsHtml(current, excludingId){
   return CARD_CATEGORIES.map(cat => {
@@ -1051,8 +1059,9 @@ function renderPreviewList(ctx){
   ensureCardGroups();
   return previews[ctx].map((card, i) => {
     const saved = isSaved(card);
+    const star = ctx === 'modal' ? `<button type="button" class="pv-star ${saved ? 'on' : ''}" ${saved ? 'disabled' : ''} title="${saved ? '已收藏' : '收藏'}" aria-label="收藏" onclick="savePreviewCard('modal',${i})"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></button>` : '';
     return `<div class="preview-card rd">
-      ${renderCardHeader(card)}
+      ${renderCardHeader(card, star)}
       <div class="card-body">${renderSections(card) || '<div class="sec-body" style="color:#9aa5a0">AI 未返回详细内容</div>'}</div>
       <div class="preview-group-row">
         <label for="pg-${ctx}-${i}">收藏到</label>
@@ -1065,7 +1074,7 @@ function renderPreviewList(ctx){
 function refreshPreview(ctx){
   const host = ctx === 'modal' ? $('infoBody') : $('recognitionPreview');
   const top = host.scrollTop;
-  host.innerHTML = (ctx === 'modal' ? '<div class="preview-tip">预览内容 · 在每张卡片底部选择分组并收藏，或点右上角星标全部收藏</div>' : '') + renderPreviewList(ctx);
+  host.innerHTML = renderPreviewList(ctx);
   host.scrollTop = top;
   if (ctx === 'modal'){
     const fav = $('infoFavorite');
@@ -1075,9 +1084,9 @@ function refreshPreview(ctx){
 }
 function showGeneratedPreview(title, cards){
   previews.modal = cards;
-  $('infoTitle').textContent = title; $('infoTitle').style.display = 'none'; /* 预览只显示红色标题 */
+  $('infoTitle').textContent = title; $('infoModal').classList.add('preview-mode'); /* 预览隐藏头部与底部，整块空间留给内容 */
   $('infoBody').classList.add('rd');
-  $('infoFavorite').style.display = '';
+  $('infoFavorite').style.display = 'none';
   $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
   $('infoModal').classList.add('active');
   refreshPreview('modal'); $('infoBody').scrollTop = 0;
@@ -1161,7 +1170,7 @@ async function generateGrammarTopic(topic){
   if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
   if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
   batchRunning = true;
-  $('infoTitle').style.display = ''; $('infoTitle').textContent = topic;
+  $('infoModal').classList.remove('preview-mode'); $('infoTitle').style.display = ''; $('infoTitle').textContent = topic;
   $('infoBody').classList.add('rd');
   $('infoBody').innerHTML = '<div style="text-align:center;padding:26px;color:#87958d;font-size:16px;">AI 正在整理语法知识…</div>';
   $('infoFavorite').style.display = 'none'; $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
@@ -1276,6 +1285,7 @@ function changeCardGroup(id, newGroupId){
    通用信息弹窗
 ========================================================= */
 function showInfo(title, html, word){
+  $('infoModal').classList.remove('preview-mode');
   $('infoTitle').style.display = '';
   $('infoBody').classList.remove('rd');
   $('infoTitle').innerText = title;
