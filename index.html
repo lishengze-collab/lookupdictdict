@@ -568,6 +568,34 @@ button{font-family:inherit;}
 #infoBody .card-detail-content .card-footer{font-size:14px;}
 @media(max-width:370px){#recognizeMessage{font-size:10px;}}
 
+
+/* V6 layout fix: give the input tab the full flex height and scroll results inside it */
+#tab-input.content.active{
+  display:flex;
+  flex:1 1 0;
+  flex-direction:column;
+  height:0;
+  min-height:0;
+  overflow:hidden;
+  padding:14px 16px 0;
+}
+#tab-input .recognize-status-bar{
+  flex:0 0 48px;
+  min-height:48px;
+}
+#tab-input .recognition-preview{
+  display:block;
+  flex:1 1 0;
+  height:0;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:2px 2px calc(220px + env(safe-area-inset-bottom));
+}
+#infoBody.card-detail-mode{display:block;min-height:0;overflow-y:auto;overflow-x:hidden;}
+
 </style>
 </head>
 <body>
@@ -2090,7 +2118,8 @@ function openCardDetail(id){
   currentModalCardId=Number(id);cardSwipeAnimating=false;const body=$('infoBody');
   body.classList.remove('card-detail-mode');body.classList.add('card-detail-mode');
   body.style.transition='';body.style.transform='';body.style.opacity='';body.innerHTML=cardDetailHtml(card);body.scrollTop=0;
-  $('infoTitle').textContent=card.word;$('infoModal').classList.add('active');
+  $('infoTitle').textContent='';$('infoTitle').style.display='none';
+  $('infoModal').classList.add('active');
   $('infoFavorite').style.display='none';$('infoSpeak').style.display='none';$('infoAdd').style.display='none';
 }
 function navigateCardInGroup(direction){
@@ -2131,6 +2160,7 @@ function onCardTouchEnd(e){
 }
 /* 通用信息弹窗，兼容原有单词查询/清单分析 */
 function showInfo(title,html,word){
+  $('infoTitle').style.display='';
   $('infoBody').classList.remove('card-detail-mode');
   $('infoBody').style.transition='';$('infoBody').style.transform='';$('infoBody').style.opacity='';cardSwipeAnimating=false;
   $('infoTitle').innerText = title;
@@ -2143,6 +2173,7 @@ function showInfo(title,html,word){
   if (word && ad.dataset.state !== 'busy') { ad.innerText = '加入卡片'; ad.disabled = false; }
 }
 function closeInfoModal(){
+  $('infoTitle').style.display='';
   $('infoModal').classList.remove('active');
   $('infoBody').classList.remove('card-detail-mode');
   $('infoBody').style.transition='';$('infoBody').style.transform='';$('infoBody').style.opacity='';
