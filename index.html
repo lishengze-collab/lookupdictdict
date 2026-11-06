@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>单词记忆助手</title>
+<meta name="theme-color" content="#f5f7f6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DICTIONARY">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>DICTIONARY · 单词记忆助手</title>
 <style>
 :root{
   --primary:#2c5e4f;
@@ -28,7 +35,7 @@
 html,body{height:100%;}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
-  background-color:#e9eeec;color:var(--text-main);
+  background-color:var(--bg-color);color:var(--text-main);
   display:flex;justify-content:center;height:100vh;height:100dvh;overflow:hidden;
 }
 button{font-family:inherit;}
@@ -446,17 +453,55 @@ button{font-family:inherit;}
 .delete-accept{background:#d95b56;color:#fff;}
 .app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:350;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center;}
 .app-toast.show{opacity:1;transform:translate(-50%,0);}
+/* 收藏分组选择：必须手动选择，不预选默认分组 */
+.group-picker-overlay{position:absolute;inset:0;z-index:420;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(22,31,27,.46);}
+.group-picker-dialog{width:min(100%,430px);max-height:82%;display:flex;flex-direction:column;background:#fff;border-radius:21px;padding:17px;box-shadow:0 18px 55px rgba(0,0,0,.22);}
+.group-picker-header{display:flex;align-items:center;justify-content:space-between;color:var(--primary);font-size:17px;font-weight:750;}
+.group-picker-header button{border:0;background:none;color:#9ba59f;font-size:27px;line-height:1;padding:0 3px;}
+.group-picker-desc{font-size:12px;line-height:1.55;color:var(--text-muted);margin:5px 0 12px;}
+.group-picker-list{min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.group-picker-item{padding:11px 0;border-top:1px solid #edf1ef;}
+.group-picker-item strong{display:block;font-size:14px;color:#293630;margin-bottom:7px;}
+.group-picker-item label{display:block;font-size:11px;color:var(--text-muted);margin-bottom:5px;}
+.group-picker-select{width:100%;padding:10px 11px;border:1px solid #dce6e0;border-radius:11px;background:#f9fbfa;color:var(--text-main);font:inherit;font-size:13px;outline:none;}
+.group-picker-select:focus{border-color:var(--primary);}
+.group-picker-actions{display:flex;gap:9px;padding-top:13px;flex-shrink:0;}
+.group-picker-actions button{flex:1;}
+/* 长按删除的居中提示与居中确认弹窗 */
+.delete-hold-indicator{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:410;display:flex;flex-direction:column;align-items:center;gap:7px;width:min(78%,270px);padding:19px 16px;border-radius:19px;background:rgba(35,48,41,.94);color:#fff;box-shadow:0 12px 35px rgba(0,0,0,.24);pointer-events:none;text-align:center;}
+.delete-hold-indicator strong{font-size:15px;}
+.delete-hold-indicator>span{font-size:11px;color:rgba(255,255,255,.78);}
+.delete-hold-ring{width:42px;height:42px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:750;}
+.delete-confirm-overlay{position:absolute;inset:0;z-index:430;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(20,29,24,.48);}
+.delete-confirm{width:min(100%,330px);display:flex;flex-direction:column;align-items:center;gap:10px;padding:23px 19px 18px;background:#fff;border:1px solid #f0e1df;border-radius:21px;box-shadow:0 16px 48px rgba(0,0,0,.24);text-align:center;}
+.delete-confirm-symbol{width:39px;height:39px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff0ef;color:#d95b56;font-size:22px;font-weight:800;}
+.delete-confirm-copy{display:flex;flex-direction:column;gap:6px;}
+.delete-confirm-copy strong{font-size:16px;color:#513b39;}
+.delete-confirm-copy span{font-size:12px;line-height:1.5;color:#9c8e8c;}
+.delete-confirm-actions{display:flex;width:100%;gap:9px;margin-top:8px;}
+.delete-cancel,.delete-accept{flex:1;border:0;border-radius:11px;padding:11px 12px;font-size:13px;font-weight:700;}
+.delete-cancel{background:#f2f4f3;color:#68736d;}
+.delete-accept{background:#d95b56;color:#fff;}
+/* 主屏幕图标安装入口 */
+.install-home-card{display:flex;align-items:center;gap:10px;padding:11px;margin:3px 0 14px;border:1px solid #e6eeea;border-radius:15px;background:#fbfcfb;}
+.install-app-icon{width:54px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:13px;background:#2c5e4f;color:#fff;box-shadow:0 3px 9px rgba(44,94,79,.22);}
+.install-app-icon span{font-size:6.5px;letter-spacing:.15px;font-weight:900;white-space:nowrap;}
+.install-home-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
+.install-home-copy strong{font-size:13px;color:#30443a;}
+.install-home-copy span{font-size:10px;color:var(--text-muted);}
+.install-home-button{border:0;border-radius:10px;padding:9px 13px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;}
+/* 手势区域保留竖向滚动，横向手势切换同组卡片 */
+#infoBody{touch-action:pan-y;}
+.card-detail-view{touch-action:pan-y;}
 @media (max-width:370px){.group-create-row{grid-template-columns:70px minmax(0,1fr) 66px 48px;gap:4px}.group-create-row input,.group-create-row select{font-size:11px;padding:8px 5px}.grammar-topic-grid{grid-template-columns:1fr;}}
 
 </style>
 </head>
 <body>
-
 <div id="app">
 
   <!-- ================= TAB 1 录入 ================= -->
   <div class="content active" id="tab-input">
-    <div class="section-label">识别记录</div>
     <div id="recognizeStatus"><div class="empty-hint">粘贴内容后，点击放大镜进行 AI 识别</div></div>
   </div>
 
@@ -484,10 +529,6 @@ button{font-family:inherit;}
 
   <!-- ================= TAB 2 语法 ================= -->
   <div class="content" id="tab-grammar">
-    <div class="grammar-intro">
-      <div class="grammar-title">英语语法知识库</div>
-      <div class="grammar-subtitle">选择任一知识点，调用 AI 生成结构化讲解；收藏后自动加入语法卡片。</div>
-    </div>
     <div id="grammarTopics"></div>
   </div>
 
@@ -554,6 +595,11 @@ button{font-family:inherit;}
         <input type="password" id="apiKeyInput" placeholder="sk-...">
       </div>
       <button class="btn-primary" onclick="saveApiKey()" style="width:100%; margin-bottom:12px;">保存 API Key</button>
+      <div class="install-home-card">
+        <div class="install-app-icon"><span>DICTIONARY</span></div>
+        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>绿色 DICTIONARY 应用图标</span></div>
+        <button type="button" class="install-home-button" onclick="addToHomeScreen()">添加</button>
+      </div>
       <div style="display:flex; gap:10px;">
         <button class="btn-outline" style="flex:1;" onclick="exportData()">导出备份</button>
         <button class="btn-outline" style="flex:1; border-color:#ddd; color:#666;" onclick="document.getElementById('importFile').click()">导入恢复</button>
@@ -614,10 +660,28 @@ button{font-family:inherit;}
     </div>
   </div>
 
-  <div class="delete-confirm" id="deleteConfirm" style="display:none;">
-    <div class="delete-confirm-copy"><strong>删除这张卡片？</strong><span>此操作会从卡片目录中移除该内容。</span></div>
-    <button type="button" class="delete-cancel" onclick="cancelDeleteCard()">取消</button>
-    <button type="button" class="delete-accept" onclick="confirmDeleteCard()">删除</button>
+  <div class="delete-confirm-overlay" id="deleteConfirm" style="display:none;">
+    <div class="delete-confirm" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+      <div class="delete-confirm-symbol">!</div>
+      <div class="delete-confirm-copy"><strong id="deleteConfirmTitle">确认删除这张卡片？</strong><span>卡片将从当前分组和目录中移除。</span></div>
+      <div class="delete-confirm-actions">
+        <button type="button" class="delete-cancel" onclick="cancelDeleteCard()">取消</button>
+        <button type="button" class="delete-accept" onclick="confirmDeleteCard()">确认删除</button>
+      </div>
+    </div>
+  </div>
+  <div class="delete-hold-indicator" id="deleteHoldIndicator" style="display:none;" aria-live="polite">
+    <div class="delete-hold-ring"><span id="deleteHoldSeconds">5</span></div>
+    <strong>保持不动</strong><span>持续停留 5 秒后进入删除确认</span>
+  </div>
+
+  <div class="group-picker-overlay" id="groupPickerModal" style="display:none;">
+    <div class="group-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="groupPickerTitle">
+      <div class="group-picker-header"><strong id="groupPickerTitle">选择收藏分组</strong><button type="button" onclick="closeCardGroupPicker()" aria-label="关闭">×</button></div>
+      <div class="group-picker-desc">请为每张卡片指定所属分组，未选择前不会自动归入默认分组。</div>
+      <div class="group-picker-list" id="groupPickerList"></div>
+      <div class="group-picker-actions"><button type="button" class="btn-outline" onclick="closeCardGroupPicker()">取消</button><button type="button" class="btn-primary" onclick="confirmSavePendingCards()">确认收藏</button></div>
+    </div>
   </div>
   <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
 </div>
@@ -891,22 +955,24 @@ async function addLookupWord() {
     const btn = $('infoAdd');
     const w = btn.dataset.w;
     if (!w) return;
-    if (!apiKey) { alert('生成卡片需要先填写 API Key'); return; }
+    if (!apiKey) { showToast('生成卡片需要先填写 API Key'); return; }
     btn.dataset.state = 'busy';
     btn.disabled = true;
     btn.innerText = '生成中...';
     try {
-        const isNew = await generateWordCard(w);
-        btn.innerText = isNew ? '已加入' : '已存在';
+        const generated = await generateWordCard(w);
+        pendingPreviewCards = [normalizeCardData(generated, '单词')];
+        btn.dataset.state = '';
+        showGeneratedPreview('单词预览 · ' + w, pendingPreviewCards);
+        openCardGroupPicker();
         updateStatsUI();
     } catch (e) {
         btn.innerText = '加入卡片';
         btn.disabled = false;
-        alert(e.message || '生成失败');
+        btn.dataset.state = '';
+        showToast(e.message || '生成失败');
     }
-    btn.dataset.state = '';
 }
-
 /* =========================================================
    批量处理
 ========================================================= */
@@ -1004,7 +1070,7 @@ async function generateWordCard(word) {
         throw new Error('AI 解析失败');
     }
     if (!data.word) data.word = word;
-    return saveWord(data);
+    return data;
 }
 
 function saveWord(data) {
@@ -1603,7 +1669,10 @@ let pendingPreviewCards = [];
 let pendingDeleteCardId = null;
 let currentModalCardId = null;
 let toastTimer = null;
-let swipeStartY = null;
+let cardGesture = null;
+let deleteHoldTimer = null;
+let deleteHoldTicker = null;
+let deferredInstallPrompt = null;
 
 const CARD_CATEGORIES = ['单词','语法','其它'];
 const DEFAULT_GROUPS = [
@@ -1656,16 +1725,11 @@ function init(){
   $('batchInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); triggerSearch(); }
   });
-  $('infoBody').addEventListener('touchstart', e => {
-    swipeStartY = e.touches && e.touches.length ? e.touches[0].clientY : null;
-  }, {passive:true});
-  $('infoBody').addEventListener('touchend', e => {
-    if (swipeStartY == null || !e.changedTouches || !e.changedTouches.length) return;
-    const delta = e.changedTouches[0].clientY - swipeStartY;
-    swipeStartY = null;
-    const detail = $('infoBody').querySelector('.card-detail-view[data-card-id]');
-    if (detail && delta < -78) requestDeleteCard(Number(detail.dataset.cardId));
-  }, {passive:true});
+  const gestureHost = $('infoBody');
+  gestureHost.addEventListener('touchstart', onCardTouchStart, {passive:true});
+  gestureHost.addEventListener('touchmove', onCardTouchMove, {passive:true});
+  gestureHost.addEventListener('touchend', onCardTouchEnd, {passive:true});
+  gestureHost.addEventListener('touchcancel', cancelCardGesture, {passive:true});
 }
 
 function switchTab(tabId){
@@ -1691,9 +1755,10 @@ function clearBatch(){
 }
 function triggerSearch(){ analyzeInput(false); }
 async function favoriteFromToolbar(){
-  if (pendingPreviewCards.length) { savePendingCards(); return; }
+  if (pendingPreviewCards.length) { openCardGroupPicker(); return; }
   if (!$('batchInput').value.trim()) { showToast('请先粘贴或输入学习内容'); return; }
-  await analyzeInput(true);
+  // 首次点击只生成预览；必须再次收藏并手动选择分组后才写入卡片。
+  await analyzeInput(false);
 }
 function parseAIJson(text, fallbackType){
   const cleaned = String(text || '').replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
@@ -1705,7 +1770,8 @@ function normalizeCardData(data, categoryFallback){
   const d = {...data};
   d.word = String(d.word || d.title || d.topic || '未命名卡片').trim();
   d.category = CARD_CATEGORIES.includes(d.category) ? d.category : (categoryFallback || '单词');
-  if (!d.groupId || !getCardGroup(d.groupId)) d.groupId = defaultGroupId(d.category);
+  const selectedGroup = d.groupId ? getCardGroup(d.groupId) : null;
+  if (!selectedGroup || selectedGroup.category !== d.category) d.groupId = '';
   return d;
 }
 async function analyzeInput(autoSave){
@@ -1741,9 +1807,8 @@ function renderPreviewBody(card){
   return fields.map(([label,value]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body">${esc(value)}</div></div>`).join('');
 }
 function renderGeneratedPreview(cards){
-  return cards.map((card,i) => {
-    const opts = groupsFor(card.category).map(g => `<option value="${esc(g.id)}" ${g.id === (card.groupId || defaultGroupId(card.category)) ? 'selected' : ''}>${esc(g.name)}${g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : ''}</option>`).join('');
-    return `<div class="preview-card"><div class="preview-card-title">${esc(card.word)}</div>${renderPreviewBody(card)}<div class="preview-group-row"><span>${esc(card.category)} · 分组</span><select class="preview-group-select" onchange="updatePendingGroup(${i},this.value)">${opts}</select></div></div>`;
+  return cards.map(card => {
+    return `<div class="preview-card"><div class="preview-card-title">${esc(card.word)}</div>${renderPreviewBody(card)}<div class="preview-group-row"><span>${esc(card.category)} · 收藏时选择分组</span></div></div>`;
   }).join('');
 }
 function showGeneratedPreview(title,cards){
@@ -1758,28 +1823,64 @@ function showGeneratedPreview(title,cards){
   $('infoSpeak').style.display = 'none';
   $('infoAdd').style.display = 'none';
 }
-function updatePendingGroup(index,groupId){
-  if (!pendingPreviewCards[index]) return;
-  const group = getCardGroup(groupId);
-  if (!group || group.category !== pendingPreviewCards[index].category) return;
-  pendingPreviewCards[index].groupId = groupId;
-}
-function savePendingCards(){
+function openCardGroupPicker(){
   if (!pendingPreviewCards.length) { showToast('没有待收藏的预览内容'); return; }
+  ensureCardGroups();
+  const host = $('groupPickerList');
+  host.innerHTML = pendingPreviewCards.map((card,index) => {
+    const groups = groupsFor(card.category);
+    const options = groups.map(g => {
+      const full = g.limit > 0 && !groupHasRoom(g.id);
+      const meta = g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : '';
+      return `<option value="${esc(g.id)}" ${full ? 'disabled' : ''}>${esc(g.name)}${meta}${full ? ' · 已满' : ''}</option>`;
+    }).join('');
+    return `<div class="group-picker-item"><strong>${index+1}. ${esc(card.word)}</strong><label for="pendingGroup${index}">${esc(card.category)} · 选择保存位置</label><select class="group-picker-select" id="pendingGroup${index}" data-index="${index}"><option value="">请选择分组</option>${options}</select></div>`;
+  }).join('');
+  $('groupPickerModal').style.display = 'flex';
+}
+function closeCardGroupPicker(){ $('groupPickerModal').style.display = 'none'; }
+function savePendingCards(){ openCardGroupPicker(); }
+function confirmSavePendingCards(){
+  if (!pendingPreviewCards.length) { closeCardGroupPicker(); return; }
+  const selections = pendingPreviewCards.map((card,index) => {
+    const select = $('pendingGroup' + index);
+    return select ? select.value : '';
+  });
+  const missingIndex = selections.findIndex(v => !v);
+  if (missingIndex >= 0) { showToast(`请先为「${pendingPreviewCards[missingIndex].word}」选择分组`); $('pendingGroup'+missingIndex)?.focus(); return; }
+
+  // 先校验整批容量，避免收藏到一半才发现分组已满。
+  const projected = {};
+  const seen = new Set();
+  for (let i=0;i<pendingPreviewCards.length;i++){
+    const card = pendingPreviewCards[i];
+    const group = getCardGroup(selections[i]);
+    if (!group || group.category !== card.category) { showToast('分组与卡片类别不匹配，请重新选择'); return; }
+    const duplicateKey = card.category + '::' + String(card.word).toLowerCase();
+    if (seen.has(duplicateKey) || words.some(w => String(w.word).toLowerCase() === String(card.word).toLowerCase() && (w.category || '单词') === card.category)) continue;
+    seen.add(duplicateKey);
+    projected[group.id] = (Object.prototype.hasOwnProperty.call(projected, group.id) ? projected[group.id] : countInGroup(group.id)) + 1;
+    if (group.limit > 0 && projected[group.id] > group.limit) {
+      showToast(`「${group.name}」容量不足，请为相关卡片选择其他分组`);
+      return;
+    }
+  }
+
   let saved = 0, skipped = 0;
-  pendingPreviewCards.forEach(item => {
+  pendingPreviewCards.forEach((item,index) => {
     const data = normalizeCardData(item, item.category || '单词');
+    data.groupId = selections[index];
     if (saveWord(data)) saved++; else skipped++;
   });
-  if (saved) showToast(`已收藏 ${saved} 张卡片${skipped ? `，${skipped} 项重复或达到分组上限` : ''}`);
-  else showToast(skipped ? '卡片重复或分组数量已达上限' : '没有可收藏的内容');
+  if (saved) showToast(`已收藏 ${saved} 张卡片${skipped ? `，${skipped} 项重复` : ''}`);
+  else showToast(skipped ? '卡片已存在或未能保存' : '没有可收藏的内容');
+  closeCardGroupPicker();
   renderCards(); renderGroupManager(); updateStatsUI();
   pendingPreviewCards = [];
   $('infoFavorite').disabled = true;
   $('infoFavorite').style.opacity = '.45';
   if (saved) $('infoFavorite').innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>';
 }
-
 /* 图片：OCR 结果回填统一输入框，不直接跳过预览创建卡片 */
 async function handleImageUpload(event){
   const file = event.target.files[0]; event.target.value = '';
@@ -1872,7 +1973,9 @@ function renderGroupManager(){
 function saveWord(data){
   data = normalizeCardData(data, data.category || '单词');
   if (words.find(w => String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category)) return false;
-  if (!groupHasRoom(data.groupId)) { showToast(`“${getCardGroup(data.groupId)?.name || '该分组'}”已达到数量上限`); return false; }
+  const targetGroup = getCardGroup(data.groupId);
+  if (!targetGroup || targetGroup.category !== data.category) { showToast('请先选择卡片分组'); return false; }
+  if (!groupHasRoom(data.groupId)) { showToast(`“${targetGroup.name}”已达到数量上限`); return false; }
   data.id = Date.now() + Math.floor(Math.random() * 1000);
   data.time = nowStr();
   words.push(data);
@@ -1902,10 +2005,11 @@ function cardDetailHtml(card){
     ['柯林斯释义',card.collins,'en'],['中文释义',card.cn,''],['例句',card.example,'en'],['同义词',card.syn,''],['反义词',card.ant,''],
     ['知识概要',card.summary,''],['结构',card.structure,'en'],['用法',card.usage,''],['注意事项',card.notes,'']
   ].filter(x => x[1]);
-  return `<div class="card-detail-view" data-card-id="${card.id}"><div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic ? `<div class="word-phonetic">${esc(card.phonetic)}</div>` : ''}${card.syllable ? `<div class="word-syllable">${esc(card.syllable)}</div>` : ''}${category === '单词' ? `<div class="pron-row"><button class="pron-btn" onclick="speak('${esc(card.word).replace(/'/g,"\\'")}',2)">美音</button><button class="pron-btn" onclick="speak('${esc(card.word).replace(/'/g,"\\'")}',1)">英音</button></div>` : ''}</div></div><div class="card-body">${fields.map(([label,value,lang]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div><div class="card-detail-group"><span>分类分组</span><select onchange="changeCardGroup(${card.id},this.value)">${groupOpts}</select></div><div class="card-footer">${esc(card.time || '')}</div><div class="swipe-delete-hint">向上滑动此卡片，可删除</div></div>`;
+  return `<div class="card-detail-view" data-card-id="${card.id}"><div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic ? `<div class="word-phonetic">${esc(card.phonetic)}</div>` : ''}${card.syllable ? `<div class="word-syllable">${esc(card.syllable)}</div>` : ''}${category === '单词' ? `<div class="pron-row"><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,2)">美音</button><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,1)">英音</button></div>` : ''}</div></div><div class="card-body">${fields.map(([label,value,lang]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div><div class="card-detail-group"><span>分类分组</span><select onchange="changeCardGroup(${card.id},this.value)">${groupOpts}</select></div><div class="card-footer">${esc(card.time || '')}</div><div class="swipe-delete-hint">左右滑动浏览本分组 · 上滑到底并停留 5 秒可申请删除</div></div>`;
 }
 function openCardDetail(id){
   const card = words.find(w => Number(w.id) === Number(id)); if (!card) return;
+  cancelCardGesture();
   currentModalCardId = Number(id); pendingPreviewCards = [];
   $('infoTitle').textContent = card.word;
   $('infoBody').innerHTML = cardDetailHtml(card);
@@ -1913,11 +2017,90 @@ function openCardDetail(id){
   $('infoFavorite').style.display = 'none';
   $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
 }
+function cardsInSameGroup(card){
+  const category = card.category || '单词';
+  const groupId = card.groupId || defaultGroupId(category);
+  return words.filter(w => (w.category || '单词') === category && (w.groupId || defaultGroupId(category)) === groupId).slice().reverse();
+}
+function navigateCardInGroup(direction){
+  if (currentModalCardId == null) return;
+  const current = words.find(w => Number(w.id) === Number(currentModalCardId)); if (!current) return;
+  const list = cardsInSameGroup(current);
+  const index = list.findIndex(w => Number(w.id) === Number(current.id));
+  const next = list[index + direction];
+  if (!next) { showToast(direction > 0 ? '已到本分组最后一张' : '已到本分组第一张'); return; }
+  openCardDetail(next.id);
+}
 function changeCardGroup(id,newGroupId){
   const card = words.find(w => Number(w.id) === Number(id)); const group = getCardGroup(newGroupId);
   if (!card || !group || group.category !== (card.category || '单词')) return;
   if (!groupHasRoom(newGroupId,id)) { showToast('目标分组已达到数量上限'); openCardDetail(id); return; }
-  card.groupId = newGroupId; safeSet('wm_words',JSON.stringify(words)); renderCards(); renderGroupManager(); showToast('卡片分组已更新');
+  card.groupId = newGroupId; safeSet('wm_words',JSON.stringify(words)); renderCards(); renderGroupManager();
+  if (currentModalCardId === Number(id)) openCardDetail(id);
+  showToast('卡片分组已更新');
+}
+function showDeleteHoldIndicator(){
+  const indicator = $('deleteHoldIndicator');
+  indicator.style.display = 'flex';
+  const started = Date.now();
+  const update = () => {
+    const left = Math.max(0, 5 - Math.floor((Date.now()-started)/1000));
+    $('deleteHoldSeconds').textContent = left;
+  };
+  update();
+  deleteHoldTicker = setInterval(update,150);
+}
+function hideDeleteHoldIndicator(){
+  $('deleteHoldIndicator').style.display = 'none';
+  if (deleteHoldTicker) clearInterval(deleteHoldTicker);
+  deleteHoldTicker = null;
+}
+function cancelCardGesture(){
+  if (deleteHoldTimer) clearTimeout(deleteHoldTimer);
+  deleteHoldTimer = null;
+  hideDeleteHoldIndicator();
+  cardGesture = null;
+}
+function onCardTouchStart(e){
+  const touch = e.touches && e.touches[0];
+  const target = e.target && e.target.closest ? e.target.closest('button,select,input,textarea,a') : null;
+  const detail = $('infoBody').querySelector('.card-detail-view[data-card-id]');
+  if (!touch || !detail || target) return;
+  cancelCardGesture();
+  cardGesture = {id:Number(detail.dataset.cardId),startX:touch.clientX,startY:touch.clientY,lastX:touch.clientX,lastY:touch.clientY,holdStarted:false,horizontal:false};
+}
+function onCardTouchMove(e){
+  if (!cardGesture || !e.touches || !e.touches.length) return;
+  const touch=e.touches[0], dx=touch.clientX-cardGesture.startX, dy=touch.clientY-cardGesture.startY;
+  if (!cardGesture.holdStarted && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.25){ cardGesture.horizontal=true; return; }
+  if (cardGesture.horizontal) return;
+  if (!cardGesture.holdStarted && dy < -115 && Math.abs(dx)<55){
+    cardGesture.holdStarted=true;
+    cardGesture.holdX=touch.clientX; cardGesture.holdY=touch.clientY;
+    showDeleteHoldIndicator();
+    const targetId=cardGesture.id;
+    deleteHoldTimer=setTimeout(()=>{
+      hideDeleteHoldIndicator();
+      cardGesture=null;
+      requestDeleteCard(targetId);
+    },5000);
+  } else if (cardGesture.holdStarted){
+    const drift=Math.hypot(touch.clientX-cardGesture.holdX,touch.clientY-cardGesture.holdY);
+    if (drift>22) cancelCardGesture();
+  }
+}
+function onCardTouchEnd(e){
+  if (!cardGesture) return;
+  const gesture=cardGesture;
+  const touch=e.changedTouches && e.changedTouches[0];
+  if (gesture.holdStarted){ cancelCardGesture(); return; }
+  if (touch && gesture.horizontal){
+    const dx=touch.clientX-gesture.startX;
+    cancelCardGesture();
+    if (Math.abs(dx)>55) navigateCardInGroup(dx<0 ? 1 : -1);
+    return;
+  }
+  cancelCardGesture();
 }
 function requestDeleteCard(id){
   if (!words.some(w => Number(w.id) === Number(id))) return;
@@ -1930,7 +2113,7 @@ function confirmDeleteCard(){
   words = words.filter(w => Number(w.id) !== id);
   safeSet('wm_words',JSON.stringify(words));
   pendingDeleteCardId = null; $('deleteConfirm').style.display = 'none';
-  $('infoModal').classList.remove('active'); currentModalCardId = null;
+  $('infoModal').classList.remove('active'); currentModalCardId = null; cancelCardGesture();
   renderCards(); renderGroupManager(); updateStatsUI(); showToast('卡片已删除');
 }
 function deleteWord(id){ requestDeleteCard(id); }
@@ -2021,6 +2204,38 @@ async function analyzeWork(){
     const res = await callAI([{role:'user',content:`以下是最近的休息记录：\n${restLines.join('\n')}\n请分析休息频率、时长与规律，并给出简短可执行建议。中文输出，控制在 150 字以内。`}]);
     showInfo('AI 休息习惯分析',esc(res).replace(/\n/g,'<br>'));
   }catch(e){ showInfo('AI 休息习惯分析',`<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
+}
+
+/* 主屏幕安装：Android/桌面支持安装提示；iOS 提供 Safari 操作说明 */
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  showToast('DICTIONARY 已添加到主屏幕');
+});
+async function addToHomeScreen(){
+  if (deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    try{
+      const choice=await deferredInstallPrompt.userChoice;
+      showToast(choice && choice.outcome === 'accepted' ? '正在添加 DICTIONARY' : '已取消添加');
+    }catch(e){ showToast('暂时无法打开安装窗口'); }
+    deferredInstallPrompt=null;
+    return;
+  }
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  if (location.protocol === 'file:'){
+    showInfo('添加 DICTIONARY 到主屏幕','<p>请先将应用文件夹部署到支持 HTTPS 的静态网站，再使用浏览器打开。</p><p>部署时请同时保留 index.html、manifest.webmanifest、sw.js 和 icon-192.png / icon-512.png。</p>');
+  }else if (isIOS){
+    showInfo('添加 DICTIONARY 到主屏幕','<p>请使用 Safari 打开本应用。</p><p>1. 点击底部或顶部的<strong>分享</strong>图标。</p><p>2. 在分享菜单中选择<strong>添加到主屏幕</strong>。</p><p>3. 确认名称为 <strong>DICTIONARY</strong>，点击添加。</p><p>主屏幕将使用绿色底色、白色 DICTIONARY 字样图标。</p>');
+  }else{
+    showInfo('添加 DICTIONARY 到主屏幕','<p>请打开浏览器右上角菜单，选择<strong>安装应用</strong>或<strong>添加到主屏幕</strong>。</p><p>如未显示安装选项，请确认应用通过 HTTPS 访问，并且 PWA 文件与 HTML 位于同一目录。</p>');
+  }
+}
+if ('serviceWorker' in navigator && location.protocol !== 'file:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 }
 
 /* 导入导出兼容新分组字段；原有数据保持可恢复 */
