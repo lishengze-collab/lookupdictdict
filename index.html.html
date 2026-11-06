@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>单词记忆助手</title>
+<style>
+:root{
+  --primary:#2c5e4f;
+  --primary-dark:#1f4a3d;
+  --primary-soft:#e8f0ed;
+  --primary-light:#f2f7f5;
+  --bg-color:#f5f7f6;
+  --card:#ffffff;
+  --text-main:#1f2523;
+  --text-sub:#5c6662;
+  --text-muted:#9aa5a0;
+  --line:#e8edeb;
+  --white:#ffffff;
+  --red:#d93b3b;
+  --amber:#d98a1f;
+  --amber-soft:#fdf3e1;
+  --green:#2f9e6a;
+  --radius:18px;
+  --shadow:0 2px 12px rgba(31,74,61,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+  background-color:#e9eeec;color:var(--text-main);
+  display:flex;justify-content:center;height:100vh;height:100dvh;overflow:hidden;
+}
+button{font-family:inherit;}
+#app{
+  width:100%;max-width:480px;background-color:var(--bg-color);
+  position:relative;height:100%;display:flex;flex-direction:column;
+  box-shadow:0 0 40px rgba(0,0,0,.06);
+}
+.header{
+  padding:calc(18px + env(safe-area-inset-top)) 20px 12px;font-size:20px;font-weight:700;
+  color:var(--primary);text-align:center;letter-spacing:2px;
+  background:rgba(245,247,246,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.content{flex:1;overflow-y:auto;padding:4px 18px 110px 18px;display:none;-webkit-overflow-scrolling:touch;}
+.content.active{display:block;}
+
+/* ============ 搜索框 ============ */
+.search-container{position:relative;display:flex;align-items:center;margin-bottom:14px;}
+.search-box{
+  width:100%;padding:15px 52px 15px 52px;border-radius:30px;border:1px solid var(--line);
+  background-color:var(--white);font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;
+  box-shadow:var(--shadow);color:var(--text-main);
+}
+.search-box:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(44,94,79,.12);}
+.icon-add{
+  position:absolute;left:6px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--primary);background:var(--primary-soft);height:40px;width:40px;border-radius:50%;
+}
+.icon-add:active{background:#d9e6e1;}
+.icon-search{
+  position:absolute;right:6px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;background:var(--primary);height:40px;width:40px;border-radius:50%;
+}
+.icon-search:active{background:var(--primary-dark);}
+
+/* ============ 粘贴区 ============ */
+.paste-box{
+  width:100%;height:120px;padding:14px 16px;border-radius:16px;
+  border:1px dashed #c9d8d2;background:var(--white);
+  font-size:14px;line-height:1.6;resize:none;overflow-y:auto;outline:none;
+  font-family:inherit;color:var(--text-main);transition:border-color .2s;
+}
+.paste-box:focus{border-color:var(--primary);border-style:solid;}
+.paste-box::placeholder{color:#a8b5af;}
+.btn-row{display:flex;gap:10px;margin-top:12px;}
+.btn-primary{
+  flex:1;padding:14px;background:var(--primary);color:#fff;border:none;
+  border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;
+  box-shadow:0 4px 12px rgba(44,94,79,.22);transition:transform .1s,background .2s;
+}
+.btn-primary:active{transform:scale(.98);background:var(--primary-dark);}
+.btn-primary:disabled{opacity:.5;box-shadow:none;}
+.btn-outline{
+  padding:14px 20px;background:var(--white);color:var(--primary);
+  border:1px solid var(--primary);border-radius:14px;font-size:15px;cursor:pointer;
+}
+.btn-outline:active{background:var(--primary-light);}
+.section-label{
+  font-size:12px;color:var(--text-muted);letter-spacing:1.5px;
+  margin:26px 0 10px 2px;font-weight:700;
+}
+
+/* ============ 识别状态 ============ */
+.empty-hint{font-size:13px;color:#b5bfba;text-align:center;padding:24px 0;}
+.status-item{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;
+  font-size:13px;background:var(--white);border-radius:14px;margin-bottom:8px;
+  box-shadow:var(--shadow);animation:fadeIn .3s ease;
+}
+.status-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#ccc;}
+.status-item .dot.loading{background:var(--primary);animation:pulse 1s infinite;}
+.status-item .dot.done{background:#3aab6d;}
+.status-item .dot.fail{background:#e05555;}
+.status-item .st-word{font-weight:600;color:var(--text-main);}
+.status-item .st-msg{margin-left:auto;color:var(--text-muted);font-size:12px;text-align:right;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ============ 设置折叠 ============ */
+.fold{margin-top:28px;background:var(--white);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.fold summary{font-size:14px;color:var(--text-sub);cursor:pointer;outline:none;list-style:none;font-weight:600;}
+.fold summary::-webkit-details-marker{display:none;}
+.stats-box{background:var(--bg-color);padding:18px;border-radius:14px;margin:14px 0;}
+.stats-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;color:var(--text-sub);}
+.stats-row:last-child{margin-bottom:0;}
+.stats-val{font-weight:700;color:var(--primary);}
+.setting-item{margin-bottom:14px;}
+.setting-item label{display:block;font-size:13px;margin-bottom:8px;color:var(--text-muted);}
+.setting-item input{
+  width:100%;padding:14px;border:1px solid var(--line);background:var(--bg-color);
+  border-radius:12px;font-size:15px;outline:none;
+}
+.setting-item input:focus{border-color:var(--primary);}
+
+/* ============ 单词卡片 ============ */
+.flashcard-container{
+  display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;
+  padding:8px 0;height:calc(100vh - 170px);height:calc(100dvh - 170px);
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.flashcard-container::-webkit-scrollbar{display:none;}
+.flashcard{
+  flex:0 0 88%;scroll-snap-align:center;background:var(--white);
+  border-radius:22px;padding:22px;display:flex;flex-direction:column;
+  position:relative;box-shadow:0 4px 20px rgba(31,74,61,.08);
+}
+.card-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);
+}
+.word-big{
+  font-size:40px;font-weight:700;color:var(--red);
+  letter-spacing:.5px;line-height:1.15;word-break:break-word;
+}
+.word-phonetic{font-size:16px;color:#777;margin-top:6px;}
+.word-syllable{
+  font-size:15px;color:var(--primary);margin-top:4px;
+  letter-spacing:1.5px;font-weight:500;
+}
+.delete-btn{
+  color:#e0605f;font-size:13px;background:none;border:none;
+  cursor:pointer;flex-shrink:0;padding:4px 0 4px 8px;
+}
+.card-body{flex:1;overflow-y:auto;font-size:16px;line-height:1.65;color:#444;}
+.sec{margin-bottom:16px;}
+.sec:last-child{margin-bottom:0;}
+.sec-label{
+  font-size:12px;color:var(--primary);font-weight:700;letter-spacing:1.5px;
+  margin-bottom:6px;display:inline-block;background:var(--primary-soft);
+  padding:2px 9px;border-radius:20px;
+}
+.sec-body{font-size:16px;line-height:1.65;color:#333;white-space:pre-line;}
+.sec-body.en{font-family:Georgia,"Times New Roman",serif;color:#3a3a3a;}
+.card-footer{
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--text-muted);text-align:center;
+}
+.empty-state{
+  width:100%;text-align:center;color:var(--text-muted);
+  margin-top:100px;font-size:15px;
+}
+
+/* ============ 清单 ============ */
+.clock-card{
+  background:linear-gradient(135deg,#2c5e4f,#3d7a66);color:#fff;
+  border-radius:var(--radius);padding:20px;margin-bottom:14px;
+  box-shadow:0 8px 24px rgba(44,94,79,.22);
+}
+.clock-time{font-size:38px;font-weight:700;letter-spacing:2px;font-variant-numeric:tabular-nums;}
+.clock-date{font-size:13px;opacity:.85;margin-top:4px;}
+.clock-log{font-size:12px;opacity:.92;margin-top:12px;line-height:1.7;}
+.clock-actions{display:flex;gap:8px;margin-top:14px;}
+.clock-actions button{
+  flex:1;padding:10px 0;border-radius:12px;border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.14);color:#fff;font-size:13px;cursor:pointer;
+}
+.clock-actions button:active{background:rgba(255,255,255,.28);}
+
+/* ---- 上班打卡卡片 ---- */
+.work-card{
+  background:var(--white);border-radius:var(--radius);padding:18px;
+  margin-bottom:18px;box-shadow:var(--shadow);
+}
+.w-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.w-title{font-size:16px;font-weight:700;color:var(--primary);letter-spacing:1px;}
+.w-badge{
+  font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600;
+  background:#eef1f0;color:var(--text-muted);
+}
+.w-badge.working{background:var(--primary-soft);color:var(--primary);}
+.w-badge.break{background:var(--amber-soft);color:var(--amber);}
+.w-badge.done{background:#e6f4ec;color:var(--green);}
+.w-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.w-cell{background:var(--bg-color);border-radius:14px;padding:12px 8px;text-align:center;}
+.w-cell .k{font-size:10px;color:var(--text-muted);letter-spacing:1px;font-weight:700;}
+.w-cell .v{font-size:19px;font-weight:700;color:var(--text-main);margin-top:6px;font-variant-numeric:tabular-nums;}
+.w-cell .v.sm{font-size:15px;line-height:1.4;padding-top:2px;}
+.w-cell .v.late{color:var(--red);}
+.w-cell .v.ok{color:var(--green);}
+.w-bar{height:8px;background:#e9efec;border-radius:8px;margin-top:16px;overflow:hidden;}
+.w-bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3d7a66,#2c5e4f);border-radius:8px;transition:width .6s;}
+.w-bar.over > i{background:linear-gradient(90deg,#e8a23a,#d98a1f);}
+.w-remain{font-size:12px;color:var(--text-sub);margin-top:8px;text-align:center;}
+.w-actions{display:flex;gap:10px;margin-top:14px;}
+.w-btn{
+  flex:1;padding:13px 0;border-radius:14px;border:none;font-size:15px;font-weight:600;
+  cursor:pointer;transition:transform .1s,opacity .2s;
+}
+.w-btn:active{transform:scale(.98);}
+.w-btn:disabled{opacity:.4;}
+.w-btn.in{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(44,94,79,.22);}
+.w-btn.out{background:var(--white);color:var(--primary);border:1px solid var(--primary);}
+.w-btn.brk{background:var(--amber-soft);color:var(--amber);width:100%;flex:none;margin-top:10px;display:block;}
+.w-btn.brk.running{background:var(--amber);color:#fff;}
+.w-stat{
+  margin-top:14px;padding:12px 14px;background:var(--bg-color);border-radius:14px;
+  font-size:13px;color:var(--text-sub);line-height:1.8;
+}
+.w-stat b{color:var(--text-main);font-weight:600;}
+.w-set{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--text-sub);}
+.w-set input{
+  border:1px solid var(--line);background:var(--bg-color);border-radius:10px;
+  padding:8px 10px;font-size:14px;color:var(--text-main);outline:none;font-family:inherit;
+}
+.w-ai{
+  width:100%;margin-top:12px;padding:12px;border-radius:14px;font-size:14px;cursor:pointer;
+  background:var(--white);color:var(--primary);border:1px solid var(--primary);font-weight:600;
+}
+.w-ai:active{background:var(--primary-light);}
+.w-reset{display:block;margin:10px auto 0;font-size:12px;color:var(--text-muted);background:none;border:none;cursor:pointer;}
+
+.check-item{
+  display:flex;align-items:flex-start;gap:12px;padding:14px;
+  background:var(--white);border-radius:16px;margin-bottom:10px;
+  box-shadow:var(--shadow);animation:fadeIn .25s ease;
+}
+.check-box{
+  width:24px;height:24px;border-radius:50%;border:2px solid #ccd6d1;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  margin-top:1px;cursor:pointer;transition:all .2s;
+}
+.check-box.done{background:var(--primary);border-color:var(--primary);color:#fff;}
+.check-box svg{opacity:0;transition:opacity .2s;}
+.check-box.done svg{opacity:1;}
+.check-main{flex:1;min-width:0;}
+.check-text{font-size:15px;line-height:1.5;color:var(--text-main);word-break:break-word;}
+.check-text.done{color:#b3b3b3;text-decoration:line-through;}
+.check-photo{
+  width:58px;height:58px;object-fit:cover;border-radius:10px;
+  margin-top:8px;display:block;border:1px solid var(--line);
+}
+.check-meta{font-size:11px;color:#bbb;margin-top:4px;}
+
+.add-check-row{display:flex;gap:10px;margin-bottom:14px;}
+.add-check-row input{
+  flex:1;min-width:0;padding:14px;border:1px solid var(--line);background:var(--white);
+  border-radius:14px;font-size:15px;outline:none;
+}
+.add-check-row input:focus{border-color:var(--primary);}
+.add-check-row button{
+  padding:0 22px;border-radius:14px;border:none;background:var(--primary);
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+}
+.check-toolbar{display:flex;gap:10px;margin-bottom:18px;}
+.check-toolbar button{
+  flex:1;padding:12px;border-radius:14px;font-size:14px;cursor:pointer;
+  background:var(--white);color:var(--primary);border:1px solid var(--primary);
+}
+.check-toolbar button.ghost{color:#888;border-color:#ddd;}
+
+/* ============ 发音 / 选词查询 ============ */
+.pron-row{display:flex;gap:6px;margin-top:8px;}
+.pron-btn{
+  font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--primary);
+  background:var(--white);color:var(--primary);cursor:pointer;
+}
+.pron-btn:active{background:var(--primary-soft);}
+.sel-bar{
+  position:fixed;z-index:200;display:none;background:var(--primary-dark);
+  border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);overflow:hidden;
+}
+.sel-bar.active{display:flex;}
+.sel-bar button{background:none;border:none;color:#fff;font-size:14px;padding:10px 16px;cursor:pointer;}
+.sel-bar button + button{border-left:1px solid rgba(255,255,255,.2);}
+
+/* ============ 底部导航 ============ */
+.bottom-nav{
+  position:absolute;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+  width:84%;height:58px;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+  border-radius:29px;box-shadow:0 6px 24px rgba(31,74,61,.14);
+  display:flex;justify-content:space-around;align-items:center;
+  padding:5px;gap:4px;z-index:20;
+}
+.nav-item{
+  color:var(--text-muted);font-size:15px;flex:1;text-align:center;
+  height:100%;line-height:48px;cursor:pointer;transition:all .2s;border-radius:24px;
+}
+.nav-item.active{color:#fff;background:var(--primary);font-weight:600;}
+
+/* ============ 弹窗 ============ */
+.modal{
+  display:none;position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.4);z-index:100;align-items:center;
+  justify-content:center;padding:20px;
+}
+.modal.active{display:flex;}
+.modal-content{
+  background:#fff;width:100%;max-height:85vh;border-radius:22px;
+  padding:24px;display:flex;flex-direction:column;animation:scaleIn .25s ease;
+}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  font-weight:700;font-size:18px;color:var(--primary);margin-bottom:15px;
+}
+.modal-body{
+  flex:1;overflow-y:auto;font-size:15px;line-height:1.7;color:#333;
+  margin-bottom:18px;
+}
+.modal-footer{display:flex;gap:10px;}
+.modal-footer .btn-primary{flex:1;}
+.modal-footer .btn-outline{flex:1;}
+
+
+/* ============ 新版整体布局 ============ */
+#app{padding-top:env(safe-area-inset-top);}
+.header{display:none;}
+.content{padding:14px 16px 110px;}
+.content.active{display:block;}
+#tab-input{padding:14px 16px 220px;}
+#tab-cards{padding:12px 14px 100px;}
+#tab-grammar{padding:14px 16px 100px;}
+#tab-checklist{padding:14px 16px 110px;}
+.input-dock{
+  position:absolute;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));
+  z-index:25;display:block;
+}
+.input-dock.hidden{display:none;}
+.input-composer{background:rgba(255,255,255,.98);border:1px solid #e4ebe7;border-radius:20px;padding:8px 10px 7px;box-shadow:0 8px 28px rgba(31,74,61,.13);backdrop-filter:blur(16px);}
+.paste-box{display:block;width:100%;height:98px;min-height:72px;padding:9px 9px 7px;border:0;border-radius:12px;background:transparent;font-size:15px;line-height:1.55;resize:vertical;box-shadow:none;}
+.paste-box:focus{border:0;box-shadow:none;}
+.work-toolbar{display:flex;align-items:center;justify-content:space-around;gap:8px;border-top:1px solid #edf1ef;padding:6px 2px 0;margin-top:3px;}
+.tool-icon,.modal-icon-action{width:42px;height:38px;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:#718079;border-radius:12px;cursor:pointer;}
+.tool-icon:active,.modal-icon-action:active{background:var(--primary-soft);color:var(--primary);}
+.tool-icon.tool-search{background:var(--primary);color:#fff;width:48px;}
+.tool-icon.tool-search:active{background:var(--primary-dark);}
+.bottom-nav{left:10px;right:10px;transform:none;width:auto;height:58px;bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);border-radius:18px;box-shadow:0 4px 20px rgba(31,74,61,.10);padding:4px 8px;gap:4px;}
+.nav-item{height:100%;line-height:50px;border-radius:0;background:transparent!important;color:#8d9993;font-size:14px;font-weight:500;}
+.nav-item.active{color:var(--primary);font-weight:750;text-shadow:0 0 .01px currentColor;}
+.section-label{margin-top:6px;}
+
+/* ============ 语法目录 ============ */
+.grammar-intro{padding:7px 2px 16px;}
+.grammar-title{font-size:21px;font-weight:750;color:var(--primary);}
+.grammar-subtitle{font-size:13px;color:var(--text-muted);line-height:1.6;margin-top:5px;}
+.grammar-section{margin:0 0 16px;background:#fff;border-radius:17px;padding:15px 14px;box-shadow:var(--shadow);}
+.grammar-section-title{font-size:15px;font-weight:750;color:var(--primary);margin-bottom:10px;}
+.grammar-topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.grammar-topic{display:flex;align-items:center;justify-content:space-between;gap:5px;text-align:left;border:1px solid #e8efeb;background:#f9fbfa;color:#34443d;border-radius:11px;padding:10px 9px;font-size:13px;line-height:1.35;min-height:42px;cursor:pointer;}
+.grammar-topic:after{content:'›';font-size:18px;color:#9aaba2;}
+.grammar-topic:active{background:var(--primary-soft);border-color:#cbdcd4;}
+
+/* ============ 卡片目录与分组 ============ */
+.group-manager{margin:0 0 16px;padding:14px 14px;border-radius:16px;}
+.group-manager summary{color:var(--primary);}
+.group-create-row{display:grid;grid-template-columns:78px minmax(0,1fr) 76px 54px;gap:6px;margin-top:13px;}
+.group-create-row input,.group-create-row select{min-width:0;width:100%;padding:9px 7px;border:1px solid var(--line);border-radius:10px;background:#fbfcfb;color:var(--text-main);font:inherit;font-size:12px;outline:none;}
+.group-create-row button{border:0;border-radius:10px;background:var(--primary);color:#fff;font-size:12px;font-weight:650;}
+.group-hint{font-size:11px;color:var(--text-muted);margin-top:8px;}
+.group-manager-list{margin-top:8px;}
+.group-manager-row{display:flex;align-items:center;gap:7px;padding:8px 0;border-top:1px solid #f0f3f1;font-size:12px;color:var(--text-sub);}
+.group-manager-row strong{color:var(--text-main);font-weight:650;}
+.group-manager-row .group-meta{margin-left:auto;color:var(--text-muted);white-space:nowrap;}
+.group-remove{border:0;background:transparent;color:#bd7774;font-size:12px;padding:4px 2px;}
+.card-directory-title{font-size:17px;font-weight:750;color:var(--text-main);margin:4px 2px 12px;}
+.card-category{margin:0 0 16px;}
+.card-category-head{font-size:14px;color:var(--primary);font-weight:750;padding:5px 3px 8px;display:flex;justify-content:space-between;}
+.card-category-head span{font-size:12px;color:var(--text-muted);font-weight:500;}
+.card-group{margin:0 0 12px;}
+.card-group-head{font-size:12px;color:#8a9690;padding:4px 4px 6px;}
+.card-directory-item{display:flex;align-items:center;gap:11px;background:#fff;border-radius:13px;padding:13px 13px;margin-bottom:7px;box-shadow:var(--shadow);cursor:pointer;min-height:56px;}
+.card-directory-item:active{background:#f1f6f3;}
+.card-directory-main{flex:1;min-width:0;}
+.card-directory-word{font-size:15px;font-weight:700;color:#28332e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-directory-desc{font-size:12px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-directory-arrow{color:#a7b2ac;font-size:21px;}
+.card-count{font-size:12px;color:var(--text-muted);font-weight:500;}
+.card-detail-view{background:#fff;border-radius:16px;padding:5px 2px 9px;}
+.card-detail-view .card-header{padding:9px 4px 13px;}
+.card-detail-view .card-body{overflow:visible;}
+.card-detail-view .word-big{font-size:40px;}
+.card-detail-view .word-phonetic{font-size:17px;}
+.card-detail-view .word-syllable{font-size:16px;}
+.card-detail-view .sec-label{font-size:13px;}
+.card-detail-view .sec-body{font-size:17px;line-height:1.7;}
+.card-detail-view .card-body{font-size:17px;line-height:1.7;}
+.card-detail-view .card-footer{font-size:13px;}
+.card-detail-group{display:flex;align-items:center;gap:8px;margin:12px 2px 6px;font-size:13px;color:var(--text-sub);}
+.card-detail-group select,.preview-group-select{border:1px solid var(--line);border-radius:9px;background:#fbfcfb;padding:7px 9px;color:var(--text-main);font:inherit;font-size:12px;max-width:70%;}
+.swipe-delete-hint{text-align:center;color:#a3ada7;font-size:11px;padding:12px 0 2px;}
+.preview-card{border:1px solid #edf1ef;border-radius:14px;padding:13px;margin-bottom:11px;background:#fbfcfb;}
+.preview-card-title{font-size:17px;font-weight:750;color:var(--primary);margin-bottom:8px;}
+.preview-card .sec{margin-bottom:10px;}
+.preview-card .sec-label{font-size:12px;}
+.preview-card .sec-body{font-size:15px;line-height:1.6;}
+.preview-group-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px;padding-top:9px;border-top:1px solid #edf1ef;font-size:12px;color:var(--text-muted);}
+
+/* ============ 清单中的休息记录 ============ */
+.rest-card{background:#fff;border-radius:18px;padding:17px;margin:18px 0;box-shadow:var(--shadow);}
+.rest-head{display:flex;align-items:center;justify-content:space-between;}
+.rest-title{font-size:16px;font-weight:750;color:var(--primary);}
+.rest-sub{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.rest-icon{font-size:23px;}
+.rest-summary{margin-top:13px;padding:12px;background:var(--bg-color);border-radius:12px;color:var(--text-sub);font-size:14px;font-weight:650;}
+.rest-action{width:100%;margin-top:11px;padding:12px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:700;}
+.rest-action.running{background:var(--amber);color:#fff;}
+.rest-history{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:8px;}
+
+/* ============ 弹窗、交互提示 ============ */
+.modal{padding:16px;}
+.modal-content{max-height:86vh;max-height:86dvh;padding:18px 17px 16px;border-radius:20px;min-height:180px;}
+.modal-header{font-size:17px;margin-bottom:12px;flex-shrink:0;}
+.modal-head-actions{display:flex;align-items:center;gap:5px;}
+.modal-icon-action{width:36px;height:36px;color:var(--primary);}
+.modal-close{border:0;background:transparent;color:#aab3ae;font-size:26px;line-height:1;padding:0 3px;}
+.modal-body{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;font-size:16px;line-height:1.75;margin-bottom:12px;}
+.modal-footer{flex-shrink:0;}
+.delete-confirm{position:absolute;left:12px;right:12px;bottom:calc(82px + env(safe-area-inset-bottom));z-index:300;display:flex;align-items:center;gap:7px;padding:12px;background:#fff;border:1px solid #f0e1df;border-radius:15px;box-shadow:0 8px 28px rgba(31,40,35,.18);}
+.delete-confirm-copy{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.delete-confirm-copy strong{font-size:13px;color:#513b39;}
+.delete-confirm-copy span{font-size:10px;color:#9c8e8c;}
+.delete-cancel,.delete-accept{border:0;border-radius:10px;padding:9px 11px;font-size:12px;font-weight:650;}
+.delete-cancel{background:#f2f4f3;color:#68736d;}
+.delete-accept{background:#d95b56;color:#fff;}
+.app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:350;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center;}
+.app-toast.show{opacity:1;transform:translate(-50%,0);}
+@media (max-width:370px){.group-create-row{grid-template-columns:70px minmax(0,1fr) 66px 48px;gap:4px}.group-create-row input,.group-create-row select{font-size:11px;padding:8px 5px}.grammar-topic-grid{grid-template-columns:1fr;}}
+
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================= TAB 1 录入 ================= -->
+  <div class="content active" id="tab-input">
+    <div class="section-label">识别记录</div>
+    <div id="recognizeStatus"><div class="empty-hint">粘贴内容后，点击放大镜进行 AI 识别</div></div>
+  </div>
+
+  <!-- 固定底部录入区：输入框与工作条一体化 -->
+  <div class="input-dock" id="inputDock">
+    <div class="input-composer">
+      <textarea class="paste-box" id="batchInput" placeholder="粘贴或输入英语单词、短语及学习材料…
+支持多行、逗号分隔与图片识别"></textarea>
+      <div class="work-toolbar" aria-label="录入工具">
+        <button class="tool-icon" type="button" title="清空" aria-label="清空" onclick="clearBatch()">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg>
+        </button>
+        <button class="tool-icon" type="button" title="相机识别" aria-label="相机识别" onclick="document.getElementById('imageInput').click()">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6H8l1.5-2h5L16 6h2.5A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <button class="tool-icon" type="button" title="收藏并创建卡片" aria-label="收藏并创建卡片" onclick="favoriteFromToolbar()">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+        </button>
+        <button class="tool-icon tool-search" type="button" title="AI 识别" aria-label="AI 识别" onclick="triggerSearch()">
+          <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 4.3 4.3"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 2 语法 ================= -->
+  <div class="content" id="tab-grammar">
+    <div class="grammar-intro">
+      <div class="grammar-title">英语语法知识库</div>
+      <div class="grammar-subtitle">选择任一知识点，调用 AI 生成结构化讲解；收藏后自动加入语法卡片。</div>
+    </div>
+    <div id="grammarTopics"></div>
+  </div>
+
+  <!-- ================= TAB 3 卡片 ================= -->
+  <div class="content" id="tab-cards">
+    <details class="fold group-manager">
+      <summary>卡片分组管理</summary>
+      <div class="group-create-row">
+        <select id="groupCategory" aria-label="分组类别"><option>单词</option><option>语法</option><option>其它</option></select>
+        <input id="groupName" type="text" placeholder="分组名称">
+        <input id="groupLimit" type="number" min="0" placeholder="数量不限" aria-label="数量上限">
+        <button type="button" onclick="createCardGroup()">创建</button>
+      </div>
+      <div class="group-hint">数量上限填 0 表示不限；同一类别可建立多个分组。</div>
+      <div id="groupManagerList"></div>
+    </details>
+    <div class="card-directory-title">卡片目录</div>
+    <div id="cardsContainer"></div>
+  </div>
+
+  <!-- ================= TAB 4 清单 ================= -->
+  <div class="content" id="tab-checklist">
+    <div class="clock-card">
+      <div class="clock-time" id="live-clock">--:--:--</div>
+      <div class="clock-date" id="live-date">--</div>
+      <div class="clock-log" id="clock-log">今日暂无出入记录</div>
+      <div class="clock-actions">
+        <button onclick="recordOut()">出门</button>
+        <button onclick="recordHome()">回家</button>
+        <button onclick="resetClock()">重置</button>
+      </div>
+    </div>
+
+    <div class="add-check-row">
+      <input type="text" id="checkInput" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…" onkeypress="if(event.key==='Enter')addCheckItem()">
+      <button onclick="addCheckItem()">添加</button>
+    </div>
+    <div class="check-toolbar">
+      <button onclick="resetChecklist()">一键循环刷新</button>
+      <button class="ghost" onclick="analyzeChecklist()">AI 分析</button>
+    </div>
+    <div id="checklistContainer"></div>
+
+    <!-- 保留休息记录，移至清单事项之后；移除上下班打卡及工时统计 -->
+    <div class="rest-card">
+      <div class="rest-head"><div><div class="rest-title">休息记录</div><div class="rest-sub" id="restStatus">今天还没有休息记录</div></div><span class="rest-icon">☕</span></div>
+      <div class="rest-summary" id="restSummary">今日 0 次 · 共 0 分钟</div>
+      <button class="rest-action" id="restButton" onclick="toggleBreak()">开始休息</button>
+      <div class="rest-history" id="restHistory"></div>
+      <button class="w-ai" onclick="analyzeWork()">AI 分析休息习惯</button>
+    </div>
+
+    <!-- 设置与统计移至第四个 TAB 底部 -->
+    <details class="fold" id="settingsFold">
+      <summary>设置与统计</summary>
+      <div class="stats-box">
+        <div class="stats-row"><span>API 调用次数</span><span class="stats-val" id="stat-api-calls">0</span></div>
+        <div class="stats-row"><span>估算 TOKEN 量</span><span class="stats-val" id="stat-tokens">0</span></div>
+        <div class="stats-row"><span>卡片总数</span><span class="stats-val" id="stat-words">0</span></div>
+        <div class="stats-row"><span>清单事项数</span><span class="stats-val" id="stat-checks">0</span></div>
+      </div>
+      <div class="setting-item">
+        <label>DeepSeek API Key（仅本地存储）</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-...">
+      </div>
+      <button class="btn-primary" onclick="saveApiKey()" style="width:100%; margin-bottom:12px;">保存 API Key</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-outline" style="flex:1;" onclick="exportData()">导出备份</button>
+        <button class="btn-outline" style="flex:1; border-color:#ddd; color:#666;" onclick="document.getElementById('importFile').click()">导入恢复</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-tab="input" onclick="switchTab('input')">录入</div>
+    <div class="nav-item" data-tab="grammar" onclick="switchTab('grammar')">语法</div>
+    <div class="nav-item" data-tab="cards" onclick="switchTab('cards')">卡片</div>
+    <div class="nav-item" data-tab="checklist" onclick="switchTab('checklist')">清单</div>
+  </div>
+
+  <!-- 隐藏的文件输入 -->
+  <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+  <input type="file" id="checklistCamera" accept="image/*" capture="environment" style="display:none;" onchange="handleChecklistPhoto(event)">
+  <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
+
+  <!-- 选中单词浮动工具条 -->
+  <div class="sel-bar" id="selBar" onmousedown="event.preventDefault()">
+    <button onclick="lookupWord()">查询</button>
+    <button onclick="speak(selWord,2)">美音</button>
+    <button onclick="speak(selWord,1)">英音</button>
+  </div>
+
+  <!-- 拍照询问弹窗 (清单) -->
+  <div class="modal" id="photoModal">
+    <div class="modal-content" style="max-height:none;">
+      <div class="modal-header"><span>拍照记录</span></div>
+      <div class="modal-body" id="photoModalBody">是否拍照记录完成情况？</div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="skipPhoto()">跳过</button>
+        <button class="btn-primary" onclick="takeChecklistPhoto()">拍照</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 信息弹窗（AI 分析等） -->
+  <div class="modal" id="infoModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="infoTitle">分析</span>
+        <div class="modal-head-actions">
+          <button class="modal-icon-action" id="infoFavorite" type="button" title="收藏并创建卡片" aria-label="收藏并创建卡片" onclick="savePendingCards()" style="display:none;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+          </button>
+          <button class="modal-close" type="button" onclick="closeInfoModal()" aria-label="关闭">×</button>
+        </div>
+      </div>
+      <div class="modal-body" id="infoBody"></div>
+      <div class="modal-footer">
+        <button class="btn-outline" id="infoSpeak" style="display:none;" onclick="speak(this.dataset.w,2)">发音</button>
+        <button class="btn-outline" id="infoAdd" style="display:none;" onclick="addLookupWord()">加入卡片</button>
+        <button class="btn-primary" onclick="closeInfoModal()">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="delete-confirm" id="deleteConfirm" style="display:none;">
+    <div class="delete-confirm-copy"><strong>删除这张卡片？</strong><span>此操作会从卡片目录中移除该内容。</span></div>
+    <button type="button" class="delete-cancel" onclick="cancelDeleteCard()">取消</button>
+    <button type="button" class="delete-accept" onclick="confirmDeleteCard()">删除</button>
+  </div>
+  <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+/* =========================================================
+   基础工具
+========================================================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowStr = () => new Date().toLocaleString('zh-CN',
+  {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
+const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+const WORK_MIN = 510; // 8.5 小时
+
+function load(key, fallback){
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function safeSet(key, val){
+  try { localStorage.setItem(key, val); return true; }
+  catch(e){ return false; }
+}
+
+/* =========================================================
+   状态
+========================================================= */
+let words      = load('wm_words', []);
+let checklist  = load('wm_checklist', []);
+let stats      = load('wm_stats', {apiCalls:0, tokens:0});
+let attendance = load('wm_attendance', {});
+let workStart  = localStorage.getItem('wm_work_start') || '09:00';
+let apiKey     = localStorage.getItem('wm_api_key') || '';
+let outTs      = Number(localStorage.getItem('wm_out_ts') || 0);
+let homeTs     = Number(localStorage.getItem('wm_home_ts') || 0);
+let batchQueue = [];
+let batchRunning = false;
+let pendingCheckId = null;
+
+/* =========================================================
+   初始化
+========================================================= */
+function init(){
+  $('apiKeyInput').value = apiKey;
+  $('workStartInput').value = workStart;
+  cleanupPhotos();
+  renderCards();
+  renderChecklist();
+  updateStatsUI();
+  tick();
+  setInterval(tick, 1000);
+  setInterval(() => { cleanupPhotos(); renderChecklist(); }, 60000);
+
+  $('searchInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') triggerSearch();
+  });
+}
+
+/* =========================================================
+   Tab 切换
+========================================================= */
+function switchTab(tabId){
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  $('tab-' + tabId).classList.add('active');
+
+  const navs = document.querySelectorAll('.nav-item');
+  const map = {input:0, cards:1, checklist:2};
+  navs[map[tabId]].classList.add('active');
+
+  const titles = {input:'单词录入', cards:'记忆卡片', checklist:'出行清单'};
+  $('header-title').innerText = titles[tabId];
+
+  if (tabId === 'cards') renderCards();
+  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); updateWork(); }
+  if (tabId === 'input') updateStatsUI();
+}
+
+/* =========================================================
+   通用 API 调用
+========================================================= */
+async function callAI(messages){
+  if (!apiKey) throw new Error('请先在“设置与统计”中填写 API Key');
+  let data;
+  try {
+    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer ' + apiKey},
+      body: JSON.stringify({model:'deepseek-chat', messages, temperature:0.6})
+    });
+    data = await res.json();
+  } catch (e) {
+    throw new Error('网络请求失败');
+  }
+  stats.apiCalls++;
+  stats.tokens += Math.round(JSON.stringify(messages).length / 2) + 300;
+  saveStats();
+  if (!data.choices || !data.choices.length){
+    throw new Error((data.error && data.error.message) || 'API 返回异常');
+  }
+  return data.choices[0].message.content;
+}
+
+/* =========================================================
+   图片识别：OCR 提取文字 → AI 提取单词 → 自动生成卡片
+========================================================= */
+let tessLoading = null;
+function loadTesseract() {
+    if (window.Tesseract) return Promise.resolve();
+    if (tessLoading) return tessLoading;
+    tessLoading = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        s.onload = resolve;
+        s.onerror = () => { tessLoading = null; reject(new Error('OCR 组件加载失败，请检查网络')); };
+        document.head.appendChild(s);
+    });
+    return tessLoading;
+}
+
+async function ocrImage(dataUrl, onProgress) {
+    await loadTesseract();
+    const r = await Tesseract.recognize(dataUrl, 'eng', {
+        logger: m => { if (m.status === 'recognizing text') onProgress(Math.round(m.progress * 100)); }
+    });
+    return (r && r.data && r.data.text) || '';
+}
+
+async function extractWordsAI(text) {
+    const prompt = `下面是 OCR 从图片中识别出的文字（可能含错字、乱码、中文释义、序号、音标等噪声）。请提取其中需要学习的英文单词或短语：保持图片中的原样，仅修正明显的 OCR 拼写错误，去重，最多 60 个。只输出 JSON 数组，例如 ["abandon","cognitive"]，不要输出任何其他内容。
+
+${text.slice(0, 4000)}`;
+    const res = await callAI([{role: 'user', content: prompt}]);
+    const m = res.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('AI 提取失败');
+    let arr;
+    try { arr = JSON.parse(m[0]); } catch (e) { throw new Error('AI 提取失败'); }
+    return [...new Set(arr.map(w => String(w).trim()).filter(w => /^[A-Za-z][A-Za-z\s'-]*$/.test(w)))].slice(0, 60);
+}
+
+async function handleImageUpload(event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    if (batchRunning) { alert('正在生成中，请稍候'); return; }
+    if (!apiKey) { alert('请先在“设置与统计”中填写 API Key：图片识别后需要 AI 提取单词并生成卡片'); return; }
+
+    $('recognizeStatus').innerHTML = '';
+    const el = addStatusItem('图片识别', 'loading', '读取图片...');
+    batchRunning = true;
+    $('batchBtn').disabled = true;
+    let words_ = [];
+    try {
+        const dataUrl = await compressImage(file, 1600, 0.85);
+        setStatus(el, 'loading', '文字识别中 0%');
+        const text = await ocrImage(dataUrl, p => setStatus(el, 'loading', '文字识别中 ' + p + '%'));
+        if (!text.trim()) throw new Error('未识别到文字');
+        setStatus(el, 'loading', 'AI 提取单词中...');
+        words_ = await extractWordsAI(text);
+        if (!words_.length) throw new Error('未提取到单词');
+        setStatus(el, 'done', '提取 ' + words_.length + ' 个单词');
+    } catch (e) {
+        setStatus(el, 'fail', e.message || '识别失败');
+    }
+    batchRunning = false;
+    $('batchBtn').disabled = false;
+    if (words_.length) {
+        $('batchInput').value = words_.join(', ');
+        processBatch(true); // 自动写入：直接生成卡片
+    }
+}
+
+/* =========================================================
+   发音（联网音频，失败时回退到浏览器语音）
+========================================================= */
+let curAudio = null;
+function stopSpeak() {
+    if (curAudio) { try { curAudio.pause(); } catch (e) {} curAudio = null; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+function speak(word, type) { // type: 1 英音, 2 美音
+    word = String(word || '').trim();
+    if (!word) return;
+    stopSpeak();
+    let fell = false;
+    const fallback = () => {
+        if (fell) return;
+        fell = true;
+        if (!('speechSynthesis' in window)) { alert('发音失败：网络不可用且浏览器不支持语音'); return; }
+        const u = new SpeechSynthesisUtterance(word);
+        u.lang = type === 1 ? 'en-GB' : 'en-US';
+        u.rate = 0.9;
+        speechSynthesis.speak(u);
+    };
+    const a = new Audio('https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(word) + '&type=' + type);
+    curAudio = a;
+    a.onerror = fallback;
+    const p = a.play();
+    if (p && p.catch) p.catch(fallback);
+}
+
+/* =========================================================
+   选中单词查询
+========================================================= */
+let selWord = '';
+let selTimer = null;
+const hideSelBar = () => $('selBar').classList.remove('active');
+
+function updateSelBar() {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) { hideSelBar(); return; }
+    const text = sel.toString().trim();
+    const n = sel.anchorNode;
+    const el = n && (n.nodeType === 1 ? n : n.parentElement);
+    if (!el || !el.closest('#cardsContainer, #infoBody')) { hideSelBar(); return; }
+    if (!/^[A-Za-z][A-Za-z\s'’-]{0,38}$/.test(text)) { hideSelBar(); return; }
+    selWord = text.replace(/’/g, "'");
+
+    const r = sel.getRangeAt(0).getBoundingClientRect();
+    const bar = $('selBar');
+    bar.classList.add('active');
+    const bw = bar.offsetWidth, bh = bar.offsetHeight;
+    const left = Math.max(8, Math.min(window.innerWidth - bw - 8, r.left + r.width / 2 - bw / 2));
+    let top = r.bottom + 10;
+    if (top + bh > window.innerHeight - 8) top = Math.max(8, r.top - bh - 10);
+    bar.style.left = left + 'px';
+    bar.style.top = top + 'px';
+}
+
+document.addEventListener('selectionchange', () => {
+    clearTimeout(selTimer);
+    selTimer = setTimeout(updateSelBar, 250);
+});
+document.addEventListener('scroll', hideSelBar, true);
+
+async function lookupFree(w) {
+    const r = await fetch('https://api.dictionaryapi.dev/v2/entries/en/' + encodeURIComponent(w));
+    if (!r.ok) throw new Error('未查到该词（短语请配置 API Key 后查询）');
+    const e = (await r.json())[0];
+    let html = `<p><strong>${esc(e.word)}</strong> ${esc(e.phonetic || '')}</p>`;
+    (e.meanings || []).slice(0, 3).forEach(m => {
+        html += `<p><b>${esc(m.partOfSpeech)}</b> ${esc((m.definitions || []).slice(0, 2).map(x => x.definition).join('；'))}</p>`;
+    });
+    return html + '<p style="color:#999;font-size:12px;margin-top:10px;">(未配置 API Key，使用在线英文词典)</p>';
+}
+
+async function lookupWord(word) {
+    const w = String(word || selWord || '').trim();
+    hideSelBar();
+    if (!w) return;
+    try { window.getSelection().removeAllRanges(); } catch (e) {}
+    showInfo(w, '<div style="text-align:center;padding:20px;color:#888;">查询中...</div>', w);
+    let html;
+    try {
+        if (apiKey) {
+            const res = await callAI([{role: 'user', content:
+                `请简明解释英文单词/短语 "${w}"：1）音标；2）词性与中文释义（不超过 3 条）；3）一句英文例句并附中文翻译。纯文本输出，每项一行，不使用 Markdown。`}]);
+            html = esc(res).replace(/\n/g, '<br>');
+        } else {
+            html = await lookupFree(w);
+        }
+    } catch (e) {
+        html = `<span style="color:red;">查询失败：${esc(e.message)}</span>`;
+    }
+    if ($('infoModal').classList.contains('active') && $('infoSpeak').dataset.w === w) showInfo(w, html, w);
+}
+
+async function addLookupWord() {
+    const btn = $('infoAdd');
+    const w = btn.dataset.w;
+    if (!w) return;
+    if (!apiKey) { alert('生成卡片需要先填写 API Key'); return; }
+    btn.dataset.state = 'busy';
+    btn.disabled = true;
+    btn.innerText = '生成中...';
+    try {
+        const isNew = await generateWordCard(w);
+        btn.innerText = isNew ? '已加入' : '已存在';
+        updateStatsUI();
+    } catch (e) {
+        btn.innerText = '加入卡片';
+        btn.disabled = false;
+        alert(e.message || '生成失败');
+    }
+    btn.dataset.state = '';
+}
+
+/* =========================================================
+   批量处理
+========================================================= */
+function triggerSearch() {
+    const val = $('searchInput').value.trim();
+    if (!val) return;
+    if (batchRunning) { alert('正在生成中，请稍候'); return; }
+    $('searchInput').value = '';
+    $('searchInput').blur();
+    $('batchInput').value = val;
+    processBatch();
+}
+
+function clearBatch() {
+    $('batchInput').value = '';
+    $('batchInput').focus();
+}
+
+function processBatch(keepStatus) {
+    if (batchRunning) { alert('正在生成中，请稍候'); return; }
+    const text = $('batchInput').value.trim();
+    if (!text) { alert('请先输入或粘贴单词'); return; }
+    const wordsArr = text.split(/[\n,，、;；]+/).map(w => w.trim()).filter(w => w);
+    const uniqueWords = [...new Set(wordsArr)];
+    if (uniqueWords.length === 0) return;
+
+    $('batchInput').value = '';
+    if (keepStatus !== true) $('recognizeStatus').innerHTML = '';
+
+    batchQueue = [...uniqueWords];
+    batchRunning = true;
+    $('batchBtn').disabled = true;
+    processNextInQueue();
+}
+
+function processNextInQueue() {
+    if (batchQueue.length === 0) {
+        batchRunning = false;
+        $('batchBtn').disabled = false;
+        updateStatsUI();
+        return;
+    }
+    const word = batchQueue.shift();
+    const el = addStatusItem(word, 'loading', '生成中...');
+    generateWordCard(word).then(isNew => {
+        setStatus(el, 'done', isNew ? '已完成' : '已存在');
+        processNextInQueue();
+    }).catch(err => {
+        setStatus(el, 'fail', err.message || '失败');
+        processNextInQueue();
+    });
+}
+
+function addStatusItem(word, type, msg) {
+    const container = $('recognizeStatus');
+    if (container.querySelector('.empty-hint')) container.innerHTML = '';
+    const div = document.createElement('div');
+    div.className = 'status-item';
+    div.innerHTML = `
+        <div class="dot ${type}"></div>
+        <div class="st-word">${esc(word)}</div>
+        <div class="st-msg">${esc(msg)}</div>
+    `;
+    container.prepend(div);
+    return div;
+}
+
+function setStatus(el, type, msg) {
+    el.querySelector('.dot').className = 'dot ' + type;
+    el.querySelector('.st-msg').innerText = msg;
+}
+
+/* =========================================================
+   单词卡生成
+========================================================= */
+async function generateWordCard(word) {
+    const prompt = `请为我生成单词 "${word}" 的详细记忆卡片，严格按照以下JSON格式输出，不要输出任何其他多余内容：
+{
+"word": "${word}",
+"phonetic": "音标",
+"syllable": "音节拆分（用点连接）",
+"collins": "柯林斯英文释义",
+"cn": "中文释义",
+"example": "英文例句（附带中文翻译）",
+"syn": "同义词",
+"ant": "反义词"
+}`;
+
+    const res = await callAI([{role: 'user', content: prompt}]);
+    let data;
+    try {
+        const m = res.match(/\{[\s\S]*\}/);
+        data = JSON.parse(m ? m[0] : res);
+    } catch (e) {
+        throw new Error('AI 解析失败');
+    }
+    if (!data.word) data.word = word;
+    return saveWord(data);
+}
+
+function saveWord(data) {
+    if (words.find(w => String(w.word).toLowerCase() === String(data.word).toLowerCase())) return false;
+    data.id = Date.now() + Math.floor(Math.random() * 1000);
+    data.time = nowStr();
+    words.push(data);
+    safeSet('wm_words', JSON.stringify(words));
+    renderCards();
+    return true;
+}
+
+/* =========================================================
+   渲染单词卡
+========================================================= */
+function renderCards() {
+    const container = $('cardsContainer');
+    if (words.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无卡片，快去录入单词吧~</div>';
+        return;
+    }
+
+    const sorted = [...words].reverse();
+    container.innerHTML = sorted.map(w => {
+        return `
+        <div class="flashcard">
+            <div class="card-header">
+                <div>
+                    <div class="word-big">${esc(w.word)}</div>
+                    ${w.phonetic ? `<div class="word-phonetic">${esc(w.phonetic)}</div>` : ''}
+                    ${w.syllable ? `<div class="word-syllable">${esc(w.syllable)}</div>` : ''}
+                    <div class="pron-row">
+                        <button class="pron-btn" data-w="${esc(w.word)}" onclick="speak(this.dataset.w,2)">美音</button>
+                        <button class="pron-btn" data-w="${esc(w.word)}" onclick="speak(this.dataset.w,1)">英音</button>
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="deleteWord(${w.id})">删除</button>
+            </div>
+            <div class="card-body">
+                ${w.collins ? `<div class="sec"><div class="sec-label">柯林斯释义</div><div class="sec-body en">${esc(w.collins)}</div></div>` : ''}
+                ${w.cn ? `<div class="sec"><div class="sec-label">中文释义</div><div class="sec-body">${esc(w.cn)}</div></div>` : ''}
+                ${w.example ? `<div class="sec"><div class="sec-label">例句</div><div class="sec-body en">${esc(w.example)}</div></div>` : ''}
+                ${w.syn ? `<div class="sec"><div class="sec-label">同义词</div><div class="sec-body">${esc(w.syn)}</div></div>` : ''}
+                ${w.ant ? `<div class="sec"><div class="sec-label">反义词</div><div class="sec-body">${esc(w.ant)}</div></div>` : ''}
+            </div>
+            <div class="card-footer">${esc(w.time || '')}</div>
+        </div>`;
+    }).join('');
+}
+
+function deleteWord(id) {
+    if (!confirm('确定删除这张单词卡吗？')) return;
+    words = words.filter(w => w.id !== id);
+    safeSet('wm_words', JSON.stringify(words));
+    renderCards();
+    updateStatsUI();
+}
+
+/* =========================================================
+   清单相关
+========================================================= */
+function cleanupPhotos() {
+    const now = Date.now();
+    let changed = false;
+    checklist.forEach(item => {
+        if (item.photo && item.photoTs && now - item.photoTs > THREE_DAYS) {
+            delete item.photo;
+            delete item.photoTs;
+            changed = true;
+        }
+    });
+    if (changed) safeSet('wm_checklist', JSON.stringify(checklist));
+}
+
+function renderChecklist() {
+    const container = $('checklistContainer');
+    if (checklist.length === 0) {
+        container.innerHTML = '<div class="empty-hint">暂无清单，添加一项吧</div>';
+        return;
+    }
+
+    container.innerHTML = checklist.map(item => {
+        let photoHtml = item.photo ? `<img src="${item.photo}" class="check-photo">` : '';
+        let metaHtml = item.doneTime ? `<div class="check-meta">完成于 ${esc(item.doneTime)}</div>` : '';
+
+        return `
+        <div class="check-item">
+            <div class="check-box ${item.done ? 'done' : ''}" onclick="toggleCheck(${item.id})">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <div class="check-main">
+                <div class="check-text ${item.done ? 'done' : ''}">${esc(item.text)}</div>
+                ${photoHtml}
+                ${metaHtml}
+            </div>
+            <button class="delete-btn" onclick="deleteCheckItem(${item.id})">删除</button>
+        </div>`;
+    }).join('');
+}
+
+function addCheckItem() {
+    const text = $('checkInput').value.trim();
+    if (!text) return;
+    checklist.push({ id: Date.now(), text, done: false });
+    $('checkInput').value = '';
+    saveChecklist();
+    renderChecklist();
+}
+
+function deleteCheckItem(id) {
+    if (!confirm('删除此事项？')) return;
+    checklist = checklist.filter(i => i.id !== id);
+    saveChecklist();
+    renderChecklist();
+}
+
+function toggleCheck(id) {
+    const item = checklist.find(i => i.id === id);
+    if (!item) return;
+    if (item.done) {
+        item.done = false;
+        delete item.doneTime;
+        delete item.photo;
+        delete item.photoTs;
+        saveChecklist();
+        renderChecklist();
+    } else {
+        pendingCheckId = id;
+        $('photoModal').classList.add('active');
+        $('photoModalBody').innerText = `"${item.text}" 已完成，是否拍照记录？`;
+    }
+}
+
+function saveChecklist() {
+    if (!safeSet('wm_checklist', JSON.stringify(checklist))) {
+        alert('本地存储空间不足，部分数据可能未保存（可导出备份并清理照片）');
+    }
+    updateStatsUI();
+}
+
+function resetChecklist() {
+    checklist.forEach(item => {
+        item.done = false;
+        delete item.doneTime;
+    });
+    saveChecklist();
+    renderChecklist();
+    alert('已一键刷新完成状态');
+}
+
+function completeItem(id, photo) {
+    const item = checklist.find(i => i.id === id);
+    if (!item) return;
+    item.done = true;
+    item.doneTime = nowStr();
+    if (photo) { item.photo = photo; item.photoTs = Date.now(); }
+    saveChecklist();
+    renderChecklist();
+}
+
+function skipPhoto() {
+    $('photoModal').classList.remove('active');
+    if (pendingCheckId) completeItem(pendingCheckId);
+    pendingCheckId = null;
+}
+
+function takeChecklistPhoto() {
+    $('photoModal').classList.remove('active'); // 保留 pendingCheckId，等待拍照结果
+    $('checklistCamera').click();
+}
+
+function compressImage(file, maxW = 800, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+            const scale = Math.min(1, maxW / img.width);
+            const c = document.createElement('canvas');
+            c.width = Math.round(img.width * scale);
+            c.height = Math.round(img.height * scale);
+            c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+            URL.revokeObjectURL(url);
+            resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('图片读取失败')); };
+        img.src = url;
+    });
+}
+
+async function handleChecklistPhoto(event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file || !pendingCheckId) return;
+    const id = pendingCheckId;
+    pendingCheckId = null;
+    try {
+        const photo = await compressImage(file);
+        completeItem(id, photo);
+    } catch (e) {
+        completeItem(id);
+    }
+}
+
+function showInfo(title, html, word) {
+    $('infoTitle').innerText = title;
+    $('infoBody').innerHTML = html;
+    $('infoModal').classList.add('active');
+    const sp = $('infoSpeak'), ad = $('infoAdd');
+    sp.style.display = ad.style.display = word ? '' : 'none';
+    sp.dataset.w = ad.dataset.w = word || '';
+    if (word && ad.dataset.state !== 'busy') { ad.innerText = '加入卡片'; ad.disabled = false; }
+}
+
+async function analyzeChecklist() {
+    const pending = checklist.filter(i => !i.done);
+    const done = checklist.filter(i => i.done);
+    if (checklist.length === 0) { alert('清单为空'); return; }
+
+    showInfo('AI 清单分析', '<div style="text-align:center;padding:20px;color:#888;">正在分析...</div>');
+
+    if (!apiKey) {
+        showInfo('AI 清单分析', `
+            <p><strong>本地统计：</strong></p>
+            <p>您共有 ${done.length} 项已完成，${pending.length} 项待办。</p>
+            <p>${pending.length > 0 ? '未完成事项：' + esc(pending.map(p=>p.text).join('、')) : '所有事项均已完成，太棒了！'}</p>
+            <p style="color:#999;font-size:12px;margin-top:10px;">(未配置 API Key，未调用 AI)</p>`);
+        return;
+    }
+
+    const prompt = `我有一份出行清单，状态如下：
+已完成：${done.map(d=>d.text).join('、') || '无'}
+待办：${pending.map(p=>p.text).join('、') || '无'}
+请给我一段简短的分析或提醒（100字以内），纯文本输出。`;
+
+    try {
+        const res = await callAI([{role: 'user', content: prompt}]);
+        showInfo('AI 清单分析', esc(res).replace(/\n/g, '<br>'));
+    } catch (e) {
+        showInfo('AI 清单分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`);
+    }
+}
+
+function closeInfoModal() {
+    $('infoModal').classList.remove('active');
+    stopSpeak();
+}
+
+/* =========================================================
+   出门 / 回家 时钟
+========================================================= */
+function recordOut() {
+    outTs = Date.now();
+    safeSet('wm_out_ts', outTs);
+    tick();
+}
+
+function recordHome() {
+    homeTs = Date.now();
+    safeSet('wm_home_ts', homeTs);
+    tick();
+}
+
+function resetClock() {
+    if (!confirm('确定清空当前出入时间记录吗？')) return;
+    outTs = 0;
+    homeTs = 0;
+    localStorage.removeItem('wm_out_ts');
+    localStorage.removeItem('wm_home_ts');
+    tick();
+}
+
+function tick() {
+    const d = new Date();
+    $('live-clock').innerText = d.toLocaleTimeString('zh-CN', {hour12:false});
+    $('live-date').innerText = d.toLocaleDateString('zh-CN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+    let log = '';
+    const fmt = ts => {
+        if (!ts) return '--:--';
+        return new Date(ts).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit', hour12:false});
+    };
+
+    if (outTs || homeTs) {
+        log = `出门：${fmt(outTs)} | 回家：${fmt(homeTs)}`;
+        if (outTs && homeTs && homeTs > outTs) {
+            const diff = Math.floor((homeTs - outTs) / 60000);
+            log += `<br>在外时长：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`;
+        } else if (outTs && (!homeTs || homeTs < outTs)) {
+            const diff = Math.floor((Date.now() - outTs) / 60000);
+            log += `<br>已出门：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`;
+        }
+    } else {
+        log = '今日暂无出入记录';
+    }
+    $('clock-log').innerHTML = log;
+
+    updateWork();
+}
+
+/* =========================================================
+   上班打卡 / 休息 / 迟到统计
+========================================================= */
+const dayKey = (d = new Date()) =>
+    d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+const fmtHM = ts => ts ? new Date(ts).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit', hour12:false}) : '--:--';
+const fmtDur = min => {
+    min = Math.max(0, Math.round(min));
+    const h = Math.floor(min / 60), m = min % 60;
+    return h ? `${h}小时${m}分` : `${m}分钟`;
+};
+const openBreak = rec => {
+    const l = rec && rec.breaks && rec.breaks[rec.breaks.length - 1];
+    return l && !l.e ? l : null;
+};
+
+function schedTs(key) {
+    const [y, m, d] = key.split('-').map(Number);
+    const [hh, mm] = (workStart || '09:00').split(':').map(Number);
+    return new Date(y, m - 1, d, hh, mm, 0, 0).getTime();
+}
+
+function saveAtt() {
+    if (!safeSet('wm_attendance', JSON.stringify(attendance))) alert('本地存储空间不足');
+}
+
+function breakTotals(rec, now) {
+    let n = 0, ms = 0, max = 0;
+    (rec.breaks || []).forEach(b => {
+        const d = Math.max(0, (b.e || now) - b.s);
+        n++; ms += d; if (d > max) max = d;
+    });
+    return {n, ms, max};
+}
+
+function saveWorkStart() {
+    const v = $('workStartInput').value;
+    if (!v) { $('workStartInput').value = workStart; return; }
+    workStart = v;
+    safeSet('wm_work_start', workStart);
+}
+
+function clockIn() {
+    const key = dayKey();
+    if (attendance[key]) return;
+    const now = Date.now();
+    const sched = schedTs(key);
+    attendance[key] = {
+        in: now,
+        sched,
+        late: Math.max(0, Math.floor((now - sched) / 60000)),
+        breaks: []
+    };
+    saveAtt();
+    updateWork();
+}
+
+function clockOut() {
+    const rec = attendance[dayKey()];
+    if (!rec || rec.out) return;
+    if (!confirm('确定下班打卡吗？')) return;
+    const now = Date.now();
+    const ob = openBreak(rec);
+    if (ob) ob.e = now;
+    rec.out = now;
+    saveAtt();
+    updateWork();
+}
+
+function toggleBreak() {
+    const rec = attendance[dayKey()];
+    if (!rec || rec.out) return;
+    const ob = openBreak(rec);
+    if (ob) ob.e = Date.now();
+    else rec.breaks.push({s: Date.now()});
+    saveAtt();
+    updateWork();
+}
+
+function resetToday() {
+    const key = dayKey();
+    if (!attendance[key]) return;
+    if (!confirm('确定清空今日考勤记录吗？')) return;
+    delete attendance[key];
+    saveAtt();
+    updateWork();
+}
+
+function updateWork() {
+    const now = Date.now();
+    const key = dayKey();
+    const rec = attendance[key];
+    const ob = openBreak(rec);
+    const state = !rec ? 'idle' : rec.out ? 'done' : ob ? 'break' : 'working';
+
+    // 状态徽章
+    const badge = $('w-badge');
+    badge.className = 'w-badge ' + (state === 'idle' ? '' : state);
+    badge.innerText = {idle:'未打卡', working:'工作中', break:'休息中', done:'已下班'}[state];
+
+    // 三格数据
+    const lateEl = $('w-late');
+    lateEl.className = 'v sm';
+    if (!rec) {
+        $('w-in').innerText = '--:--';
+        $('w-off').innerText = '--:--';
+        lateEl.innerText = '--';
+    } else {
+        const off = rec.in + WORK_MIN * 60000;
+        $('w-in').innerText = fmtHM(rec.in);
+        $('w-off').innerText = (new Date(off).getDate() !== new Date(rec.in).getDate() ? '次日 ' : '') + fmtHM(off);
+        if (rec.late > 0) { lateEl.innerText = fmtDur(rec.late); lateEl.classList.add('late'); }
+        else { lateEl.innerText = '准时'; lateEl.classList.add('ok'); }
+    }
+
+    // 进度与剩余
+    const bar = $('w-bar'), wrap = $('w-barwrap'), remain = $('w-remain');
+    if (!rec) {
+        bar.style.width = '0%';
+        wrap.classList.remove('over');
+        remain.innerText = '点击「上班打卡」开始计时（工时 8.5 小时）';
+    } else {
+        const off = rec.in + WORK_MIN * 60000;
+        const end = rec.out || now;
+        const pct = Math.min(100, Math.max(0, (end - rec.in) / (WORK_MIN * 60000) * 100));
+        bar.style.width = pct.toFixed(1) + '%';
+        wrap.classList.toggle('over', !rec.out && now > off);
+        if (rec.out) {
+            const bt = breakTotals(rec, rec.out);
+            remain.innerText = `在岗 ${fmtDur((rec.out - rec.in) / 60000)}，扣除休息净工作 ${fmtDur((rec.out - rec.in - bt.ms) / 60000)}`;
+        } else if (now < off) {
+            remain.innerText = `距预计下班还有 ${fmtDur((off - now) / 60000)}`;
+        } else {
+            remain.innerText = `已超出预计下班 ${fmtDur((now - off) / 60000)}`;
+        }
+    }
+
+    // 按钮状态
+    $('w-btn-in').disabled = !!rec;
+    $('w-btn-out').disabled = state !== 'working' && state !== 'break';
+    const brk = $('w-btn-brk');
+    brk.disabled = state !== 'working' && state !== 'break';
+    brk.classList.toggle('running', state === 'break');
+    if (state === 'break') {
+        const sec = Math.floor((now - ob.s) / 1000);
+        brk.innerText = `结束休息 ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+    } else {
+        brk.innerText = '开始休息';
+    }
+
+    // 今日休息统计
+    if (rec) {
+        const bt = breakTotals(rec, now);
+        $('w-stat-today').innerHTML = bt.n === 0
+            ? '今日暂无休息记录'
+            : `今日休息 <b>${bt.n}</b> 次 · 共 <b>${fmtDur(bt.ms / 60000)}</b> · 最长 <b>${fmtDur(bt.max / 60000)}</b>`;
+    } else {
+        $('w-stat-today').innerHTML = '今日暂无休息记录';
+    }
+
+    // 本月统计
+    const pre = key.slice(0, 7);
+    let days = 0, lateN = 0, lateM = 0, brkMs = 0;
+    Object.keys(attendance).forEach(k => {
+        if (!k.startsWith(pre)) return;
+        const r = attendance[k];
+        days++;
+        if (r.late > 0) { lateN++; lateM += r.late; }
+        brkMs += breakTotals(r, r.out || now).ms;
+    });
+    $('w-stat-month').innerHTML = days === 0
+        ? '本月暂无考勤记录'
+        : `本月出勤 <b>${days}</b> 天 · 迟到 <b>${lateN}</b> 次，累计 <b>${fmtDur(lateM)}</b> · 日均休息 <b>${fmtDur(brkMs / 60000 / days)}</b>`;
+}
+
+function buildAttendanceLines() {
+    const keys = Object.keys(attendance).sort().slice(-14);
+    const now = Date.now();
+    return keys.map(k => {
+        const r = attendance[k];
+        const bt = breakTotals(r, r.out || now);
+        return `${k}：上班${fmtHM(r.in)}，下班${r.out ? fmtHM(r.out) : '未打卡'}，迟到${r.late || 0}分钟，休息${bt.n}次共${Math.round(bt.ms / 60000)}分钟`;
+    });
+}
+
+async function analyzeWork() {
+    const lines = buildAttendanceLines();
+    if (lines.length === 0) { alert('暂无考勤记录，请先上班打卡'); return; }
+
+    showInfo('AI 考勤分析', '<div style="text-align:center;padding:20px;color:#888;">正在分析...</div>');
+
+    if (!apiKey) {
+        // 本地统计兜底
+        const now = Date.now();
+        const keys = Object.keys(attendance).sort().slice(-14);
+        let lateN = 0, lateM = 0, brkMs = 0, brkN = 0;
+        keys.forEach(k => {
+            const r = attendance[k];
+            if (r.late > 0) { lateN++; lateM += r.late; }
+            const bt = breakTotals(r, r.out || now);
+            brkMs += bt.ms; brkN += bt.n;
+        });
+        showInfo('AI 考勤分析', `
+            <p><strong>本地统计（最近 ${keys.length} 天）：</strong></p>
+            <p>迟到 ${lateN} 次，累计 ${fmtDur(lateM)}${lateN ? `，平均每次 ${fmtDur(lateM / lateN)}` : ''}。</p>
+            <p>休息共 ${brkN} 次，累计 ${fmtDur(brkMs / 60000)}，日均 ${fmtDur(brkMs / 60000 / keys.length)}。</p>
+            <p style="color:#999;font-size:12px;margin-top:10px;">(未配置 API Key，未调用 AI)</p>`);
+        return;
+    }
+
+    const prompt = `我的规定上班时间是 ${workStart}，每天工时按 8.5 小时计算（含休息）。以下是我最近的考勤与休息记录：
+${lines.join('\n')}
+请用中文做一段 100-200 字的分析：1）迟到规律；2）休息习惯是否合理（次数、时长、时间段）；3）给出 2 条可执行的改进建议。纯文本输出，不要使用 Markdown。`;
+
+    try {
+        const res = await callAI([{role: 'user', content: prompt}]);
+        showInfo('AI 考勤分析', esc(res).replace(/\n/g, '<br>'));
+    } catch (e) {
+        showInfo('AI 考勤分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`);
+    }
+}
+
+/* =========================================================
+   设置与导入导出
+========================================================= */
+function saveApiKey() {
+    apiKey = $('apiKeyInput').value.trim();
+    safeSet('wm_api_key', apiKey);
+    alert('API Key 已保存');
+}
+
+function updateStatsUI() {
+    $('stat-api-calls').innerText = stats.apiCalls;
+    $('stat-tokens').innerText = stats.tokens;
+    $('stat-words').innerText = words.length;
+    $('stat-checks').innerText = checklist.length;
+}
+
+function saveStats() {
+    safeSet('wm_stats', JSON.stringify(stats));
+    updateStatsUI();
+}
+
+function exportData() {
+    const data = { words, checklist, stats, attendance, workStart, exportTime: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `word_memory_backup_${new Date().getTime()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.words && data.checklist) {
+                words = data.words;
+                checklist = data.checklist;
+                stats = data.stats || {apiCalls:0, tokens:0};
+                if (data.attendance) attendance = data.attendance;
+                if (data.workStart) { workStart = data.workStart; $('workStartInput').value = workStart; safeSet('wm_work_start', workStart); }
+                safeSet('wm_words', JSON.stringify(words));
+                safeSet('wm_checklist', JSON.stringify(checklist));
+                safeSet('wm_stats', JSON.stringify(stats));
+                safeSet('wm_attendance', JSON.stringify(attendance));
+                renderCards();
+                renderChecklist();
+                updateStatsUI();
+                updateWork();
+                alert('数据恢复成功！');
+            } else {
+                alert('文件格式不正确');
+            }
+        } catch (err) {
+            alert('读取文件失败');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+
+/* =========================================================
+   新版功能层：录入预览、语法目录、卡片分类/分组、休息记录
+   继续使用原有 wm_words / wm_checklist / wm_stats / wm_attendance 数据键。
+========================================================= */
+let cardGroups = load('wm_card_groups', []);
+let pendingPreviewCards = [];
+let pendingDeleteCardId = null;
+let currentModalCardId = null;
+let toastTimer = null;
+let swipeStartY = null;
+
+const CARD_CATEGORIES = ['单词','语法','其它'];
+const DEFAULT_GROUPS = [
+  {id:'default-word', category:'单词', name:'默认单词', limit:0, isDefault:true},
+  {id:'default-grammar', category:'语法', name:'默认语法', limit:0, isDefault:true},
+  {id:'default-other', category:'其它', name:'默认其它', limit:0, isDefault:true}
+];
+
+function persistGroups(){ safeSet('wm_card_groups', JSON.stringify(cardGroups)); }
+function ensureCardGroups(){
+  if (!Array.isArray(cardGroups)) cardGroups = [];
+  DEFAULT_GROUPS.forEach(g => { if (!cardGroups.some(x => x.id === g.id)) cardGroups.unshift({...g}); });
+  words.forEach(w => {
+    if (!w.category || !CARD_CATEGORIES.includes(w.category)) w.category = '单词';
+    if (!w.groupId || !cardGroups.some(g => g.id === w.groupId)) w.groupId = defaultGroupId(w.category);
+  });
+  persistGroups();
+  safeSet('wm_words', JSON.stringify(words));
+}
+function defaultGroupId(category){
+  return category === '语法' ? 'default-grammar' : category === '其它' ? 'default-other' : 'default-word';
+}
+function getCardGroup(id){ return cardGroups.find(g => g.id === id); }
+function groupsFor(category){ return cardGroups.filter(g => g.category === category); }
+function countInGroup(id){ return words.filter(w => (w.groupId || defaultGroupId(w.category || '单词')) === id).length; }
+function groupHasRoom(id, excludingId){
+  const g = getCardGroup(id);
+  if (!g || !g.limit || g.limit <= 0) return true;
+  const count = words.filter(w => (w.groupId || defaultGroupId(w.category || '单词')) === id && w.id !== excludingId).length;
+  return count < g.limit;
+}
+function showToast(message){
+  const el = $('appToast'); if (!el) return;
+  el.textContent = message; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
+}
+
+function init(){
+  $('apiKeyInput').value = apiKey;
+  ensureCardGroups();
+  cleanupPhotos();
+  renderGrammarTopics();
+  renderCards();
+  renderGroupManager();
+  renderChecklist();
+  updateStatsUI();
+  tick();
+  setInterval(tick, 1000);
+  setInterval(() => { cleanupPhotos(); renderChecklist(); renderRestUI(); }, 60000);
+  $('batchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); triggerSearch(); }
+  });
+  $('infoBody').addEventListener('touchstart', e => {
+    swipeStartY = e.touches && e.touches.length ? e.touches[0].clientY : null;
+  }, {passive:true});
+  $('infoBody').addEventListener('touchend', e => {
+    if (swipeStartY == null || !e.changedTouches || !e.changedTouches.length) return;
+    const delta = e.changedTouches[0].clientY - swipeStartY;
+    swipeStartY = null;
+    const detail = $('infoBody').querySelector('.card-detail-view[data-card-id]');
+    if (detail && delta < -78) requestDeleteCard(Number(detail.dataset.cardId));
+  }, {passive:true});
+}
+
+function switchTab(tabId){
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const panel = $('tab-' + tabId); if (!panel) return;
+  panel.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if (el.dataset.tab === tabId) el.classList.add('active');
+  });
+  $('inputDock').classList.toggle('hidden', tabId !== 'input');
+  if (tabId === 'cards') { renderCards(); renderGroupManager(); }
+  if (tabId === 'grammar') renderGrammarTopics();
+  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); updateStatsUI(); }
+}
+
+/* 录入：搜索只负责 AI 识别与预览，收藏才真正写入卡片 */
+function clearBatch(){
+  $('batchInput').value = '';
+  $('batchInput').focus();
+  pendingPreviewCards = [];
+  showToast('输入内容已清空');
+}
+function triggerSearch(){ analyzeInput(false); }
+async function favoriteFromToolbar(){
+  if (pendingPreviewCards.length) { savePendingCards(); return; }
+  if (!$('batchInput').value.trim()) { showToast('请先粘贴或输入学习内容'); return; }
+  await analyzeInput(true);
+}
+function parseAIJson(text, fallbackType){
+  const cleaned = String(text || '').replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+  const candidates = [cleaned, (cleaned.match(fallbackType === 'array' ? /\[[\s\S]*\]/ : /\{[\s\S]*\}/) || [])[0]].filter(Boolean);
+  for (const c of candidates){ try { return JSON.parse(c); } catch(e){} }
+  throw new Error('AI 返回内容解析失败，请重试');
+}
+function normalizeCardData(data, categoryFallback){
+  const d = {...data};
+  d.word = String(d.word || d.title || d.topic || '未命名卡片').trim();
+  d.category = CARD_CATEGORIES.includes(d.category) ? d.category : (categoryFallback || '单词');
+  if (!d.groupId || !getCardGroup(d.groupId)) d.groupId = defaultGroupId(d.category);
+  return d;
+}
+async function analyzeInput(autoSave){
+  const text = $('batchInput').value.trim();
+  if (!text) { showToast('请先粘贴或输入学习内容'); return; }
+  if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
+  batchRunning = true;
+  $('recognizeStatus').innerHTML = '<div class="status-item"><div class="dot loading"></div><div class="st-word">AI 识别中</div><div class="st-msg">正在整理知识点…</div></div>';
+  try{
+    const prompt = `你是一名专业英语词汇与学习卡片整理助手。请分析用户提供的英语学习材料，提取最值得记忆的单词或短语；若输入本身是一条知识点或非单词学习内容，也可以整理为“其它”卡片。最多生成 20 张卡片，去重，按原材料重要性排序。每张卡片必须包含字段：word（卡片标题）、category（只能为“单词”或“其它”）、phonetic、syllable、collins（简明英文释义）、cn（中文释义/说明）、example（英文例句及中文翻译）、syn、ant。材料中没有对应内容的字段填空字符串。只返回 JSON 数组，不要 Markdown，不要解释。\n\n材料：\n${text.slice(0,9000)}`;
+    const raw = await callAI([{role:'user',content:prompt}]);
+    let data = parseAIJson(raw,'array');
+    if (!Array.isArray(data)) data = [data];
+    pendingPreviewCards = data.slice(0,20).map(d => normalizeCardData(d, '单词'));
+    if (!pendingPreviewCards.length) throw new Error('没有识别到可创建的卡片');
+    renderRecognitionStatus(`识别完成 · ${pendingPreviewCards.length} 项，收藏后写入卡片`);
+    showGeneratedPreview('AI 识别预览', pendingPreviewCards);
+    if (autoSave) savePendingCards();
+  }catch(e){
+    pendingPreviewCards = [];
+    renderRecognitionStatus('识别失败 · ' + (e.message || '请重试'), true);
+    showToast(e.message || 'AI 识别失败');
+  }finally{ batchRunning = false; }
+}
+function renderRecognitionStatus(message, failed){
+  $('recognizeStatus').innerHTML = `<div class="status-item"><div class="dot ${failed ? 'fail' : 'done'}"></div><div class="st-word">${failed ? '识别未完成' : '识别结果'}</div><div class="st-msg">${esc(message)}</div></div>`;
+}
+function renderPreviewBody(card){
+  const fields = [
+    ['音标',card.phonetic],['音节',card.syllable],['英文释义',card.collins],['中文释义',card.cn],['例句',card.example],['同义词',card.syn],['反义词',card.ant],
+    ['知识概要',card.summary],['结构',card.structure],['用法',card.usage],['注意事项',card.notes]
+  ].filter(x => x[1]);
+  return fields.map(([label,value]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body">${esc(value)}</div></div>`).join('');
+}
+function renderGeneratedPreview(cards){
+  return cards.map((card,i) => {
+    const opts = groupsFor(card.category).map(g => `<option value="${esc(g.id)}" ${g.id === (card.groupId || defaultGroupId(card.category)) ? 'selected' : ''}>${esc(g.name)}${g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : ''}</option>`).join('');
+    return `<div class="preview-card"><div class="preview-card-title">${esc(card.word)}</div>${renderPreviewBody(card)}<div class="preview-group-row"><span>${esc(card.category)} · 分组</span><select class="preview-group-select" onchange="updatePendingGroup(${i},this.value)">${opts}</select></div></div>`;
+  }).join('');
+}
+function showGeneratedPreview(title,cards){
+  currentModalCardId = null;
+  $('infoFavorite').innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+  $('infoTitle').textContent = title;
+  $('infoBody').innerHTML = `<div class="preview-tip" style="font-size:12px;color:#8c9992;margin-bottom:10px;">预览内容 · 点击右上角收藏图标创建卡片</div>${renderGeneratedPreview(cards)}`;
+  $('infoModal').classList.add('active');
+  $('infoFavorite').style.display = '';
+  $('infoFavorite').disabled = false;
+  $('infoFavorite').style.opacity = '1';
+  $('infoSpeak').style.display = 'none';
+  $('infoAdd').style.display = 'none';
+}
+function updatePendingGroup(index,groupId){
+  if (!pendingPreviewCards[index]) return;
+  const group = getCardGroup(groupId);
+  if (!group || group.category !== pendingPreviewCards[index].category) return;
+  pendingPreviewCards[index].groupId = groupId;
+}
+function savePendingCards(){
+  if (!pendingPreviewCards.length) { showToast('没有待收藏的预览内容'); return; }
+  let saved = 0, skipped = 0;
+  pendingPreviewCards.forEach(item => {
+    const data = normalizeCardData(item, item.category || '单词');
+    if (saveWord(data)) saved++; else skipped++;
+  });
+  if (saved) showToast(`已收藏 ${saved} 张卡片${skipped ? `，${skipped} 项重复或达到分组上限` : ''}`);
+  else showToast(skipped ? '卡片重复或分组数量已达上限' : '没有可收藏的内容');
+  renderCards(); renderGroupManager(); updateStatsUI();
+  pendingPreviewCards = [];
+  $('infoFavorite').disabled = true;
+  $('infoFavorite').style.opacity = '.45';
+  if (saved) $('infoFavorite').innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>';
+}
+
+/* 图片：OCR 结果回填统一输入框，不直接跳过预览创建卡片 */
+async function handleImageUpload(event){
+  const file = event.target.files[0]; event.target.value = '';
+  if (!file) return;
+  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
+  batchRunning = true;
+  renderRecognitionStatus('正在读取图片…');
+  try{
+    const dataUrl = await compressImage(file,1600,.85);
+    const text = await ocrImage(dataUrl,p => renderRecognitionStatus(`图片文字识别中 ${p}%`));
+    if (!text.trim()) throw new Error('未识别到文字');
+    $('batchInput').value = text.trim();
+    renderRecognitionStatus('图片文字已填入输入框，点击放大镜进行 AI 整理');
+    $('batchInput').focus();
+    showToast('图片文字已识别并填入');
+  }catch(e){ renderRecognitionStatus(e.message || '图片识别失败',true); showToast(e.message || '图片识别失败'); }
+  finally{ batchRunning = false; }
+}
+
+/* 语法知识点目录：核心模块置顶，其余模块在后 */
+const GRAMMAR_SECTIONS = [
+  {title:'核心语法 · 优先掌握',items:[
+    ['时态','一般现在时','一般过去时','一般将来时','现在进行时','过去进行时','将来进行时','现在完成时','过去完成时','将来完成时','现在完成进行时','过去完成进行时','将来完成进行时','时态一致与时间状语'],
+    ['情态动词','can / could：能力、请求与可能性','may / might：许可与推测','must：义务与肯定推测','should / ought to：建议与责任','shall / will / would：意愿、习惯与请求','need / dare：半情态用法','情态动词 + have done：对过去的推测'],
+    ['虚拟语气','与现在事实相反','与过去事实相反','与将来事实相反','错综时间条件句','wish / if only','as if / as though','would rather / it is time','suggest / demand 等词后的虚拟语气','条件句省略 if 与倒装'],
+    ['疑问句与复杂疑问句','一般疑问句','特殊疑问句与疑问词','选择疑问句','反意疑问句','否定疑问句与修辞疑问句','主语疑问句与宾语疑问句','间接疑问句','嵌入式疑问句与多重疑问结构'],
+    ['动词不定式与动名词','不定式作主语、宾语与表语','不定式作定语与状语','疑问词 + 不定式','动名词作主语、宾语与表语','只能接不定式的动词','只能接动名词的动词','不定式与动名词含义差异','完成式与被动式'],
+    ['从句','名词性从句：主语、宾语、表语、同位语从句','定语从句：关系代词与关系副词','限制性与非限制性定语从句','介词 + 关系代词与 whose / of which','状语从句：时间、地点、原因','状语从句：条件、让步、目的、结果','比较状语从句','从句省略与简化','复合句嵌套与从句识别']
+  ]},
+  {title:'其他语法知识点',items:[
+    ['词性与句子成分','名词、动词、形容词、副词','代词与限定词','介词、连词与感叹词','主语、谓语、宾语、补语、定语、状语'],
+    ['句子结构','五种基本句型','简单句、并列句与复合句','陈述句、祈使句与感叹句','主谓一致','语序与强调信息位置'],
+    ['名词与冠词','可数名词与不可数名词','名词复数与所有格','a / an / the 的用法','零冠词与冠词特殊用法'],
+    ['代词','人称代词与物主代词','反身代词与相互代词','指示代词与不定代词','复合不定代词与代词指代'],
+    ['形容词与副词','形容词作定语、表语与补语','副词的位置与类型','原级、比较级与最高级','比较结构与倍数表达'],
+    ['介词与连词','时间、地点与方式介词','介词搭配与介词短语','并列连词与从属连词','连接词与逻辑关系'],
+    ['被动语态','一般时态的被动语态','完成时与进行时的被动语态','情态动词的被动语态','get-passive 与主动被动转换'],
+    ['非谓语动词补充','现在分词与过去分词','分词作定语、状语与补语','独立主格结构','非谓语动词的逻辑主语与语态'],
+    ['特殊句式','倒装句：全部倒装与部分倒装','强调句型 it is / was ... that','省略句与替代表达','There be 句型','同位语与插入语']
+  ]}
+];
+function renderGrammarTopics(){
+  const host = $('grammarTopics'); if (!host) return;
+  host.innerHTML = GRAMMAR_SECTIONS.map(section => `<section class="grammar-section"><div class="grammar-section-title">${esc(section.title)}</div>${section.items.map(group => `<div style="font-size:13px;font-weight:700;color:#64736b;margin:11px 1px 7px;">${esc(group[0])}</div><div class="grammar-topic-grid">${group.slice(1).map(topic => `<button class="grammar-topic" type="button" onclick="generateGrammarTopic('${esc(topic).replace(/'/g,"\\'")}')">${esc(topic)}</button>`).join('')}</div>`).join('')}</section>`).join('');
+}
+async function generateGrammarTopic(topic){
+  if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
+  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  batchRunning = true;
+  $('infoTitle').textContent = topic;
+  $('infoBody').innerHTML = '<div style="text-align:center;padding:26px;color:#87958d;">AI 正在整理语法知识…</div>';
+  $('infoFavorite').style.display = 'none'; $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
+  $('infoModal').classList.add('active');
+  try{
+    const prompt = `请用中文为英语学习者系统讲解英语语法知识点“${topic}”。内容要准确、结构清楚，包含：核心概念、基本结构/公式、主要用法、易错点、至少 3 个英文例句及中文翻译、必要时的对比。不要泛泛而谈。以 JSON 对象输出，字段必须为 word（标题，使用“${topic}”）、category（固定为“语法”）、summary（概念）、structure（结构/公式）、usage（主要用法与说明）、example（多组英文例句及翻译，可用换行）、notes（易错点与对比）。只输出 JSON，不要 Markdown 代码围栏。`;
+    const raw = await callAI([{role:'user',content:prompt}]);
+    const parsed = parseAIJson(raw,'object');
+    const card = normalizeCardData({...parsed,word:parsed.word || topic,category:'语法'},'语法');
+    pendingPreviewCards = [card];
+    showGeneratedPreview(`语法预览 · ${topic}`,pendingPreviewCards);
+  }catch(e){
+    $('infoTitle').textContent = `${topic} · 生成失败`;
+    $('infoBody').innerHTML = `<div style="color:#c45b56;">${esc(e.message || 'AI 生成失败')}</div>`;
+    $('infoFavorite').style.display = 'none';
+  }finally{ batchRunning = false; }
+}
+
+/* 卡片分组管理 */
+function createCardGroup(){
+  const category = $('groupCategory').value;
+  const name = $('groupName').value.trim();
+  const limit = Math.max(0, Number($('groupLimit').value || 0));
+  if (!name) { showToast('请填写分组名称'); return; }
+  if (cardGroups.some(g => g.category === category && g.name.toLowerCase() === name.toLowerCase())) { showToast('该类别已存在同名分组'); return; }
+  cardGroups.push({id:'g-' + Date.now() + '-' + Math.floor(Math.random()*1000),category,name,limit,isDefault:false});
+  persistGroups(); $('groupName').value=''; $('groupLimit').value=''; renderGroupManager(); renderCards(); showToast('分组已创建');
+}
+function removeCardGroup(id){
+  const g = getCardGroup(id); if (!g || g.isDefault) return;
+  const fallback = defaultGroupId(g.category);
+  words.forEach(w => { if (w.groupId === id) w.groupId = fallback; });
+  cardGroups = cardGroups.filter(x => x.id !== id);
+  persistGroups(); safeSet('wm_words',JSON.stringify(words)); renderGroupManager(); renderCards(); showToast('分组已删除，卡片已移至默认分组');
+}
+function renderGroupManager(){
+  const host = $('groupManagerList'); if (!host) return;
+  host.innerHTML = cardGroups.map(g => `<div class="group-manager-row"><strong>${esc(g.category)} · ${esc(g.name)}</strong><span class="group-meta">${countInGroup(g.id)}${g.limit ? '/' + g.limit : ''}</span>${g.isDefault ? '<span class="group-meta">默认</span>' : `<button class="group-remove" type="button" onclick="removeCardGroup('${esc(g.id)}')">删除</button>`}</div>`).join('');
+}
+function saveWord(data){
+  data = normalizeCardData(data, data.category || '单词');
+  if (words.find(w => String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category)) return false;
+  if (!groupHasRoom(data.groupId)) { showToast(`“${getCardGroup(data.groupId)?.name || '该分组'}”已达到数量上限`); return false; }
+  data.id = Date.now() + Math.floor(Math.random() * 1000);
+  data.time = nowStr();
+  words.push(data);
+  safeSet('wm_words', JSON.stringify(words));
+  renderCards();
+  return true;
+}
+function renderCards(){
+  const container = $('cardsContainer'); if (!container) return;
+  ensureCardGroups();
+  if (!words.length) { container.innerHTML = '<div class="empty-state" style="margin-top:48px;">暂无卡片，去录入或语法中生成内容吧</div>'; return; }
+  container.innerHTML = CARD_CATEGORIES.map(category => {
+    const categoryCards = words.filter(w => (w.category || '单词') === category);
+    if (!categoryCards.length) return '';
+    const groupHtml = groupsFor(category).map(group => {
+      const entries = categoryCards.filter(w => (w.groupId || defaultGroupId(category)) === group.id).slice().reverse();
+      if (!entries.length) return '';
+      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></div>${entries.map(w => `<div class="card-directory-item" role="button" tabindex="0" onclick="openCardDetail(${Number(w.id)})" onkeydown="if(event.key==='Enter')openCardDetail(${Number(w.id)})"><div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(w.cn || w.summary || w.collins || w.example || '点击查看卡片内容')}</div></div><div class="card-directory-arrow">›</div></div>`).join('')}</div>`;
+    }).join('');
+    return `<section class="card-category"><div class="card-category-head">${category}<span>${categoryCards.length} 张</span></div>${groupHtml}</section>`;
+  }).join('');
+}
+function cardDetailHtml(card){
+  const category = card.category || '单词';
+  const groupOpts = groupsFor(category).map(g => `<option value="${esc(g.id)}" ${g.id === (card.groupId || defaultGroupId(category)) ? 'selected' : ''}>${esc(g.name)}${g.limit ? ` · ${countInGroup(g.id)}/${g.limit}` : ''}</option>`).join('');
+  const fields = [
+    ['柯林斯释义',card.collins,'en'],['中文释义',card.cn,''],['例句',card.example,'en'],['同义词',card.syn,''],['反义词',card.ant,''],
+    ['知识概要',card.summary,''],['结构',card.structure,'en'],['用法',card.usage,''],['注意事项',card.notes,'']
+  ].filter(x => x[1]);
+  return `<div class="card-detail-view" data-card-id="${card.id}"><div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic ? `<div class="word-phonetic">${esc(card.phonetic)}</div>` : ''}${card.syllable ? `<div class="word-syllable">${esc(card.syllable)}</div>` : ''}${category === '单词' ? `<div class="pron-row"><button class="pron-btn" onclick="speak('${esc(card.word).replace(/'/g,"\\'")}',2)">美音</button><button class="pron-btn" onclick="speak('${esc(card.word).replace(/'/g,"\\'")}',1)">英音</button></div>` : ''}</div></div><div class="card-body">${fields.map(([label,value,lang]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div><div class="card-detail-group"><span>分类分组</span><select onchange="changeCardGroup(${card.id},this.value)">${groupOpts}</select></div><div class="card-footer">${esc(card.time || '')}</div><div class="swipe-delete-hint">向上滑动此卡片，可删除</div></div>`;
+}
+function openCardDetail(id){
+  const card = words.find(w => Number(w.id) === Number(id)); if (!card) return;
+  currentModalCardId = Number(id); pendingPreviewCards = [];
+  $('infoTitle').textContent = card.word;
+  $('infoBody').innerHTML = cardDetailHtml(card);
+  $('infoModal').classList.add('active');
+  $('infoFavorite').style.display = 'none';
+  $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
+}
+function changeCardGroup(id,newGroupId){
+  const card = words.find(w => Number(w.id) === Number(id)); const group = getCardGroup(newGroupId);
+  if (!card || !group || group.category !== (card.category || '单词')) return;
+  if (!groupHasRoom(newGroupId,id)) { showToast('目标分组已达到数量上限'); openCardDetail(id); return; }
+  card.groupId = newGroupId; safeSet('wm_words',JSON.stringify(words)); renderCards(); renderGroupManager(); showToast('卡片分组已更新');
+}
+function requestDeleteCard(id){
+  if (!words.some(w => Number(w.id) === Number(id))) return;
+  pendingDeleteCardId = Number(id); $('deleteConfirm').style.display = 'flex';
+}
+function cancelDeleteCard(){ pendingDeleteCardId = null; $('deleteConfirm').style.display = 'none'; }
+function confirmDeleteCard(){
+  if (pendingDeleteCardId == null) return;
+  const id = pendingDeleteCardId;
+  words = words.filter(w => Number(w.id) !== id);
+  safeSet('wm_words',JSON.stringify(words));
+  pendingDeleteCardId = null; $('deleteConfirm').style.display = 'none';
+  $('infoModal').classList.remove('active'); currentModalCardId = null;
+  renderCards(); renderGroupManager(); updateStatsUI(); showToast('卡片已删除');
+}
+function deleteWord(id){ requestDeleteCard(id); }
+
+/* 通用信息弹窗，兼容原有单词查询/清单分析 */
+function showInfo(title,html,word){
+  $('infoTitle').innerText = title;
+  $('infoBody').innerHTML = html;
+  $('infoModal').classList.add('active');
+  $('infoFavorite').style.display = 'none';
+  const sp = $('infoSpeak'), ad = $('infoAdd');
+  sp.style.display = ad.style.display = word ? '' : 'none';
+  sp.dataset.w = ad.dataset.w = word || '';
+  if (word && ad.dataset.state !== 'busy') { ad.innerText = '加入卡片'; ad.disabled = false; }
+}
+function closeInfoModal(){
+  $('infoModal').classList.remove('active');
+  $('infoFavorite').style.display = 'none';
+  stopSpeak();
+}
+
+/* 删除卡片完全使用自定义 UI；保留原生 confirm 只用于其他既有操作 */
+function updateStatsUI(){
+  if ($('stat-api-calls')) $('stat-api-calls').innerText = stats.apiCalls || 0;
+  if ($('stat-tokens')) $('stat-tokens').innerText = stats.tokens || 0;
+  if ($('stat-words')) $('stat-words').innerText = words.length;
+  if ($('stat-checks')) $('stat-checks').innerText = checklist.length;
+}
+
+/* 休息记录独立于上下班打卡，可单独开始/结束并持续保存 */
+function getTodayAttendance(){
+  const key = dayKey();
+  if (!attendance[key]) attendance[key] = {in:null,out:null,sched:null,late:0,breaks:[]};
+  if (!Array.isArray(attendance[key].breaks)) attendance[key].breaks = [];
+  return attendance[key];
+}
+function toggleBreak(){
+  const rec = getTodayAttendance(); const active = openBreak(rec);
+  if (active) active.e = Date.now(); else rec.breaks.push({s:Date.now()});
+  saveAtt(); renderRestUI();
+}
+function renderRestUI(){
+  const status = $('restStatus'); if (!status) return;
+  const rec = attendance[dayKey()];
+  const now = Date.now(); const breaks = rec && Array.isArray(rec.breaks) ? rec.breaks : [];
+  const active = rec ? openBreak(rec) : null;
+  let totalMs = 0;
+  breaks.forEach(b => { totalMs += Math.max(0,(b.e || now) - b.s); });
+  const mins = Math.floor(totalMs / 60000);
+  $('restSummary').textContent = `今日 ${breaks.length} 次 · 共 ${fmtDur(totalMs/60000)}`;
+  if (active){
+    status.textContent = `正在休息 · 已 ${fmtDur((now-active.s)/60000)}`;
+    $('restButton').textContent = '结束休息'; $('restButton').classList.add('running');
+  } else {
+    status.textContent = breaks.length ? `最近一次 ${fmtHM(breaks[breaks.length-1].e || breaks[breaks.length-1].s)}` : '今天还没有休息记录';
+    $('restButton').textContent = '开始休息'; $('restButton').classList.remove('running');
+  }
+  $('restHistory').textContent = breaks.length ? breaks.map((b,i) => `${i+1}. ${fmtHM(b.s)} – ${b.e ? fmtHM(b.e) : '进行中'}（${fmtDur(((b.e || now)-b.s)/60000)}）`).join('　') : '开始休息后，将自动记录每次休息的时间与时长。';
+}
+function tick(){
+  const d = new Date();
+  $('live-clock').innerText = d.toLocaleTimeString('zh-CN',{hour12:false});
+  $('live-date').innerText = d.toLocaleDateString('zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const fmt = ts => ts ? new Date(ts).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false}) : '--:--';
+  let log = '今日暂无出入记录';
+  if (outTs || homeTs){
+    log = `出门：${fmt(outTs)} | 回家：${fmt(homeTs)}`;
+    if (outTs && homeTs && homeTs > outTs){ const diff=Math.floor((homeTs-outTs)/60000); log += `<br>在外时长：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`; }
+    else if (outTs && (!homeTs || homeTs < outTs)){ const diff=Math.floor((Date.now()-outTs)/60000); log += `<br>已出门：${Math.floor(diff/60)} 小时 ${diff%60} 分钟`; }
+  }
+  $('clock-log').innerHTML = log;
+  renderRestUI();
+}
+function buildAttendanceLines(){
+  const keys = Object.keys(attendance).sort().slice(-30); const now = Date.now();
+  return keys.map(k => { const rec=attendance[k]; const bt=breakTotals(rec,rec.out||now); return `${k}：休息 ${bt.n} 次，共 ${Math.round(bt.ms/60000)} 分钟`; });
+}
+async function analyzeWork(){
+  const lines = buildAttendanceLines();
+  const restLines = lines.filter(x => !x.endsWith('休息 0 次，共 0 分钟'));
+  if (!restLines.length){ showInfo('AI 休息分析','目前还没有有效休息记录。'); return; }
+  showInfo('AI 休息习惯分析','<div style="text-align:center;padding:20px;color:#888;">正在分析…</div>');
+  if (!apiKey){
+    const total = Object.keys(attendance).reduce((sum,k)=>sum+breakTotals(attendance[k],attendance[k].out||Date.now()).ms,0);
+    showInfo('休息习惯分析',`<p>已记录 ${restLines.length} 天的休息数据。</p><p>累计休息 ${fmtDur(total/60000)}。</p><p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>`); return;
+  }
+  try{
+    const res = await callAI([{role:'user',content:`以下是最近的休息记录：\n${restLines.join('\n')}\n请分析休息频率、时长与规律，并给出简短可执行建议。中文输出，控制在 150 字以内。`}]);
+    showInfo('AI 休息习惯分析',esc(res).replace(/\n/g,'<br>'));
+  }catch(e){ showInfo('AI 休息习惯分析',`<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
+}
+
+/* 导入导出兼容新分组字段；原有数据保持可恢复 */
+function exportData(){
+  const data = {words,checklist,stats,attendance,workStart,cardGroups,exportTime:new Date().toISOString()};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=`word_memory_backup_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url);
+}
+function importData(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.words && data.checklist){
+        words=Array.isArray(data.words)?data.words:[]; checklist=Array.isArray(data.checklist)?data.checklist:[];
+        stats=data.stats||{apiCalls:0,tokens:0}; if(data.attendance) attendance=data.attendance;
+        if(data.workStart) workStart=data.workStart;
+        cardGroups=Array.isArray(data.cardGroups)?data.cardGroups:cardGroups;
+        ensureCardGroups(); safeSet('wm_checklist',JSON.stringify(checklist)); safeSet('wm_stats',JSON.stringify(stats)); safeSet('wm_attendance',JSON.stringify(attendance));
+        renderCards();renderGroupManager();renderChecklist();renderRestUI();updateStatsUI();
+        showToast('数据恢复成功');
+      }else showToast('文件格式不正确');
+    }catch(err){showToast('读取文件失败');}
+  };
+  reader.readAsText(file); event.target.value='';
+}
+
+
+/* 启动 */
+init();
+</script>
+</body>
+</html>
