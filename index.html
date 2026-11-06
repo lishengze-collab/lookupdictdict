@@ -497,9 +497,9 @@ button{font-family:inherit;}
 
 
 #infoModal .modal-content{height:86vh;height:86dvh;}
-#infoBody.card-detail-carousel{display:flex;flex-direction:row;align-items:stretch;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:6%;padding:8px 6%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-#infoBody.card-detail-carousel::-webkit-scrollbar{display:none;}
-.card-detail-slide{flex:0 0 88%;width:88%;min-width:0;height:100%;scroll-snap-align:center;scroll-snap-stop:always;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;background:#fff;border-radius:18px;box-shadow:0 4px 18px rgba(31,74,61,.07);}
+#infoBody.card-detail-mode{display:flex;flex-direction:row;align-items:stretch;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:6%;padding:8px 6%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+#infoBody.card-detail-mode::-webkit-scrollbar{display:none;}
+.{flex:0 0 88%;width:88%;min-width:0;height:100%;scroll-snap-align:center;scroll-snap-stop:always;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;background:#fff;border-radius:18px;box-shadow:0 4px 18px rgba(31,74,61,.07);}
 .card-detail-view{min-height:100%;padding:5px 13px 12px;}
 .card-detail-view .card-body{overflow:visible;min-height:0;}
 .card-detail-view .word-phonetic{font-size:18px;}
@@ -539,6 +539,35 @@ button{font-family:inherit;}
 .group-picker-empty{font-size:12px;line-height:1.6;color:var(--text-muted);padding:10px 0;}
 .group-picker-create{padding:10px 14px;border:0;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;}
 
+
+/* V5 input status + inline preview */
+#tab-input{display:flex;flex-direction:column;min-height:0;overflow-y:auto;}
+#tab-input .recognize-status-bar{position:sticky;top:0;z-index:12;flex:0 0 48px;height:48px;min-height:48px;display:flex;align-items:center;gap:9px;padding:0 12px;margin:0 -2px 10px;border:1px solid #e6ede9;border-radius:13px;background:rgba(245,247,246,.97);box-shadow:0 3px 12px rgba(31,74,61,.05);backdrop-filter:blur(12px);}
+.recognize-dot{width:8px;height:8px;flex:none;border-radius:50%;background:#aab5af;}
+.recognize-dot.loading{background:#d99a36;box-shadow:0 0 0 4px rgba(217,154,54,.12);animation:pulse 1s infinite;}
+.recognize-dot.done{background:#35a36d;}.recognize-dot.fail{background:#d95b56;}
+#recognizeTitle{flex:none;font-size:13px;font-weight:750;color:var(--primary);}
+#recognizeMessage{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--text-muted);text-align:right;}
+.recognition-preview{flex:1;min-height:0;padding:2px 0 18px;overflow:visible;}
+.recognition-preview .preview-card{background:#fff;border:1px solid #e9efec;box-shadow:var(--shadow);}
+.recognition-preview .preview-card-title{font-size:18px;}
+.preview-group-row{display:flex;align-items:center;gap:9px;justify-content:space-between;flex-wrap:wrap;}
+.preview-group-row label{font-size:12px;font-weight:700;color:var(--primary);white-space:nowrap;}
+.preview-group-select{flex:1;min-width:0;max-width:78%;padding:8px 10px;border:1px solid #dce6e0;border-radius:10px;background:#f9fbfa;color:var(--text-main);font:inherit;font-size:12px;}
+/* Modal itself is the card. Horizontal swipe animates its single content layer. */
+#infoModal .modal-content{width:100%;height:86vh;height:86dvh;max-height:86vh;max-height:86dvh;padding:18px 17px 15px;overflow:hidden;}
+#infoBody.card-detail-mode{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
+#infoBody .card-detail-content{min-height:100%;display:flex;flex-direction:column;background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;}
+#infoBody .card-detail-content .card-header{flex:none;}
+#infoBody .card-detail-content .card-body{flex:none;overflow:visible;font-size:18px;line-height:1.75;}
+#infoBody .card-detail-content .sec-label{font-size:14px;}
+#infoBody .card-detail-content .sec-body{font-size:18px;line-height:1.75;}
+#infoBody .card-detail-content .word-big{font-size:40px;}
+#infoBody .card-detail-content .word-phonetic{font-size:18px;}
+#infoBody .card-detail-content .word-syllable{font-size:17px;}
+#infoBody .card-detail-content .card-footer{font-size:14px;}
+@media(max-width:370px){#recognizeMessage{font-size:10px;}}
+
 </style>
 </head>
 <body>
@@ -546,7 +575,11 @@ button{font-family:inherit;}
 
   <!-- ================= TAB 1 录入 ================= -->
   <div class="content active" id="tab-input">
-    <div id="recognizeStatus"><div class="empty-hint">粘贴内容后，点击放大镜进行 AI 识别</div></div>
+    <div class="recognize-status-bar" id="recognizeStatus" role="status" aria-live="polite">
+      <span class="recognize-dot" id="recognizeDot"></span><strong id="recognizeTitle">等待识别</strong>
+      <span id="recognizeMessage">粘贴内容后，点击放大镜进行 AI 识别</span>
+    </div>
+    <div class="recognition-preview" id="recognitionPreview"><div class="empty-hint">AI 识别结果会显示在这里</div></div>
   </div>
 
   <!-- 固定底部录入区：输入框与工作条一体化 -->
@@ -703,29 +736,6 @@ button{font-family:inherit;}
     </div>
   </div>
 
-  <div class="delete-confirm-overlay" id="deleteConfirm" style="display:none;">
-    <div class="delete-confirm" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
-      <div class="delete-confirm-symbol">!</div>
-      <div class="delete-confirm-copy"><strong id="deleteConfirmTitle">确认删除这张卡片？</strong><span id="deleteConfirmDescription">卡片将从当前分组和目录中移除。</span></div>
-      <div class="delete-confirm-actions">
-        <button type="button" class="delete-cancel" onclick="cancelDeleteCard()">取消</button>
-        <button type="button" class="delete-accept" onclick="confirmDeleteCard()">确认删除</button>
-      </div>
-    </div>
-  </div>
-  <div class="delete-hold-indicator" id="deleteHoldIndicator" style="display:none;" aria-live="polite">
-    <div class="delete-hold-ring"><span id="deleteHoldSeconds">5</span></div>
-    <strong>保持不动</strong><span>持续停留 5 秒后进入删除确认</span>
-  </div>
-
-  <div class="group-picker-overlay" id="groupPickerModal" style="display:none;">
-    <div class="group-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="groupPickerTitle">
-      <div class="group-picker-header"><strong id="groupPickerTitle">选择收藏分组</strong><button type="button" onclick="closeCardGroupPicker()" aria-label="关闭">×</button></div>
-      <div class="group-picker-desc">请为每张卡片指定所属分组，未选择前不会自动归入默认分组。</div>
-      <div class="group-picker-list" id="groupPickerList"></div>
-      <div class="group-picker-actions"><button type="button" class="btn-outline" onclick="closeCardGroupPicker()">取消</button><button type="button" class="btn-primary" onclick="confirmSavePendingCards()">确认收藏</button></div>
-    </div>
-  </div>
   <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
 </div>
 
@@ -808,25 +818,26 @@ function switchTab(tabId){
    通用 API 调用
 ========================================================= */
 async function callAI(messages){
-  if (!apiKey) throw new Error('请先在“设置与统计”中填写 API Key');
-  let data;
-  try {
-    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer ' + apiKey},
-      body: JSON.stringify({model:'deepseek-chat', messages, temperature:0.6})
+  if(!apiKey)throw new Error('请先在“设置与统计”中填写 DeepSeek API Key');
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),90000);
+  try{
+    const response=await fetch('https://api.deepseek.com/v1/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'deepseek-chat',messages,temperature:0.25}),signal:controller.signal
     });
-    data = await res.json();
-  } catch (e) {
-    throw new Error('网络请求失败');
-  }
-  stats.apiCalls++;
-  stats.tokens += Math.round(JSON.stringify(messages).length / 2) + 300;
-  saveStats();
-  if (!data.choices || !data.choices.length){
-    throw new Error((data.error && data.error.message) || 'API 返回异常');
-  }
-  return data.choices[0].message.content;
+    const text=await response.text();let data;
+    try{data=text?JSON.parse(text):null;}catch(e){throw new Error(`API 返回的不是有效 JSON（HTTP ${response.status}）`);}
+    if(!response.ok){const msg=data&&data.error&&data.error.message;throw new Error(msg||`API 请求失败（HTTP ${response.status}）`);}
+    if(!data||!Array.isArray(data.choices)||!data.choices.length){const msg=data&&data.error&&data.error.message;throw new Error(msg||'API 没有返回 choices，请检查 Key、额度或模型权限');}
+    let content=data.choices[0].message&&data.choices[0].message.content;
+    if(Array.isArray(content))content=content.map(x=>x.text||'').join('');
+    if(typeof content!=='string'||!content.trim())throw new Error('AI 返回内容为空，请重新识别');
+    stats.apiCalls++;stats.tokens+=Math.round(JSON.stringify(messages).length/2)+300;saveStats();return content.trim();
+  }catch(e){
+    if(e&&e.name==='AbortError')throw new Error('AI 请求超过 90 秒仍未完成，请检查网络后重试');
+    if(e instanceof TypeError)throw new Error('网络连接失败，无法访问 DeepSeek API');
+    throw e;
+  }finally{clearTimeout(timeout);}
 }
 
 /* =========================================================
@@ -1007,7 +1018,6 @@ async function addLookupWord() {
         pendingPreviewCards = [normalizeCardData(generated, '单词')];
         btn.dataset.state = '';
         showGeneratedPreview('单词预览 · ' + w, pendingPreviewCards);
-        openCardGroupPicker();
         updateStatsUI();
     } catch (e) {
         btn.innerText = '加入卡片';
@@ -1714,11 +1724,9 @@ let cardGroups = load('wm_card_groups', []);
 let pendingPreviewCards = [];
 let pendingDeleteCardIds = [];
 let currentModalCardId = null;
-let pendingGroupSelections = [];
 let batchDeleteMode = false;
 let selectedCardIds = new Set();
-let carouselScrollTimer = null;
-let deleteHoldStartedAt = 0;
+let cardSwipeAnimating = false;
 let toastTimer = null;
 let cardGesture = null;
 let deleteHoldTimer = null;
@@ -1762,28 +1770,18 @@ function showToast(message){
 }
 
 function init(){
-  $('apiKeyInput').value = apiKey;
-  ensureCardGroups();
-  cleanupPhotos();
-  renderGrammarTopics();
-  renderCards();
-  renderGroupManager();
-  renderChecklist();
-  updateStatsUI();
-  tick();
-  setInterval(tick, 1000);
-  setInterval(() => { cleanupPhotos(); renderChecklist(); renderRestUI(); }, 60000);
-  $('batchInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); triggerSearch(); }
+  $('apiKeyInput').value=apiKey;ensureCardGroups();cleanupPhotos();renderGrammarTopics();
+  renderCards();renderGroupManager();renderChecklist();updateStatsUI();
+  renderRecognitionStatus('粘贴内容后，点击放大镜进行 AI 识别');
+  tick();setInterval(tick,1000);setInterval(()=>{cleanupPhotos();renderChecklist();renderRestUI();},60000);
+  $('batchInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();triggerSearch();}});
+  $('batchInput').addEventListener('input',()=>{
+    if(pendingPreviewCards.length){pendingPreviewCards=[];$('recognitionPreview').innerHTML='<div class="empty-hint">内容已修改，请重新点击放大镜识别</div>';renderRecognitionStatus('输入内容已修改，需要重新识别');}
   });
-  const gestureHost = $('infoBody');
-  gestureHost.addEventListener('touchstart', onCardTouchStart, {passive:true});
-  gestureHost.addEventListener('touchmove', onCardTouchMove, {passive:false});
-  gestureHost.addEventListener('touchend', onCardTouchEnd, {passive:true});
-  gestureHost.addEventListener('touchcancel', cancelCardGesture, {passive:true});
-  gestureHost.addEventListener('scroll', onCardCarouselScroll, {passive:true});
+  const host=$('infoBody');host.addEventListener('touchstart',onCardTouchStart,{passive:true});
+  host.addEventListener('touchmove',onCardTouchMove,{passive:false});host.addEventListener('touchend',onCardTouchEnd,{passive:true});
+  host.addEventListener('touchcancel',cancelCardGesture,{passive:true});
 }
-
 function switchTab(tabId){
   document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1800,128 +1798,131 @@ function switchTab(tabId){
 
 /* 录入：搜索只负责 AI 识别与预览，收藏才真正写入卡片 */
 function clearBatch(){
-  $('batchInput').value = '';
-  $('batchInput').focus();
-  pendingPreviewCards = [];
-  showToast('输入内容已清空');
+  $('batchInput').value='';pendingPreviewCards=[];
+  $('recognitionPreview').innerHTML='<div class="empty-hint">AI 识别结果会显示在这里</div>';
+  renderRecognitionStatus('内容已清空，等待下一次识别');$('batchInput').focus();
 }
-function triggerSearch(){ analyzeInput(false); }
-async function favoriteFromToolbar(){
-  if (pendingPreviewCards.length) { openCardGroupPicker(); return; }
-  if (!$('batchInput').value.trim()) { showToast('请先粘贴或输入学习内容'); return; }
-  // 首次点击只生成预览；必须再次收藏并手动选择分组后才写入卡片。
-  await analyzeInput(false);
+function triggerSearch(){analyzeInput();}
+function favoriteFromToolbar(){
+  if(!pendingPreviewCards.length){showToast('请先点击放大镜完成 AI 识别');return;}
+  savePendingCards();
 }
-function parseAIJson(text, fallbackType){
-  const cleaned = String(text || '').replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
-  const candidates = [cleaned, (cleaned.match(fallbackType === 'array' ? /\[[\s\S]*\]/ : /\{[\s\S]*\}/) || [])[0]].filter(Boolean);
-  for (const c of candidates){ try { return JSON.parse(c); } catch(e){} }
-  throw new Error('AI 返回内容解析失败，请重试');
+function parseAIJson(raw){
+  const cleaned=String(raw||'').replace(/^\uFEFF/,'').replace(/```(?:json)?/gi,'').replace(/```/g,'').trim();
+  if(!cleaned)throw new Error('AI 返回内容为空，请重新识别');
+  const parse=s=>{try{return JSON.parse(s);}catch(e){return null;}};
+  let obj=parse(cleaned);
+  if(!obj){const a=(cleaned.match(/\[[\s\S]*\]/)||[])[0],o=(cleaned.match(/\{[\s\S]*\}/)||[])[0];obj=(a&&parse(a))||(o&&parse(o));}
+  if(Array.isArray(obj))return obj;
+  if(obj&&typeof obj==='object'){
+    const nested=obj.cards||obj.items||obj.results||obj.data||obj.words;
+    if(Array.isArray(nested))return nested;
+    if(obj.word||obj.title||obj.topic)return [obj];
+  }
+  throw new Error('AI 返回格式无法解析，请再次点击搜索');
 }
-function normalizeCardData(data, categoryFallback){
-  const d = {...data};
-  d.word = String(d.word || d.title || d.topic || '未命名卡片').trim();
-  d.category = CARD_CATEGORIES.includes(d.category) ? d.category : (categoryFallback || '单词');
-  const selectedGroup = d.groupId ? getCardGroup(d.groupId) : null;
-  if (!selectedGroup || selectedGroup.category !== d.category) d.groupId = '';
+function normalizeCardData(data,fallback){
+  const d={...data};d.word=String(d.word||d.title||d.topic||'').trim();
+  if(!d.word)throw new Error('AI 返回了没有标题的内容，请重新识别');
+  let cat=String(d.category||fallback||'单词').trim();if(cat==='其他')cat='其它';
+  d.category=CARD_CATEGORIES.includes(cat)?cat:(fallback||'单词');
+  const g=d.groupId?getCardGroup(d.groupId):null;if(!g||g.category!==d.category)d.groupId=defaultGroupId(d.category);
   return d;
 }
-async function analyzeInput(autoSave){
-  const text = $('batchInput').value.trim();
-  if (!text) { showToast('请先粘贴或输入学习内容'); return; }
-  if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
-  batchRunning = true;
-  $('recognizeStatus').innerHTML = '<div class="status-item"><div class="dot loading"></div><div class="st-word">AI 识别中</div><div class="st-msg">正在整理知识点…</div></div>';
+async function analyzeInput(){
+  const input=$('batchInput').value.trim();
+  if(!input){showToast('请先粘贴或输入学习内容');renderRecognitionStatus('没有输入内容',true);return;}
+  if(batchRunning){showToast('AI 正在处理，请勿重复点击');return;}
+  if(!apiKey){renderRecognitionStatus('请先在清单底部设置 DeepSeek API Key',true);showToast('请先填写 API Key');return;}
+  batchRunning=true;pendingPreviewCards=[];
+  $('recognitionPreview').innerHTML='<div class="empty-hint">正在分析内容，请稍候…</div>';
+  renderRecognitionStatus('正在调用 AI，整理单词、语法及其它知识点','loading');
   try{
-    const prompt = `你是一名专业英语词汇与学习卡片整理助手。请分析用户提供的英语学习材料，提取最值得记忆的单词或短语；若输入本身是一条知识点或非单词学习内容，也可以整理为“其它”卡片。最多生成 20 张卡片，去重，按原材料重要性排序。每张卡片必须包含字段：word（卡片标题）、category（只能为“单词”或“其它”）、phonetic、syllable、collins（简明英文释义）、cn（中文释义/说明）、example（英文例句及中文翻译）、syn、ant。材料中没有对应内容的字段填空字符串。只返回 JSON 数组，不要 Markdown，不要解释。\n\n材料：\n${text.slice(0,9000)}`;
-    const raw = await callAI([{role:'user',content:prompt}]);
-    let data = parseAIJson(raw,'array');
-    if (!Array.isArray(data)) data = [data];
-    pendingPreviewCards = data.slice(0,20).map(d => normalizeCardData(d, '单词'));
-    if (!pendingPreviewCards.length) throw new Error('没有识别到可创建的卡片');
-    renderRecognitionStatus(`识别完成 · ${pendingPreviewCards.length} 项，收藏后写入卡片`);
-    showGeneratedPreview('AI 识别预览', pendingPreviewCards);
-    if (autoSave) savePendingCards();
+    ensureCardGroups();
+    const prompt=`你是一名专业英语词汇、语法与学习卡片整理助手。请从用户材料提取独立学习知识点。
+规则：
+1. 最多20条，去重排序；即使只有一条，也返回含一条对象的 JSON 数组。
+2. 每条含 word 标题、category 类别。category 只允许“单词”“语法”“其它”：单词和短语选“单词”；语法规则、句型、时态、从句等选“语法”；其他选“其它”。
+3. 其它字段可包括 phonetic、syllable、collins、cn、example、syn、ant、summary、structure、usage、notes；没有内容时用空字符串。
+4. 只返回合法 JSON 数组，不要 Markdown 或说明。
+示例：[{"word":"abandon","category":"单词","phonetic":"","syllable":"","collins":"to leave behind","cn":"放弃","example":"","syn":"","ant":""}]
+材料：
+${input.slice(0,9000)}`;
+    const raw=await callAI([{role:'user',content:prompt}]);
+    const parsed=parseAIJson(raw),items=Array.isArray(parsed)?parsed:[parsed];
+    pendingPreviewCards=items.filter(x=>x&&typeof x==='object').slice(0,20).map(x=>normalizeCardData(x,'单词'));
+    if(!pendingPreviewCards.length)throw new Error('没有识别到可创建的内容，请补充英文单词或学习材料');
+    renderGeneratedPreviewInline(pendingPreviewCards);
+    renderRecognitionStatus(`识别完成 · 共 ${pendingPreviewCards.length} 项，检查分组后点击收藏`,'done');
   }catch(e){
-    pendingPreviewCards = [];
-    renderRecognitionStatus('识别失败 · ' + (e.message || '请重试'), true);
-    showToast(e.message || 'AI 识别失败');
-  }finally{ batchRunning = false; }
+    pendingPreviewCards=[];$('recognitionPreview').innerHTML='<div class="empty-hint">本次没有生成预览，请检查输入后重试</div>';
+    renderRecognitionStatus(e.message||'AI 识别失败，请重试',true);showToast(e.message||'AI 识别失败');
+  }finally{batchRunning=false;}
 }
-function renderRecognitionStatus(message, failed){
-  $('recognizeStatus').innerHTML = `<div class="status-item"><div class="dot ${failed ? 'fail' : 'done'}"></div><div class="st-word">${failed ? '识别未完成' : '识别结果'}</div><div class="st-msg">${esc(message)}</div></div>`;
+function renderRecognitionStatus(message,state){
+  const dot=$('recognizeDot'),title=$('recognizeTitle'),detail=$('recognizeMessage');if(!dot||!title||!detail)return;
+  dot.className='recognize-dot'+(state==='loading'?' loading':state===true?' fail':state==='done'?' done':'');
+  title.textContent=state==='loading'?'AI 识别中':state===true?'识别未完成':state==='done'?'识别完成':'识别状态';
+  detail.textContent=message||'';
 }
 function renderPreviewBody(card){
-  const fields = [
-    ['音标',card.phonetic],['音节',card.syllable],['英文释义',card.collins],['中文释义',card.cn],['例句',card.example],['同义词',card.syn],['反义词',card.ant],
-    ['知识概要',card.summary],['结构',card.structure],['用法',card.usage],['注意事项',card.notes]
-  ].filter(x => x[1]);
-  return fields.map(([label,value]) => `<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body">${esc(value)}</div></div>`).join('');
+  const fields=[['音标',card.phonetic],['音节',card.syllable],['英文释义',card.collins],['中文释义',card.cn],['例句',card.example],['同义词',card.syn],['反义词',card.ant],['知识概要',card.summary],['结构',card.structure],['用法',card.usage],['注意事项',card.notes]].filter(x=>x[1]);
+  return fields.map(([label,value])=>`<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body">${esc(value)}</div></div>`).join('');
+}
+function renderPreviewGroupOptions(card){
+  const wanted=card.groupId||defaultGroupId(card.category||'单词');
+  return CARD_CATEGORIES.map(category=>{
+    const options=cardGroups.filter(g=>g.category===category).map(g=>{
+      const selected=g.id===wanted?'selected':'',full=g.limit>0&&!groupHasRoom(g.id),count=g.limit?`${countInGroup(g.id)}/${g.limit}`:`${countInGroup(g.id)} 张`;
+      return `<option value="${esc(g.id)}" ${selected} ${full&&!selected?'disabled':''}>${esc(g.name)} · ${count}${full?' · 已满':''}</option>`;
+    }).join('');
+    return `<optgroup label="${category}">${options}</optgroup>`;
+  }).join('');
 }
 function renderGeneratedPreview(cards){
-  return cards.map(card => {
-    return `<div class="preview-card"><div class="preview-card-title">${esc(card.word)}</div>${renderPreviewBody(card)}<div class="preview-group-row"><span>${esc(card.category)} · 收藏时选择分组</span></div></div>`;
-  }).join('');
+  ensureCardGroups();
+  return cards.map((card,i)=>`<div class="preview-card" data-preview-index="${i}">
+    <div class="preview-card-title">${esc(card.word)}</div>${renderPreviewBody(card)}
+    <div class="preview-group-row"><label for="previewGroup${i}">收藏分组</label><select class="preview-group-select" id="previewGroup${i}" aria-label="${esc(card.word)} 的收藏分组">${renderPreviewGroupOptions(card)}</select></div>
+  </div>`).join('');
 }
+function renderGeneratedPreviewInline(cards){$('recognitionPreview').innerHTML=renderGeneratedPreview(cards);}
 function showGeneratedPreview(title,cards){
-  currentModalCardId = null;
-  $('infoFavorite').innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
-  $('infoTitle').textContent = title;
-  $('infoBody').innerHTML = `<div class="preview-tip" style="font-size:12px;color:#8c9992;margin-bottom:10px;">预览内容 · 点击右上角收藏图标创建卡片</div>${renderGeneratedPreview(cards)}`;
-  $('infoModal').classList.add('active');
-  $('infoFavorite').style.display = '';
-  $('infoFavorite').disabled = false;
-  $('infoFavorite').style.opacity = '1';
-  $('infoSpeak').style.display = 'none';
-  $('infoAdd').style.display = 'none';
+  currentModalCardId=null;$('infoBody').classList.remove('card-detail-mode');
+  $('infoTitle').textContent=title;
+  $('infoBody').innerHTML=`<div class="preview-tip" style="font-size:12px;color:#8c9992;margin-bottom:10px;">预览内容 · 选择每条卡片的收藏分组，再点击右上角收藏</div>${renderGeneratedPreview(cards)}`;
+  $('infoFavorite').style.display='';$('infoFavorite').disabled=false;$('infoFavorite').style.opacity='1';
+  $('infoSpeak').style.display='none';$('infoAdd').style.display='none';$('infoModal').classList.add('active');
 }
-function openCardGroupPicker(){
-  if(!pendingPreviewCards.length){showToast('没有待收藏的预览内容');return;}
-  ensureCardGroups();pendingGroupSelections=pendingPreviewCards.map(()=>'');
-  const host=$('groupPickerList'),destinations=cardGroups.filter(g=>!g.isDefault);
-  host.innerHTML=pendingPreviewCards.map((card,index)=>{
-    const choices=destinations.map(g=>{
-      const full=g.limit>0&&!groupHasRoom(g.id),n=countInGroup(g.id),capacity=g.limit?`${n}/${g.limit}`:`${n} 张`;
-      return `<button type="button" class="group-choice" data-group-id="${esc(g.id)}" ${full?'disabled':''} onclick="selectPendingGroup(${index},'${esc(g.id)}')"><span class="group-choice-category">${esc(g.category)}</span><strong>${esc(g.name)}</strong><small>${full?'已满':capacity}</small></button>`;
-    }).join('');
-    const empty=destinations.length?'':'<div class="group-picker-empty">还没有自定义分组。请先在「卡片」页创建分组，再回来选择收藏位置。</div><button type="button" class="group-picker-create" onclick="closeCardGroupPicker();switchTab(\'cards\');document.querySelector(\'.group-manager\')?.setAttribute(\'open\',\'\')">前往创建分组</button>';
-    return `<div class="group-picker-item"><strong>${index+1}. ${esc(card.word)}</strong><div class="group-choice-caption">选择保存位置（可选单词、语法或其它类别的任意自定义分组）</div><div class="group-choice-grid">${choices}</div>${empty}</div>`;
-  }).join('');
-  $('groupPickerModal').style.display='flex';
-}
-function selectPendingGroup(index,id){
-  const g=getCardGroup(id);if(!g||g.isDefault||!groupHasRoom(id)){showToast('该分组当前不可用');return;}
-  pendingGroupSelections[index]=id;
-  const item=$('groupPickerList').children[index];
-  if(item)item.querySelectorAll('.group-choice').forEach(btn=>btn.classList.toggle('selected',btn.dataset.groupId===id));
-}
-function closeCardGroupPicker(){$('groupPickerModal').style.display='none';}
-function savePendingCards(){openCardGroupPicker();}
-function confirmSavePendingCards(){
-  if(!pendingPreviewCards.length){closeCardGroupPicker();return;}
-  const selections=pendingGroupSelections.slice(0,pendingPreviewCards.length);
-  if(selections.some(v=>!v)){showToast('还有卡片未指定保存位置');return;}
+function savePendingCards(){
+  if(!pendingPreviewCards.length){showToast('没有待收藏的识别结果');return;}
+  ensureCardGroups();
+  const selections=pendingPreviewCards.map((card,i)=>{
+    const control=$('previewGroup'+i);return control&&control.value?control.value:(card.groupId||defaultGroupId(card.category||'单词'));
+  });
   const projected={},seen=new Set();
   for(let i=0;i<pendingPreviewCards.length;i++){
-    const card=pendingPreviewCards[i],g=getCardGroup(selections[i]);
-    if(!g||g.isDefault){showToast('所选分组不可用');return;}
-    const category=g.category,key=category+'::'+String(card.word).toLowerCase();
-    if(seen.has(key)||words.some(w=>String(w.word).toLowerCase()===String(card.word).toLowerCase()&&(w.category||'单词')===category))continue;
-    seen.add(key);projected[g.id]=(Object.prototype.hasOwnProperty.call(projected,g.id)?projected[g.id]:countInGroup(g.id))+1;
-    if(g.limit>0&&projected[g.id]>g.limit){showToast(`「${g.name}」容量不足，请选择其它分组`);return;}
+    const card=pendingPreviewCards[i],group=getCardGroup(selections[i]);
+    if(!group){showToast(`「${card.word}」的收藏分组不存在，请重新识别`);return;}
+    const key=group.category+'::'+card.word.toLowerCase();
+    if(seen.has(key)||words.some(w=>String(w.word).toLowerCase()===card.word.toLowerCase()&&(w.category||'单词')===group.category))continue;
+    seen.add(key);projected[group.id]=(Object.prototype.hasOwnProperty.call(projected,group.id)?projected[group.id]:countInGroup(group.id))+1;
+    if(group.limit>0&&projected[group.id]>group.limit){showToast(`「${group.name}」已达到数量上限，请更换收藏分组`);return;}
   }
   let saved=0,skipped=0;
   pendingPreviewCards.forEach((item,i)=>{
-    const g=getCardGroup(selections[i]);if(!g){skipped++;return;}
-    const data=normalizeCardData(item,item.category||'单词');data.category=g.category;data.groupId=g.id;
+    const group=getCardGroup(selections[i]);if(!group){skipped++;return;}
+    const data=normalizeCardData(item,item.category||'单词');data.category=group.category;data.groupId=group.id;
     if(saveWord(data))saved++;else skipped++;
   });
-  if(saved)showToast(`已收藏 ${saved} 张卡片${skipped?`，${skipped} 项重复或未保存`:''}`);
-  else showToast(skipped?'卡片已存在或未能保存':'没有可收藏的内容');
-  closeCardGroupPicker();renderCards();renderGroupManager();updateStatsUI();pendingPreviewCards=[];pendingGroupSelections=[];
-  $('infoFavorite').disabled=true;$('infoFavorite').style.opacity='.45';
-  if(saved)$('infoFavorite').innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg>';
+  if(saved){
+    renderCards();renderGroupManager();updateStatsUI();renderRecognitionStatus(`已收藏 ${saved} 项${skipped?` · ${skipped} 项重复或跳过`:''}`,'done');
+    showToast(`已收藏 ${saved} 张卡片${skipped?`，${skipped} 项重复或跳过`:''}`);
+    pendingPreviewCards=[];document.querySelectorAll('.preview-group-select').forEach(x=>x.disabled=true);
+    const fav=$('infoFavorite');if(fav&&$('infoModal').classList.contains('active')){fav.disabled=true;fav.style.opacity='.45';}
+  }else showToast(skipped?'识别内容已存在，没有重复创建':'没有可收藏的内容');
 }
+function savePendingCardsFromModal(){savePendingCards();}
 /* 图片：OCR 结果回填统一输入框，不直接跳过预览创建卡片 */
 async function handleImageUpload(event){
   const file = event.target.files[0]; event.target.value = '';
@@ -1934,7 +1935,8 @@ async function handleImageUpload(event){
     const dataUrl = await compressImage(file,1600,.85);
     const text = await ocrImage(dataUrl,p => renderRecognitionStatus(`图片文字识别中 ${p}%`));
     if (!text.trim()) throw new Error('未识别到文字');
-    $('batchInput').value = text.trim();
+    $('batchInput').value = text.trim();pendingPreviewCards=[];
+    $('recognitionPreview').innerHTML='<div class="empty-hint">图片文字已读取，点击放大镜进行 AI 整理</div>';
     renderRecognitionStatus('图片文字已填入输入框，点击放大镜进行 AI 整理');
     $('batchInput').focus();
     showToast('图片文字已识别并填入');
@@ -2015,7 +2017,7 @@ function saveWord(data){
   data = normalizeCardData(data, data.category || '单词');
   if (words.find(w => String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category)) return false;
   const targetGroup = getCardGroup(data.groupId);
-  if (!targetGroup || targetGroup.isDefault || targetGroup.category !== data.category) { showToast('卡片保存位置无效，请重新选择自定义分组'); return false; }
+  if (!targetGroup || targetGroup.category !== data.category) { showToast('卡片保存位置无效，请重新选择收藏分组'); return false; }
   if (!groupHasRoom(data.groupId)) { showToast(`“${targetGroup.name}”已达到数量上限`); return false; }
   data.id = Date.now() + Math.floor(Math.random() * 1000);
   data.time = nowStr();
@@ -2059,22 +2061,24 @@ function updateBulkDeleteUI(){
   if(del)del.disabled=selectedCardIds.size===0;
 }
 function requestDeleteSelectedCards(){
-  const ids=[...selectedCardIds].filter(id=>words.some(w=>Number(w.id)===Number(id)));
-  if(!ids.length){showToast('请先选择要删除的卡片');return;}
-  requestDeleteCards(ids);
+  const ids=new Set([...selectedCardIds].map(Number).filter(id=>words.some(w=>Number(w.id)===Number(id))));
+  if(!ids.size){showToast('请先选择要删除的卡片');return;}
+  const count=ids.size;words=words.filter(w=>!ids.has(Number(w.id)));
+  safeSet('wm_words',JSON.stringify(words));selectedCardIds.clear();batchDeleteMode=false;
+  renderCards();renderGroupManager();updateStatsUI();showToast(`已批量删除 ${count} 张卡片`);
 }
 function cardDetailHtml(card){
-  const category=card.category||'单词';
-  const currentGroup=cardGroups.find(g=>g.id===card.groupId&&!g.isDefault);
-  const customGroups=cardGroups.filter(g=>!g.isDefault);
-  const opts=customGroups.map(g=>`<option value="${esc(g.id)}" ${g.id===card.groupId?'selected':''}>${esc(g.category)} · ${esc(g.name)}${g.limit?` · ${countInGroup(g.id)}/${g.limit}`:''}</option>`).join('');
+  const category=card.category||'单词',current=card.groupId||defaultGroupId(category);
+  const opts=CARD_CATEGORIES.map(cat=>{
+    const list=cardGroups.filter(g=>g.category===cat).map(g=>`<option value="${esc(g.id)}" ${g.id===current?'selected':''}>${esc(g.category)} · ${esc(g.name)}${g.limit?` · ${countInGroup(g.id)}/${g.limit}`:''}</option>`).join('');
+    return `<optgroup label="${cat}">${list}</optgroup>`;
+  }).join('');
   const fields=[['柯林斯释义',card.collins,'en'],['中文释义',card.cn,''],['例句',card.example,'en'],['同义词',card.syn,''],['反义词',card.ant,''],['知识概要',card.summary,''],['结构',card.structure,'en'],['用法',card.usage,''],['注意事项',card.notes,'']].filter(x=>x[1]);
-  const groupControl=customGroups.length?`<select aria-label="移动卡片到分组" onchange="changeCardGroup(${Number(card.id)},this.value)"><option value="" disabled ${currentGroup?'':'selected'}>未加入自定义分组</option>${opts}</select>`:'<span>尚无自定义分组</span>';
-  return `<div class="card-detail-view" data-card-id="${Number(card.id)}">
+  return `<div class="card-detail-content" data-card-id="${Number(card.id)}">
     <div class="card-header"><div><div class="word-big">${esc(card.word)}</div>${card.phonetic?`<div class="word-phonetic">${esc(card.phonetic)}</div>`:''}${card.syllable?`<div class="word-syllable">${esc(card.syllable)}</div>`:''}${category==='单词'?`<div class="pron-row"><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,2)">美音</button><button class="pron-btn" data-word="${esc(card.word)}" onclick="speak(this.dataset.word,1)">英音</button></div>`:''}</div></div>
     <div class="card-body">${fields.map(([label,value,lang])=>`<div class="sec"><div class="sec-label">${esc(label)}</div><div class="sec-body ${lang}">${esc(value)}</div></div>`).join('')}</div>
-    <div class="card-detail-group"><span>分类分组</span>${groupControl}</div><div class="card-footer">${esc(card.time||'')}</div>
-    <div class="swipe-delete-hint">左右滑动切换本分组卡片 · 上滑并保持 5 秒可删除</div>
+    <div class="card-detail-group"><span>分类分组</span><select aria-label="更改卡片分组" onchange="changeCardGroup(${Number(card.id)},this.value)">${opts}</select></div>
+    <div class="card-footer">${esc(card.time||'')}</div>
   </div>`;
 }
 function cardsInSameGroup(card){
@@ -2083,94 +2087,52 @@ function cardsInSameGroup(card){
 }
 function openCardDetail(id){
   const card=words.find(w=>Number(w.id)===Number(id));if(!card)return;
-  cancelCardGesture();currentModalCardId=Number(id);pendingPreviewCards=[];
-  const list=cardsInSameGroup(card),host=$('infoBody');
-  host.classList.add('card-detail-carousel');
-  host.innerHTML=list.map(w=>`<div class="card-detail-slide" data-carousel-card-id="${Number(w.id)}">${cardDetailHtml(w)}</div>`).join('');
+  currentModalCardId=Number(id);cardSwipeAnimating=false;const body=$('infoBody');
+  body.classList.remove('card-detail-mode');body.classList.add('card-detail-mode');
+  body.style.transition='';body.style.transform='';body.style.opacity='';body.innerHTML=cardDetailHtml(card);body.scrollTop=0;
   $('infoTitle').textContent=card.word;$('infoModal').classList.add('active');
   $('infoFavorite').style.display='none';$('infoSpeak').style.display='none';$('infoAdd').style.display='none';
-  requestAnimationFrame(()=>{const slide=host.querySelector(`[data-carousel-card-id="${Number(id)}"]`);if(slide)host.scrollLeft=slide.offsetLeft;currentModalCardId=Number(id);});
 }
-function onCardCarouselScroll(){
-  if(!$('infoBody').classList.contains('card-detail-carousel'))return;
-  clearTimeout(carouselScrollTimer);
-  carouselScrollTimer=setTimeout(()=>{
-    const host=$('infoBody'),slides=[...host.querySelectorAll('.card-detail-slide')];
-    if(!slides.length)return;
-    const center=host.getBoundingClientRect().left+host.clientWidth/2;
-    let nearest=slides[0],dist=Infinity;
-    slides.forEach(slide=>{const r=slide.getBoundingClientRect(),d=Math.abs((r.left+r.right)/2-center);if(d<dist){dist=d;nearest=slide;}});
-    const id=Number(nearest.dataset.carouselCardId),active=words.find(w=>Number(w.id)===id);
-    if(active){currentModalCardId=id;$('infoTitle').textContent=active.word;}
-  },70);
+function navigateCardInGroup(direction){
+  if(currentModalCardId==null||cardSwipeAnimating)return;
+  const current=words.find(w=>Number(w.id)===Number(currentModalCardId));if(!current)return;
+  const list=cardsInSameGroup(current),idx=list.findIndex(w=>Number(w.id)===Number(current.id)),next=list[idx+direction];
+  if(!next){showToast(direction>0?'已到本分组最后一张':'已到本分组第一张');return;}
+  cardSwipeAnimating=true;const body=$('infoBody');
+  body.style.transition='transform .16s ease,opacity .16s ease';body.style.transform=`translateX(${direction>0?-42:42}px)`;body.style.opacity='0';
+  setTimeout(()=>{
+    currentModalCardId=Number(next.id);$('infoTitle').textContent=next.word;
+    body.innerHTML=cardDetailHtml(next);body.scrollTop=0;body.style.transition='none';body.style.transform=`translateX(${direction>0?42:-42}px)`;
+    requestAnimationFrame(()=>{body.style.transition='transform .19s ease,opacity .19s ease';body.style.transform='translateX(0)';body.style.opacity='1';});
+    setTimeout(()=>{body.style.transition='';body.style.transform='';body.style.opacity='';cardSwipeAnimating=false;},205);
+  },165);
 }
 function changeCardGroup(id,newGroupId){
-  const card=words.find(w=>Number(w.id)===Number(id)),group=getCardGroup(newGroupId);
-  if(!card||!group||group.isDefault)return;
+  const card=words.find(w=>Number(w.id)===Number(id)),group=getCardGroup(newGroupId);if(!card||!group)return;
   if(!groupHasRoom(newGroupId,id)){showToast('目标分组已达到数量上限');return;}
   if(words.some(w=>Number(w.id)!==Number(id)&&(w.category||'单词')===group.category&&String(w.word).toLowerCase()===String(card.word).toLowerCase())){showToast('目标类别中已有同名卡片');return;}
-  card.category=group.category;card.groupId=newGroupId;
-  safeSet('wm_words',JSON.stringify(words));renderCards();renderGroupManager();openCardDetail(id);showToast('卡片分组已更新');
+  card.category=group.category;card.groupId=newGroupId;safeSet('wm_words',JSON.stringify(words));
+  renderCards();renderGroupManager();openCardDetail(id);showToast('卡片分组已更新');
 }
-function showDeleteHoldIndicator(){
-  const el=$('deleteHoldIndicator');el.style.display='flex';deleteHoldStartedAt=Date.now();
-  const update=()=>{$('deleteHoldSeconds').textContent=Math.max(0,5-Math.floor((Date.now()-deleteHoldStartedAt)/1000));};
-  update();deleteHoldTicker=setInterval(update,100);
-}
-function hideDeleteHoldIndicator(){$('deleteHoldIndicator').style.display='none';if(deleteHoldTicker)clearInterval(deleteHoldTicker);deleteHoldTicker=null;}
-function cancelCardGesture(){if(deleteHoldTimer)clearTimeout(deleteHoldTimer);deleteHoldTimer=null;hideDeleteHoldIndicator();cardGesture=null;}
+function cancelCardGesture(){cardGesture=null;}
 function onCardTouchStart(e){
-  const t=e.touches&&e.touches[0],blocked=e.target&&e.target.closest?e.target.closest('button,select,input,textarea,a'):null;
-  const detail=e.target&&e.target.closest?e.target.closest('.card-detail-view[data-card-id]'):null;
-  if(!t||!detail||blocked)return;
-  cancelCardGesture();cardGesture={id:Number(detail.dataset.cardId),startX:t.clientX,startY:t.clientY,holdStarted:false};
+  if(currentModalCardId==null||cardSwipeAnimating||!$('infoModal').classList.contains('active'))return;
+  const blocked=e.target&&e.target.closest?e.target.closest('button,select,input,textarea,a'):null;if(blocked)return;
+  const t=e.touches&&e.touches[0];if(!t)return;cardGesture={startX:t.clientX,startY:t.clientY,horizontal:false};
 }
 function onCardTouchMove(e){
   if(!cardGesture||!e.touches||!e.touches.length)return;
   const t=e.touches[0],dx=t.clientX-cardGesture.startX,dy=t.clientY-cardGesture.startY;
-  if(cardGesture.holdStarted){
-    if(e.cancelable)e.preventDefault();
-    if(Math.hypot(t.clientX-cardGesture.holdX,t.clientY-cardGesture.holdY)>34)cancelCardGesture();
-    return;
-  }
-  if(Math.abs(dx)>34&&Math.abs(dx)>Math.abs(dy)*1.15)return;
-  if(dy< -58&&Math.abs(dx)<68){
-    if(e.cancelable)e.preventDefault();
-    cardGesture.holdStarted=true;cardGesture.holdX=t.clientX;cardGesture.holdY=t.clientY;showDeleteHoldIndicator();
-    const targetId=cardGesture.id;
-    deleteHoldTimer=setTimeout(()=>{
-      if(!cardGesture||!cardGesture.holdStarted||Number(cardGesture.id)!==Number(targetId))return;
-      cardGesture=null;deleteHoldTimer=null;hideDeleteHoldIndicator();requestDeleteCard(targetId);
-    },5000);
-  }
+  if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)*1.2){cardGesture.horizontal=true;if(e.cancelable)e.preventDefault();}
 }
-function onCardTouchEnd(){if(cardGesture)cancelCardGesture();}
-function setDeleteDialog(ids){
-  pendingDeleteCardIds=ids.map(Number).filter(id=>words.some(w=>Number(w.id)===id));
-  if(!pendingDeleteCardIds.length)return;
-  const multi=pendingDeleteCardIds.length>1;
-  $('deleteConfirmTitle').textContent=multi?`确认删除选中的 ${pendingDeleteCardIds.length} 张卡片？`:'确认删除这张卡片？';
-  $('deleteConfirmDescription').textContent=multi?'这些卡片将从目录中移除，删除后无法在本地恢复。':'卡片将从当前分组和目录中移除。';
-  $('deleteConfirm').style.display='flex';
+function onCardTouchEnd(e){
+  if(!cardGesture)return;const g=cardGesture,t=e.changedTouches&&e.changedTouches[0];cardGesture=null;
+  if(!t||!g.horizontal)return;const dx=t.clientX-g.startX;if(Math.abs(dx)>48)navigateCardInGroup(dx<0?1:-1);
 }
-function requestDeleteCard(id){if(!words.some(w=>Number(w.id)===Number(id)))return;setDeleteDialog([Number(id)]);}
-function requestDeleteCards(ids){setDeleteDialog(ids);}
-function cancelDeleteCard(){pendingDeleteCardIds=[];$('deleteConfirm').style.display='none';}
-function confirmDeleteCard(){
-  if(!pendingDeleteCardIds.length)return;
-  const ids=new Set(pendingDeleteCardIds.map(Number)),count=ids.size;
-  words=words.filter(w=>!ids.has(Number(w.id)));safeSet('wm_words',JSON.stringify(words));
-  pendingDeleteCardIds=[];$('deleteConfirm').style.display='none';
-  const activeDeleted=currentModalCardId!=null&&ids.has(Number(currentModalCardId));
-  if(activeDeleted){$('infoModal').classList.remove('active');$('infoBody').classList.remove('card-detail-carousel');$('infoBody').innerHTML='';currentModalCardId=null;}
-  selectedCardIds.clear();batchDeleteMode=false;cancelCardGesture();
-  renderCards();renderGroupManager();updateStatsUI();showToast(`已删除 ${count} 张卡片`);
-}
-function deleteWord(id){requestDeleteCard(id);}
-
 /* 通用信息弹窗，兼容原有单词查询/清单分析 */
 function showInfo(title,html,word){
-  $('infoBody').classList.remove('card-detail-carousel');
+  $('infoBody').classList.remove('card-detail-mode');
+  $('infoBody').style.transition='';$('infoBody').style.transform='';$('infoBody').style.opacity='';cardSwipeAnimating=false;
   $('infoTitle').innerText = title;
   $('infoBody').innerHTML = html;
   $('infoModal').classList.add('active');
@@ -2182,7 +2144,9 @@ function showInfo(title,html,word){
 }
 function closeInfoModal(){
   $('infoModal').classList.remove('active');
-  $('infoBody').classList.remove('card-detail-carousel');
+  $('infoBody').classList.remove('card-detail-mode');
+  $('infoBody').style.transition='';$('infoBody').style.transform='';$('infoBody').style.opacity='';
+  currentModalCardId=null;cardSwipeAnimating=false;
   $('infoFavorite').style.display = 'none';
   stopSpeak();
 }
