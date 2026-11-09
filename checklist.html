@@ -138,7 +138,6 @@ button{cursor:pointer}
   </main>
 
   <main class="content active" id="tab-c">
-    <div class="check-section-head"><div class="check-section-title">我的清单</div><div class="check-section-count" id="checkCountLabel">0 项</div></div>
     <div class="add-check-row">
       <input type="text" id="checkInput" maxlength="300" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…">
       <button type="button" onclick="addCheckItem()">添加</button>
@@ -302,7 +301,6 @@ function renderChecklist(){
       return '<div class="check-item"><div class="check-box '+(item.done?'done':'')+'" role="button" tabindex="0" aria-label="'+(item.done?'重新打开':'完成事项')+'" onclick="toggleCheck('+item.id+')" onkeydown="if(event.key===\'Enter\')toggleCheck('+item.id+')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="check-main"><div class="check-text '+(item.done?'done':'')+'">'+esc(item.text)+'</div>'+photoHtml+meta+'</div><button class="delete-btn" type="button" onclick="deleteCheckItem('+item.id+')">删除</button></div>';
     }).join('');
   }
-  $('checkCountLabel').textContent=checklist.length+' 项';
 }
 function addCheckItem(){
   const input=$('checkInput'),text=input.value.trim();if(!text)return;
