@@ -126,6 +126,75 @@ textarea{line-height:1.75}
 .tabs .tab-btn:not(.active){color:#849088!important}
 #tab-4 .stat-grid{margin-top:16px}
 #tab-4 .word-box{margin-top:16px}
+
+/* Reading typography: modern sans-serif, justified paragraphs, calm rhythm */
+#article-body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:var(--reader-size);line-height:1.84;letter-spacing:0;
+  text-align:justify;text-justify:inter-word;hyphens:auto;
+  color:#293c33;overflow-wrap:break-word;
+}
+#article-body .article-paragraph{
+  margin:0 0 1.18em;padding:0;
+  text-align:justify;text-justify:inter-word;
+}
+#article-body .article-paragraph:last-child{margin-bottom:0}
+#article-body .sentence{
+  display:inline;margin:0;padding:0 .06em;
+  border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  transition:background-color .12s,box-shadow .12s;
+}
+#article-body .sentence.reading-focus{
+  background:rgba(226,235,225,.92);
+  box-shadow:inset 0 -1px 0 rgba(91,119,97,.22);
+}
+@media(hover:hover) and (pointer:fine){
+  #article-body .sentence:hover,#article-body .sentence.keyboard-focus{
+    background:rgba(235,241,229,.9);box-shadow:inset 0 -1px 0 rgba(91,119,97,.22)
+  }
+}
+
+/* Flat UI controls: solid surfaces, simple borders, no glossy gradients */
+.btn{
+  border:1px solid rgba(91,112,98,.18);border-radius:11px;
+  box-shadow:none!important;transition:background-color .14s,border-color .14s,color .14s;
+}
+.btn:active{transform:none;filter:brightness(.96)}
+.btn.primary{
+  color:#fff;background:#748a7c;border-color:#748a7c;
+  box-shadow:none!important;
+}
+.btn.primary:hover{background:#687f70;filter:none}
+.btn.danger{color:#9a6266;background:#f6eeee;border-color:#ead8d9}
+.size-btn.active{background:#e1e9e2;box-shadow:none}
+.popup-actions button{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);box-shadow:none}
+#btn-clean::before,#btn-goto-reader::after{content:none}
+
+/* iOS viewport containment: keep system bars outside the app's scroll area */
+html,body{width:100%;height:100%;min-height:0;overflow:hidden;overscroll-behavior:none}
+body{
+  height:100vh;height:100dvh;min-height:0;
+  display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) 0 0;
+  overflow:hidden;
+  overscroll-behavior-y:none;
+}
+#main-scroll{
+  flex:1 1 auto;min-height:0;width:100%;max-width:920px;
+  margin:0 auto;padding:18px 18px calc(108px + env(safe-area-inset-bottom));
+  overflow-x:hidden;overflow-y:auto;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:auto;
+  scrollbar-gutter:stable;
+  scroll-padding-top:14px;
+}
+.tab-panel{min-height:min-content}
+@media(max-width:700px){
+  #main-scroll{padding:14px 10px calc(104px + env(safe-area-inset-bottom))}
+}
+/* Keep fullscreen reader above the app shell while retaining notch clearance */
+.reader-card.fullscreen{padding-top:env(safe-area-inset-top)}
 </style>
 </head>
 <body>
@@ -134,7 +203,7 @@ textarea{line-height:1.75}
     <button class="tab-btn active" data-tab="1">粘贴</button><button class="tab-btn" data-tab="2">阅读</button><button class="tab-btn" data-tab="3">问题</button><button class="tab-btn" data-tab="4">设置</button>
   </nav>
 </header>
-<main>
+<main id="main-scroll">
  <section id="tab-1" class="tab-panel active">
   <div class="card">
     <h2>导入英文原文</h2>
@@ -143,9 +212,9 @@ textarea{line-height:1.75}
       <span class="status" id="input-counter">0 / 120,000</span>
      </div>
     <div class="row" style="margin-top:12px">
-      <button class="btn primary" id="btn-clean">✦ 识别并去噪</button>
+      <button class="btn primary" id="btn-clean">识别并去噪</button>
       <button class="btn" id="btn-clear-input">清空</button>
-      <button class="btn" id="btn-goto-reader" hidden>前往阅读区 →</button>
+      <button class="btn" id="btn-goto-reader" hidden>前往阅读区</button>
       <span class="status" id="clean-status" role="status" aria-live="polite"></span>
     </div>
     <div id="clean-stats" class="hint"></div>
@@ -195,7 +264,7 @@ const device=(()=>{const touch=navigator.maxTouchPoints>0,ua=navigator.userAgent
 document.body.classList.add(device+'-device');
 function modal({title='提示',message='',confirmText='确定',cancelText='',danger=false}={}){return new Promise(resolve=>{const layer=$('#app-modal'),actions=$('#modal-actions');$('#modal-title').textContent=title;$('#modal-message').textContent=message;actions.innerHTML='';if(cancelText){const b=document.createElement('button');b.className='btn';b.textContent=cancelText;b.onclick=()=>close(false);actions.appendChild(b)}const ok=document.createElement('button');ok.className='btn '+(danger?'danger':'primary');ok.textContent=confirmText;ok.onclick=()=>close(true);actions.appendChild(ok);function close(v){layer.classList.remove('open');layer.setAttribute('aria-hidden','true');resolve(v)}layer.classList.add('open');layer.setAttribute('aria-hidden','false');setTimeout(()=>ok.focus(),40)})}
 $$('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(Number(b.dataset.tab))));
-function switchTab(n){$$('.tab-btn').forEach(b=>b.classList.toggle('active',Number(b.dataset.tab)===n));$$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+n));window.scrollTo({top:0,behavior:'smooth'})}
+function switchTab(n){$('.tab-btn').forEach(b=>b.classList.toggle('active',Number(b.dataset.tab)===n));$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+n));const scroller=$('#main-scroll');if(scroller)scroller.scrollTo({top:0,behavior:'auto'})}
 function splitSentences(text){const out=[];for(const block of text.split(/\n+/).map(s=>s.trim()).filter(Boolean)){const parts=block.match(/[^.!?]+[.!?]+["')\]]*|[^.!?]+$/g)||[block];for(const part of parts){const t=part.trim();if(t)out.push(t)}}return out}
 async function callAI(messages,{json=false,temperature=.3,maxTokens=8192}={}){
  if(!state.apiKey)throw new Error('请先在设置页填写 API Key');
@@ -239,7 +308,8 @@ $('#btn-goto-reader').onclick=()=>switchTab(2);
 $('#raw-input').addEventListener('input',()=>{$('#input-counter').textContent=`${$('#raw-input').value.length.toLocaleString()} / 120,000`});
 $('#btn-clear-input').onclick=()=>{$('#raw-input').value='';$('#input-counter').textContent='0 / 120,000';$('#clean-status').textContent='';$('#clean-stats').textContent='';$('#btn-goto-reader').hidden=true;};
 function highlighted(sentence){let source=sentence,tokens=[];state.highlights.filter(Boolean).forEach((m,i)=>{if(source.includes(m)){const token=`___RDS_${i}_${Math.random().toString(36).slice(2)}___`;source=source.split(m).join(token);tokens.push({token,m})}});let h=escapeHtml(source);tokens.forEach(x=>h=h.split(x.token).join(`<mark>${escapeHtml(x.m)}</mark>`));return h}
-function renderArticle(){const el=$('#article-body');if(!state.article){el.innerHTML='<p class="hint">暂无文章，请先在粘贴区识别正文。</p>';return}el.innerHTML=splitSentences(state.article).map((s,i)=>`<p class="sentence" tabindex="0" data-index="${i}">${highlighted(s)}</p>`).join('');setupReadingFocus()}
+function splitParagraphs(text){return String(text).split(/\n\s*\n+/).map(block=>block.replace(/\n+/g,' ').trim()).filter(Boolean).map(splitSentences).filter(parts=>parts.length)}
+function renderArticle(){const el=$('#article-body');if(!state.article){el.innerHTML='<p class="hint">暂无文章，请先在粘贴区识别正文。</p>';return}let index=0;el.innerHTML=splitParagraphs(state.article).map((parts,p)=>`<p class="article-paragraph" data-paragraph="${p}">${parts.map(sentence=>{const i=index++;return `<span class="sentence" tabindex="0" data-index="${i}">${highlighted(sentence)}</span>`}).join(' ')}</p>`).join('');setupReadingFocus()}
 function applyFontSize(n){n=Math.max(17,Math.min(22,n));state.fontSize=n;save('rds_fontSize',n);document.documentElement.style.setProperty('--reader-size',n+'px');$$('.size-btn').forEach(b=>b.classList.toggle('active',Number(b.dataset.size)===n))}
 $$('.size-btn').forEach(b=>b.onclick=()=>applyFontSize(Number(b.dataset.size)));
 let focusRaf=0;
