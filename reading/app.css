@@ -243,3 +243,51 @@ select {
   white-space: normal;
   overflow: visible;
 }
+
+
+/* Stable reader: use #app-content as the ONLY vertical scroller.
+   The article stays in normal document flow; controls remain fixed above
+   the bottom navigation and the scroll padding prevents them covering text. */
+#app-content.reader-mode {
+  display: block !important;
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 10px 10px calc(132px + env(safe-area-inset-bottom)) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+#app-content.reader-mode #tab-read.active {
+  display: block !important;
+  height: auto !important;
+  min-height: 0 !important;
+  flex: none !important;
+  overflow: visible !important;
+}
+#app-content.reader-mode #reading-document {
+  display: block !important;
+  width: 100%;
+  max-width: 800px;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 auto;
+  padding: 5px 3px 24px !important;
+  overflow: visible !important;
+}
+#app-content.reader-mode #article-body {
+  display: block !important;
+  width: 100%;
+  max-width: none !important;
+  min-height: 1em;
+  margin: 0 !important;
+  overflow: visible !important;
+  white-space: normal;
+}
+#app-content.reader-mode .article-paragraph {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+}
