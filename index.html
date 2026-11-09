@@ -220,12 +220,21 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .card-directory-arrow{color:#a7b2ac;font-size:21px;}
 .card-count{font-size:12px;color:var(--text-muted);font-weight:500;}
 .cards-bulk-toolbar{display:flex;align-items:center;justify-content:flex-end;min-height:38px;margin:-4px 0 10px;}
+.bulk-entry-buttons{display:flex;gap:7px;}
 .cards-bulk-toolbar>button,#bulkModeActions button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:12px;font-weight:700;padding:8px 12px;}
-#bulkModeActions{width:100%;display:flex;align-items:center;gap:7px;}
+#bulkModeActions{width:100%;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 #bulkSelectedCount{margin-right:auto;font-size:12px;color:var(--text-sub);}
 #bulkModeActions button:disabled{opacity:.4;}
 #bulkModeActions button.bulk-cancel{color:#8a9690;border-color:#e4e9e6;}
+.bulk-classify-controls{display:flex;align-items:center;gap:6px;width:100%;}
+.bulk-classify-controls select{flex:1;min-width:0;padding:8px 7px;border:1px solid #d7e4dd;border-radius:9px;background:#fff;color:var(--text-main);font-size:12px;}
 .card-select{width:19px;height:19px;flex:none;accent-color:var(--primary);margin:0 2px 0 0;}
+.history-section{margin:18px 0 10px;padding:12px 12px 4px;background:rgba(255,255,255,.68);border:1px solid #e4ebe7;border-radius:16px;}
+.history-section>summary{padding:3px 2px 10px;color:var(--primary);font-size:14px;font-weight:750;cursor:pointer;list-style:none;}
+.history-section>summary::-webkit-details-marker{display:none;}
+.history-category{padding:8px 0 2px;border-top:1px solid #edf1ef;margin-top:4px;}
+.history-category-title{font-size:13px;font-weight:750;color:#6c7c73;margin:0 2px 8px;}
+.history-empty{padding:10px 2px 14px;color:var(--text-muted);font-size:12px;}
 
 /* ============ 卡片详情：整张卡片左右滑动 ============ */
 .card-modal{padding:0;background:rgba(15,25,20,.58);align-items:stretch;}
@@ -268,7 +277,11 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .check-main{flex:1;min-width:0;}
 .check-text{font-size:15px;line-height:1.5;color:var(--text-main);word-break:break-word;}
 .check-text.done{color:#b3b3b3;text-decoration:line-through;}
-.check-photo{width:58px;height:58px;object-fit:cover;border-radius:10px;margin-top:8px;display:block;border:1px solid var(--line);cursor:zoom-in;}
+.check-photo{width:58px;height:58px;object-fit:cover;border-radius:10px;display:block;border:1px solid var(--line);cursor:zoom-in;filter:blur(5px);transition:filter .18s ease;}
+.check-photo:active{filter:blur(2px);}
+.check-photo-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
+.check-photo-add{height:58px;min-width:58px;padding:0 9px;border:1px dashed #c9d7cf;border-radius:10px;background:#f8fbf9;color:var(--primary);font-size:11px;font-weight:650;}
+.check-photo-add:disabled{opacity:.4;}
 .check-meta{font-size:11px;color:#bbb;margin-top:4px;}
 .delete-btn{color:#e0605f;font-size:13px;background:none;border:none;cursor:pointer;flex-shrink:0;padding:4px 0 4px 8px;}
 .add-check-row{display:flex;gap:10px;margin-bottom:14px;}
@@ -292,6 +305,14 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .rest-action{width:100%;margin-top:11px;padding:12px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:700;}
 .rest-action.running{background:var(--amber);color:#fff;}
 .rest-history{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:8px;}
+.sleep-section{margin-top:15px;padding-top:14px;border-top:1px solid #edf1ef;}
+.sleep-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sleep-title{font-size:14px;font-weight:750;color:var(--primary);}
+.sleep-summary{font-size:12px;color:var(--text-sub);margin-top:8px;padding:10px 11px;border-radius:11px;background:var(--bg-color);}
+.sleep-actions{display:flex;gap:8px;margin-top:9px;}
+.sleep-actions button{flex:1;border:1px solid var(--primary);border-radius:11px;background:#fff;color:var(--primary);padding:10px 8px;font-size:13px;font-weight:650;}
+.sleep-actions button.running{background:var(--amber);border-color:var(--amber);color:#fff;}
+.sleep-history{font-size:11px;color:var(--text-muted);line-height:1.8;margin-top:8px;}
 
 /* ============ 选词查询 ============ */
 .sel-bar{
@@ -345,6 +366,15 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .photo-preview-overlay{position:fixed;inset:0;z-index:1400;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(12,18,15,.92);}
 .photo-preview-overlay img{display:block;max-width:96vw;max-height:86vh;object-fit:contain;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.32);}
 .photo-preview-close{position:absolute;top:calc(16px + env(safe-area-inset-top));right:18px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;}
+.app-dialog{display:none;position:absolute;inset:0;z-index:1200;align-items:center;justify-content:center;padding:18px;background:rgba(14,25,19,.48);backdrop-filter:blur(3px);}
+.app-dialog.active{display:flex;}
+.app-dialog-card{width:100%;max-width:360px;background:#fff;border:1px solid #e5ede8;border-radius:20px;padding:19px 18px 16px;box-shadow:0 14px 40px rgba(18,46,33,.22);animation:scaleIn .18s ease;}
+.app-dialog-title{font-size:17px;font-weight:800;color:var(--primary);margin-bottom:9px;}
+.app-dialog-message{font-size:14px;line-height:1.7;color:var(--text-sub);white-space:pre-line;}
+.app-dialog-actions{display:flex;gap:9px;margin-top:18px;}
+.app-dialog-actions button{flex:1;border-radius:12px;padding:12px 10px;font-size:14px;font-weight:700;border:1px solid var(--primary);}
+.app-dialog-cancel{background:#fff;color:var(--text-sub);border-color:#e0e8e3!important;}
+.app-dialog-confirm{background:var(--primary);color:#fff;}
 
 /* 主屏幕图标安装入口 */
 .install-home-card{display:flex;align-items:center;gap:10px;padding:11px;margin:3px 0 14px;border:1px solid #e6eeea;border-radius:15px;background:#fbfcfb;}
@@ -414,12 +444,20 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
     </details>
     <div class="card-directory-title">卡片目录</div>
     <div class="cards-bulk-toolbar" id="cardsBulkToolbar">
-      <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
+      <div class="bulk-entry-buttons" id="bulkEntryButtons">
+        <button type="button" id="bulkClassifyButton" onclick="toggleBatchClassifyMode()">批量分类</button>
+        <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
+      </div>
       <div id="bulkModeActions" style="display:none;">
         <span id="bulkSelectedCount">已选 0 张</span>
         <button type="button" onclick="selectAllCards()">全选</button>
+        <div class="bulk-classify-controls" id="bulkClassifyControls" style="display:none;">
+          <select id="bulkCategory" aria-label="批量目标类别" onchange="renderBulkGroupOptions()"><option>单词</option><option>语法</option><option>其它</option></select>
+          <select id="bulkGroup" aria-label="批量目标分组"></select>
+          <button type="button" id="bulkApplyButton" onclick="applyBatchClassification()" disabled>应用分类</button>
+        </div>
         <button type="button" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
-        <button type="button" class="bulk-cancel" onclick="toggleBatchDeleteMode(false)">取消</button>
+        <button type="button" class="bulk-cancel" onclick="cancelBatchMode()">取消</button>
       </div>
     </div>
     <div id="cardsContainer"></div>
@@ -433,6 +471,15 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
       <button class="rest-action" id="restButton" onclick="toggleBreak()">开始休息</button>
       <div class="rest-history" id="restHistory"></div>
       <button class="w-ai" onclick="analyzeWork()">AI 分析休息习惯</button>
+      <div class="sleep-section">
+        <div class="sleep-head"><div class="sleep-title">睡眠记录</div><span class="rest-icon">🌙</span></div>
+        <div class="sleep-summary" id="sleepSummary">尚无睡眠记录</div>
+        <div class="sleep-actions">
+          <button type="button" id="sleepButton" onclick="toggleSleepRecording()">开始睡眠</button>
+          <button type="button" onclick="analyzeSleep()">AI 分析睡眠</button>
+        </div>
+        <div class="sleep-history" id="sleepHistory">开始睡眠后，醒来时结束记录。</div>
+      </div>
     </div>
     <div class="add-check-row">
       <input type="text" id="checkInput" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…" onkeypress="if(event.key==='Enter')addCheckItem()">
@@ -465,20 +512,21 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
         <button class="btn-outline" style="flex:1;" onclick="exportData()">导出备份</button>
         <button class="btn-outline" style="flex:1; border-color:#ddd; color:#666;" onclick="document.getElementById('importFile').click()">导入恢复</button>
       </div>
+      <button class="w-ai" type="button" onclick="refreshAppPage()">一键刷新应用页面</button>
     </details>
   </div>
 
   <!-- 底部导航 -->
   <div class="bottom-nav">
     <div class="nav-item active" data-tab="input" onclick="switchTab('input')">录入</div>
-    <div class="nav-item" data-tab="grammar" onclick="switchTab('grammar')">GR</div>
     <div class="nav-item" data-tab="cards" onclick="switchTab('cards')">卡片</div>
+    <div class="nav-item" data-tab="grammar" onclick="switchTab('grammar')">GR</div>
     <div class="nav-item" data-tab="checklist" onclick="switchTab('checklist')">清单</div>
   </div>
 
   <!-- 隐藏的文件输入 -->
   <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-  <input type="file" id="checklistCamera" accept="image/*" capture="environment" style="display:none;" onchange="handleChecklistPhoto(event)">
+  <input type="file" id="checklistCamera" accept="image/*" capture="environment" style="display:none;" onchange="handleChecklistPhoto(event)" oncancel="handleChecklistPhotoCancel()">
   <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
 
   <!-- 选中单词浮动工具条 -->
@@ -488,13 +536,13 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
     <button onclick="speak(selWord,1)">英音</button>
   </div>
 
-  <!-- 拍照询问弹窗 (清单) -->
-  <div class="modal" id="photoModal">
+  <!-- 清单拍照主题弹窗：完成事项必须拍照 -->
+  <div class="modal" id="photoModal" onclick="if(event.target===this)closePhotoTaskDialog()">
     <div class="modal-content" style="max-height:none;">
-      <div class="modal-header"><span>拍照记录</span></div>
-      <div class="modal-body" id="photoModalBody">是否拍照记录完成情况？</div>
+      <div class="modal-header"><span id="photoModalTitle">拍照记录</span></div>
+      <div class="modal-body" id="photoModalBody">完成清单事项前必须拍照记录。</div>
       <div class="modal-footer">
-        <button class="btn-outline" onclick="skipPhoto()">跳过</button>
+        <button class="btn-outline" onclick="closePhotoTaskDialog()">取消</button>
         <button class="btn-primary" onclick="takeChecklistPhoto()">拍照</button>
       </div>
     </div>
@@ -529,6 +577,16 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
     </div>
   </div>
 
+  <div class="app-dialog" id="appDialog" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle">
+    <div class="app-dialog-card">
+      <div class="app-dialog-title" id="appDialogTitle">确认操作</div>
+      <div class="app-dialog-message" id="appDialogMessage"></div>
+      <div class="app-dialog-actions">
+        <button type="button" class="app-dialog-cancel" onclick="resolveAppDialog(false)">取消</button>
+        <button type="button" class="app-dialog-confirm" onclick="resolveAppDialog(true)">确定</button>
+      </div>
+    </div>
+  </div>
   <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
 </div>
 
@@ -542,7 +600,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
 const escRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const nowStr = () => new Date().toLocaleString('zh-CN',
   {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
-const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function load(key, fallback){
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
@@ -560,14 +618,17 @@ let words      = load('wm_words', []);
 let checklist  = load('wm_checklist', []);
 let stats      = load('wm_stats', {apiCalls:0, tokens:0});
 let attendance = load('wm_attendance', {});
+let sleepRecords = load('wm_sleep_records', []);
 let workStart  = localStorage.getItem('wm_work_start') || '09:00';
 let apiKey     = localStorage.getItem('wm_api_key') || '';
 let batchRunning = false;
-let pendingCheckId = null;
+let pendingPhotoTask = null;
 let cardGroups = load('wm_card_groups', []);
 let previews = {inline: [], modal: []};
 let batchDeleteMode = false;
+let batchClassifyMode = false;
 let selectedCardIds = new Set();
+let appDialogAction = null;
 let toastTimer = null;
 let deferredInstallPrompt = null;
 
@@ -583,11 +644,11 @@ const DEFAULT_GROUPS = [
 ========================================================= */
 function init(){
   $('apiKeyInput').value = apiKey;
-  ensureCardGroups(); cleanupPhotos(); renderGrammarTopics();
-  renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
+  ensureCardGroups(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
+  renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI();
   renderRecognitionStatus('粘贴内容后，点击放大镜进行 AI 识别');
-  setInterval(() => { if ($('tab-checklist').classList.contains('active')) renderRestUI(); }, 1000);
-  setInterval(() => { cleanupPhotos(); if ($('tab-checklist').classList.contains('active')) renderChecklist(); }, 60000);
+  setInterval(() => { if ($('tab-checklist').classList.contains('active')) { renderRestUI(); renderSleepUI(); } }, 1000);
+  setInterval(() => { archiveExpiredCards(); if ($('tab-cards').classList.contains('active')) renderCards(); }, 60000);
   $('batchInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); triggerSearch(); }
   });
@@ -606,15 +667,26 @@ function switchTab(tabId){
   const panel = $('tab-' + tabId); if (!panel) return;
   panel.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(el => { if (el.dataset.tab === tabId) el.classList.add('active'); });
-  if (tabId === 'cards') { renderCards(); renderGroupManager(); }
+  if (tabId === 'cards') { archiveExpiredCards(); renderCards(); renderGroupManager(); }
   if (tabId === 'grammar') renderGrammarTopics();
-  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); updateStatsUI(); }
+  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI(); }
 }
 
 function showToast(message){
   const el = $('appToast'); if (!el) return;
   el.textContent = message; el.classList.add('show');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
+}
+function showAppDialog(title, message, action){
+  appDialogAction = typeof action === 'function' ? action : null;
+  $('appDialogTitle').textContent = title || '确认操作';
+  $('appDialogMessage').textContent = message || '';
+  $('appDialog').classList.add('active');
+}
+function resolveAppDialog(confirmed){
+  $('appDialog').classList.remove('active');
+  const action = appDialogAction; appDialogAction = null;
+  if (confirmed && action) action();
 }
 
 /* =========================================================
@@ -932,6 +1004,29 @@ function groupOptionsHtml(current, excludingId){
    分组数据
 ========================================================= */
 function persistGroups(){ safeSet('wm_card_groups', JSON.stringify(cardGroups)); }
+function inferCardCreatedAt(card){
+  if (Number.isFinite(Number(card.createdAt)) && Number(card.createdAt) > 0) return Number(card.createdAt);
+  const raw = String(card.time || '');
+  let m = raw.match(/(20\d{2})[/.年-](\d{1,2})[/.月-](\d{1,2})(?:日)?\s*(\d{1,2}):(\d{2})/);
+  if (m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), Number(m[4]), Number(m[5])).getTime();
+  m = raw.match(/(\d{1,2})\/(\d{1,2})\s+(\d{1,2}):(\d{2})/);
+  if (m){
+    const now = new Date(); let year = now.getFullYear();
+    let d = new Date(year, Number(m[1])-1, Number(m[2]), Number(m[3]), Number(m[4]));
+    if (d.getTime() > Date.now() + 24*60*60*1000) d = new Date(year-1, Number(m[1])-1, Number(m[2]), Number(m[3]), Number(m[4]));
+    return d.getTime();
+  }
+  return Date.now();
+}
+function isArchivedCard(card){ return !!card.archived; }
+function archiveExpiredCards(){
+  const cutoff = Date.now() - WEEK_MS; let changed = false;
+  words.forEach(card => {
+    if (!Number.isFinite(Number(card.createdAt)) || Number(card.createdAt) <= 0) { card.createdAt = inferCardCreatedAt(card); changed = true; }
+    if (!card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
+  });
+  if (changed) safeSet('wm_words', JSON.stringify(words));
+}
 function defaultGroupId(category){
   return category === '语法' ? 'default-grammar' : category === '其它' ? 'default-other' : 'default-word';
 }
@@ -941,17 +1036,19 @@ function ensureCardGroups(){
   words.forEach(w => {
     if (!w.category || !CARD_CATEGORIES.includes(w.category)) w.category = '单词';
     if (!w.groupId || !cardGroups.some(g => g.id === w.groupId)) w.groupId = defaultGroupId(w.category);
+    if (!Number.isFinite(Number(w.createdAt)) || Number(w.createdAt) <= 0) w.createdAt = inferCardCreatedAt(w);
+    if (typeof w.archived !== 'boolean') w.archived = false;
   });
   persistGroups();
   safeSet('wm_words', JSON.stringify(words));
 }
 function getCardGroup(id){ return cardGroups.find(g => g.id === id); }
 function groupsFor(category){ return cardGroups.filter(g => g.category === category); }
-function countInGroup(id){ return words.filter(w => (w.groupId || defaultGroupId(w.category || '单词')) === id).length; }
+function countInGroup(id){ return words.filter(w => !w.archived && (w.groupId || defaultGroupId(w.category || '单词')) === id).length; }
 function groupHasRoom(id, excludingId){
   const g = getCardGroup(id);
   if (!g || !g.limit || g.limit <= 0) return true;
-  const count = words.filter(w => (w.groupId || defaultGroupId(w.category || '单词')) === id && w.id !== excludingId).length;
+  const count = words.filter(w => !w.archived && (w.groupId || defaultGroupId(w.category || '单词')) === id && w.id !== excludingId).length;
   return count < g.limit;
 }
 function createCardGroup(){
@@ -1104,6 +1201,8 @@ function saveWord(data){
   if (!groupHasRoom(data.groupId)) return 'full';
   data.id = Date.now() + Math.floor(Math.random() * 100000);
   data.time = nowStr();
+  data.createdAt = Date.now();
+  data.archived = false;
   words.push(data);
   safeSet('wm_words', JSON.stringify(words));
   return 'ok';
@@ -1202,54 +1301,108 @@ async function generateGrammarTopic(topic){
 /* =========================================================
    卡片目录
 ========================================================= */
+function cardDirectoryEntry(w){
+  const id = Number(w.id), checked = selectedCardIds.has(id) ? 'checked' : '';
+  const selecting = batchDeleteMode || batchClassifyMode;
+  const check = selecting ? `<input class="card-select" type="checkbox" ${checked} aria-label="选择 ${esc(w.word)}" onclick="event.stopPropagation()" onchange="toggleCardSelection(${id},this.checked)">` : '';
+  const arrow = selecting ? '' : '<div class="card-directory-arrow">›</div>';
+  const desc = plain(w.cn || w.summary || w.definition || w.usage || w.collins || w.example).replace(/\n/g, ' ') || '点击查看卡片内容';
+  return `<div class="card-directory-item ${selecting ? 'select-mode' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${arrow}</div>`;
+}
 function renderCards(){
   const container = $('cardsContainer'); if (!container) return;
-  ensureCardGroups();
+  ensureCardGroups(); archiveExpiredCards();
   selectedCardIds = new Set([...selectedCardIds].filter(id => words.some(w => Number(w.id) === Number(id))));
-  if (!words.length){ container.innerHTML = '<div class="empty-state" style="margin-top:48px;">暂无卡片，去录入或语法中生成内容吧</div>'; updateBulkDeleteUI(); return; }
-  container.innerHTML = CARD_CATEGORIES.map(category => {
-    const categoryCards = words.filter(w => (w.category || '单词') === category);
+  const active = words.filter(w => !w.archived);
+  const history = words.filter(w => w.archived);
+  const activeHtml = CARD_CATEGORIES.map(category => {
+    const categoryCards = active.filter(w => (w.category || '单词') === category);
     if (!categoryCards.length) return '';
     const groupHtml = groupsFor(category).map(group => {
       const entries = categoryCards.filter(w => (w.groupId || defaultGroupId(category)) === group.id).slice().reverse();
       if (!entries.length) return '';
-      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></div>${entries.map(w => {
-        const id = Number(w.id), checked = selectedCardIds.has(id) ? 'checked' : '';
-        const check = batchDeleteMode ? `<input class="card-select" type="checkbox" ${checked} aria-label="选择 ${esc(w.word)}" onclick="event.stopPropagation()" onchange="toggleCardSelection(${id},this.checked)">` : '';
-        const arrow = batchDeleteMode ? '' : '<div class="card-directory-arrow">›</div>';
-        const desc = plain(w.cn || w.summary || w.definition || w.usage || w.collins || w.example).replace(/\n/g, ' ') || '点击查看卡片内容';
-        return `<div class="card-directory-item ${batchDeleteMode ? 'select-mode' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${arrow}</div>`;
-      }).join('')}</div>`;
+      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></div>${entries.map(cardDirectoryEntry).join('')}</div>`;
     }).join('');
     return `<section class="card-category"><div class="card-category-head">${category}<span>${categoryCards.length} 张</span></div>${groupHtml}</section>`;
   }).join('');
+  const historyHtml = `<details class="history-section"><summary>历史卡片 · ${history.length} 张（保存超过 7 天）</summary>${history.length ? CARD_CATEGORIES.map(category => {
+    const entries = history.filter(w => (w.category || '单词') === category).slice().reverse();
+    return entries.length ? `<section class="history-category"><div class="history-category-title">${category} · ${entries.length} 张</div>${entries.map(cardDirectoryEntry).join('')}</section>` : '';
+  }).join('') : '<div class="history-empty">暂无历史卡片。卡片保存满 7 天后会自动归档。</div>'}</details>`;
+  container.innerHTML = (activeHtml || '<div class="empty-state" style="margin-top:32px;">暂无进行中的卡片</div>') + historyHtml;
   updateBulkDeleteUI();
 }
-function handleCardDirectoryClick(id){ if (batchDeleteMode) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else openCardDetail(id); }
-function toggleBatchDeleteMode(force){ batchDeleteMode = typeof force === 'boolean' ? force : !batchDeleteMode; selectedCardIds.clear(); renderCards(); }
+function handleCardDirectoryClick(id){ if (batchDeleteMode || batchClassifyMode) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else openCardDetail(id); }
+function cancelBatchMode(){ batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); renderCards(); }
+function toggleBatchDeleteMode(force){
+  batchDeleteMode = typeof force === 'boolean' ? force : !batchDeleteMode;
+  batchClassifyMode = false; selectedCardIds.clear(); renderCards();
+}
+function toggleBatchClassifyMode(force){
+  batchClassifyMode = typeof force === 'boolean' ? force : !batchClassifyMode;
+  batchDeleteMode = false; selectedCardIds.clear();
+  if (batchClassifyMode) renderBulkGroupOptions();
+  renderCards();
+}
 function toggleCardSelection(id, checked){ id = Number(id); if (checked) selectedCardIds.add(id); else selectedCardIds.delete(id); updateBulkDeleteUI(); }
 function selectAllCards(){ selectedCardIds = new Set(words.map(w => Number(w.id))); renderCards(); }
+function renderBulkGroupOptions(){
+  const category = $('bulkCategory') ? $('bulkCategory').value : '单词';
+  const select = $('bulkGroup'); if (!select) return;
+  const opts = groupsFor(category).map(g => {
+    const count = countInGroup(g.id), full = g.limit > 0 && count >= g.limit;
+    return `<option value="${esc(g.id)}" ${full ? 'disabled' : ''}>${esc(g.name)} · ${count}${g.limit ? '/' + g.limit : ''}${full ? ' · 已满' : ''}</option>`;
+  }).join('');
+  select.innerHTML = opts || '<option value="">暂无可用分组</option>';
+}
 function updateBulkDeleteUI(){
-  const actions = $('bulkModeActions'), trigger = $('bulkModeButton'), count = $('bulkSelectedCount'), del = $('bulkDeleteButton');
-  if (!actions || !trigger) return;
-  trigger.style.display = batchDeleteMode ? 'none' : '';
-  actions.style.display = batchDeleteMode ? 'flex' : 'none';
+  const actions = $('bulkModeActions'), entries = $('bulkEntryButtons'), count = $('bulkSelectedCount');
+  const del = $('bulkDeleteButton'), classify = $('bulkClassifyControls'), apply = $('bulkApplyButton');
+  if (!actions) return;
+  const selecting = batchDeleteMode || batchClassifyMode;
+  actions.style.display = selecting ? 'flex' : 'none';
+  if (entries) entries.style.display = selecting ? 'none' : 'flex';
   if (count) count.textContent = `已选 ${selectedCardIds.size} 张`;
-  if (del) del.disabled = selectedCardIds.size === 0;
+  if (del) { del.style.display = batchDeleteMode ? '' : 'none'; del.disabled = selectedCardIds.size === 0; }
+  if (classify) classify.style.display = batchClassifyMode ? 'flex' : 'none';
+  if (apply) apply.disabled = !selectedCardIds.size || !$('bulkGroup') || !$('bulkGroup').value;
+}
+function applyBatchClassification(){
+  if (!selectedCardIds.size) { showToast('请先选择卡片'); return; }
+  const groupId = $('bulkGroup').value, group = getCardGroup(groupId);
+  if (!group) { showToast('请选择有效分组'); return; }
+  const selected = words.filter(w => selectedCardIds.has(Number(w.id)));
+  const movingActive = selected.filter(w => !w.archived);
+  const currentCount = countInGroup(groupId);
+  const available = group.limit > 0 ? Math.max(0, group.limit - currentCount + movingActive.filter(w => w.groupId === groupId).length) : Infinity;
+  if (movingActive.filter(w => w.groupId !== groupId).length > available) { showToast('目标分组容量不足，请先调整数量上限'); return; }
+  const movingIds = new Set(selected.map(w => Number(w.id)));
+  const existingNames = new Set(words.filter(w => !movingIds.has(Number(w.id))).map(w => `${group.category}|${String(w.word).toLowerCase()}`));
+  let changed = 0, duplicates = 0;
+  selected.forEach(w => {
+    const key = `${group.category}|${String(w.word).toLowerCase()}`;
+    if (existingNames.has(key)) { duplicates++; return; }
+    w.category = group.category; w.groupId = groupId; existingNames.add(key); changed++;
+  });
+  safeSet('wm_words', JSON.stringify(words)); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
+  renderCards(); renderGroupManager(); updateStatsUI();
+  showToast(`已分类 ${changed} 张${duplicates ? `，${duplicates} 张因目标类别重名未调整` : ''}`);
 }
 function requestDeleteSelectedCards(){
   const ids = new Set([...selectedCardIds].map(Number).filter(id => words.some(w => Number(w.id) === id)));
   if (!ids.size) { showToast('请先选择要删除的卡片'); return; }
-  if (!confirm(`确定删除选中的 ${ids.size} 张卡片吗？`)) return;
-  const count = ids.size; words = words.filter(w => !ids.has(Number(w.id)));
-  safeSet('wm_words', JSON.stringify(words)); selectedCardIds.clear(); batchDeleteMode = false;
-  renderCards(); renderGroupManager(); updateStatsUI(); showToast(`已批量删除 ${count} 张卡片`);
+  showAppDialog('删除卡片', `确定删除选中的 ${ids.size} 张卡片吗？此操作无法撤销。`, () => {
+    const count = ids.size; words = words.filter(w => !ids.has(Number(w.id)));
+    safeSet('wm_words', JSON.stringify(words)); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
+    renderCards(); renderGroupManager(); updateStatsUI(); showToast(`已批量删除 ${count} 张卡片`);
+  });
 }
 
 /* ---- 卡片详情：整张卡片作为一页横向滑动 ---- */
 function cardsInSameGroup(card){
+  if (card.archived) return words.filter(w => w.archived && (w.category || '单词') === (card.category || '单词')).slice().reverse();
   const gid = card.groupId || defaultGroupId(card.category || '单词');
-  return words.filter(w => (w.groupId || defaultGroupId(w.category || '单词')) === gid).slice().reverse();
+  return words.filter(w => !w.archived && (w.groupId || defaultGroupId(w.category || '单词')) === gid).slice().reverse();
 }
 function cardPageHtml(card, n, total){
   const current = card.groupId || defaultGroupId(card.category || '单词');
@@ -1304,12 +1457,18 @@ function closeInfoModal(){
 }
 
 /* =========================================================
-   清单
+   清单：完成必须拍照；每项最多保留四张
 ========================================================= */
 function cleanupPhotos(){
-  const now = Date.now(); let changed = false;
+  let changed = false;
   checklist.forEach(item => {
-    if (item.photo && item.photoTs && now - item.photoTs > THREE_DAYS) { delete item.photo; delete item.photoTs; changed = true; }
+    if (!Array.isArray(item.photos)) {
+      item.photos = item.photo ? [{src:item.photo, ts:item.photoTs || Date.now()}] : [];
+      changed = true;
+    }
+    item.photos = item.photos.filter(p => p && typeof p.src === 'string').slice(-4);
+    if ('photo' in item) { delete item.photo; changed = true; }
+    if ('photoTs' in item) { delete item.photoTs; changed = true; }
   });
   if (changed) safeSet('wm_checklist', JSON.stringify(checklist));
 }
@@ -1317,11 +1476,12 @@ function renderChecklist(){
   const container = $('checklistContainer');
   if (checklist.length === 0){ container.innerHTML = '<div class="empty-hint" style="padding:24px 0;">暂无清单，添加一项吧</div>'; return; }
   container.innerHTML = checklist.map(item => {
-    const photoHtml = item.photo ? `<img src="${item.photo}" class="check-photo" role="button" tabindex="0" alt="清单照片" onclick="openPhotoPreview(this.src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.src)">` : '';
+    const photos = Array.isArray(item.photos) ? item.photos : [];
+    const photoHtml = photos.length ? `<div class="check-photo-grid">${photos.map((p, i) => `<img src="${esc(p.src)}" class="check-photo" role="button" tabindex="0" alt="清单照片 ${i+1}" title="点击查看照片" onclick="openPhotoPreview(this.src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.src)">`).join('')}${photos.length < 4 ? `<button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>${photos.length}/4</button>` : ''}</div>` : `<div class="check-photo-grid"><button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>0/4</button></div>`;
     const metaHtml = item.doneTime ? `<div class="check-meta">完成于 ${esc(item.doneTime)}</div>` : '';
     return `
     <div class="check-item">
-      <div class="check-box ${item.done ? 'done' : ''}" onclick="toggleCheck(${item.id})">
+      <div class="check-box ${item.done ? 'done' : ''}" role="button" tabindex="0" aria-label="${item.done ? '重新打开' : '完成事项'}" onclick="toggleCheck(${item.id})" onkeydown="if(event.key==='Enter')toggleCheck(${item.id})">
         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
       <div class="check-main">
@@ -1336,53 +1496,101 @@ function openPhotoPreview(src){ if (!src) return; $('photoPreviewImage').src = s
 function closePhotoPreview(){ $('photoPreviewModal').style.display = 'none'; $('photoPreviewImage').removeAttribute('src'); }
 function addCheckItem(){
   const text = $('checkInput').value.trim(); if (!text) return;
-  checklist.push({id: Date.now(), text, done:false});
+  checklist.push({id: Date.now(), text, done:false, photos:[]});
   $('checkInput').value = ''; saveChecklist(); renderChecklist();
 }
 function deleteCheckItem(id){
-  if (!confirm('删除此事项？')) return;
-  checklist = checklist.filter(i => i.id !== id); saveChecklist(); renderChecklist();
+  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
+  showAppDialog('删除清单事项', `确定删除“${item.text}”吗？该事项及其照片都会被删除。`, () => {
+    checklist = checklist.filter(i => Number(i.id) !== Number(id)); saveChecklist(); renderChecklist();
+  });
 }
 function toggleCheck(id){
-  const item = checklist.find(i => i.id === id); if (!item) return;
+  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
   if (item.done){
-    item.done = false; delete item.doneTime; delete item.photo; delete item.photoTs;
-    saveChecklist(); renderChecklist();
+    showAppDialog('重新打开事项', '将此事项恢复为待办状态？已保存的照片会保留。', () => {
+      item.done = false; delete item.doneTime; saveChecklist(); renderChecklist();
+    });
   } else {
-    pendingCheckId = id;
-    $('photoModal').classList.add('active');
-    $('photoModalBody').innerText = `"${item.text}" 已完成，是否拍照记录？`;
+    requestChecklistPhoto(id, true);
   }
 }
+function requestChecklistPhoto(id, complete){
+  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
+  const photos = Array.isArray(item.photos) ? item.photos : [];
+  if (!complete && photos.length >= 4) { showToast('每项最多保存 4 张照片'); return; }
+  pendingPhotoTask = {id:Number(id), complete:!!complete};
+  $('photoModalTitle').textContent = complete ? '完成前拍照' : '添加清单照片';
+  $('photoModalBody').textContent = complete
+    ? `“${item.text}”完成前必须拍照。拍摄成功后才会标记为完成。`
+    : `为“${item.text}”添加照片。每项最多保存 4 张，目前已有 ${photos.length} 张。`;
+  $('photoModal').classList.add('active');
+}
+function closePhotoTaskDialog(){
+  $('photoModal').classList.remove('active');
+  pendingPhotoTask = null;
+}
+function takeChecklistPhoto(){
+  if (!pendingPhotoTask) { $('photoModal').classList.remove('active'); return; }
+  /* 保持主题弹窗在原位：用户取消系统拍照选择时，仍能看到“必须拍照”的提示 */
+  $('checklistCamera').click();
+}
+function handleChecklistPhotoCancel(){
+  if (pendingPhotoTask) $('photoModal').classList.add('active');
+}
 function saveChecklist(){
-  if (!safeSet('wm_checklist', JSON.stringify(checklist))) alert('本地存储空间不足，部分数据可能未保存（可导出备份并清理照片）');
+  if (!safeSet('wm_checklist', JSON.stringify(checklist))) showToast('本地存储空间不足，建议减少照片或导出备份');
   updateStatsUI();
 }
 function resetChecklist(){
-  checklist.forEach(item => { item.done = false; delete item.doneTime; });
-  saveChecklist(); renderChecklist(); alert('已一键刷新完成状态');
+  showAppDialog('一键循环刷新', '开始新一轮清单？所有事项将恢复为待办，并清除上一轮任务留下的照片。', () => {
+    checklist.forEach(item => {
+      item.done = false; delete item.doneTime;
+      item.photos = [];
+      delete item.photo; delete item.photoTs;
+    });
+    saveChecklist(); renderChecklist(); showToast('新一轮清单已刷新，旧照片已清除');
+  });
 }
 function completeItem(id, photo){
-  const item = checklist.find(i => i.id === id); if (!item) return;
+  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item || !photo) return false;
+  if (!Array.isArray(item.photos)) item.photos = [];
+  if (item.photos.length >= 4) item.photos.shift();
+  item.photos.push({src:photo, ts:Date.now()});
   item.done = true; item.doneTime = nowStr();
-  if (photo) { item.photo = photo; item.photoTs = Date.now(); }
   saveChecklist(); renderChecklist();
+  return true;
 }
-function skipPhoto(){
-  $('photoModal').classList.remove('active');
-  if (pendingCheckId) completeItem(pendingCheckId);
-  pendingCheckId = null;
+function addPhotoToChecklistItem(id, photo){
+  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item || !photo) return false;
+  if (!Array.isArray(item.photos)) item.photos = [];
+  if (item.photos.length >= 4) { showToast('每项最多保存 4 张照片'); return false; }
+  item.photos.push({src:photo, ts:Date.now()});
+  saveChecklist(); renderChecklist(); return true;
 }
-function takeChecklistPhoto(){ $('photoModal').classList.remove('active'); $('checklistCamera').click(); }
+function addChecklistPhoto(id){ requestChecklistPhoto(id, false); }
 async function handleChecklistPhoto(event){
   const file = event.target.files[0]; event.target.value = '';
-  if (!file || !pendingCheckId) return;
-  const id = pendingCheckId; pendingCheckId = null;
-  try{ completeItem(id, await compressImage(file)); }catch(e){ completeItem(id); }
+  if (!file) {
+    if (pendingPhotoTask) $('photoModal').classList.add('active');
+    return;
+  }
+  const task = pendingPhotoTask;
+  if (!task) return;
+  $('photoModal').classList.remove('active');
+  try{
+    const photo = await compressImage(file, 800, .66);
+    const saved = task.complete ? completeItem(task.id, photo) : addPhotoToChecklistItem(task.id, photo);
+    if (saved) showToast(task.complete ? '已拍照并完成事项' : '照片已添加');
+    pendingPhotoTask = null;
+  }catch(e){
+    $('photoModal').classList.add('active');
+    showToast('照片处理失败，请重新拍摄');
+  }
 }
 async function analyzeChecklist(){
   const pending = checklist.filter(i => !i.done), done = checklist.filter(i => i.done);
-  if (checklist.length === 0) { alert('清单为空'); return; }
+  if (checklist.length === 0) { showToast('清单为空'); return; }
   showInfo('AI 清单分析', '<div style="text-align:center;padding:20px;color:#888;">正在分析...</div>');
   if (!apiKey){
     showInfo('AI 清单分析', `
@@ -1417,7 +1625,7 @@ const openBreak = rec => {
   const l = rec && rec.breaks && rec.breaks[rec.breaks.length - 1];
   return l && !l.e ? l : null;
 };
-function saveAtt(){ if (!safeSet('wm_attendance', JSON.stringify(attendance))) alert('本地存储空间不足'); }
+function saveAtt(){ if (!safeSet('wm_attendance', JSON.stringify(attendance))) showToast('本地存储空间不足，建议导出备份'); }
 function breakTotals(rec, now){
   let n = 0, ms = 0, max = 0;
   (rec.breaks || []).forEach(b => { const d = Math.max(0, (b.e || now) - b.s); n++; ms += d; if (d > max) max = d; });
@@ -1470,13 +1678,57 @@ async function analyzeWork(){
   }catch(e){ showInfo('AI 休息习惯分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
 }
 
+function activeSleepRecord(){ return sleepRecords.findLast ? sleepRecords.findLast(r => !r.e) : [...sleepRecords].reverse().find(r => !r.e); }
+function toggleSleepRecording(){
+  const active = activeSleepRecord();
+  if (active) active.e = Date.now();
+  else sleepRecords.push({s:Date.now(), e:null});
+  safeSet('wm_sleep_records', JSON.stringify(sleepRecords)); renderSleepUI();
+}
+function renderSleepUI(){
+  const summary = $('sleepSummary'); if (!summary) return;
+  const now = Date.now(), active = activeSleepRecord();
+  const ended = sleepRecords.filter(r => r.e && r.s && r.e > r.s);
+  const total = ended.reduce((sum, r) => sum + (r.e-r.s), 0);
+  const average = ended.length ? Math.round(total / ended.length / 60000) : 0;
+  summary.textContent = active
+    ? `正在记录睡眠 · 已 ${fmtDur((now-active.s)/60000)}`
+    : `已记录 ${ended.length} 次 · 累计 ${fmtDur(total/60000)}${ended.length ? ` · 平均 ${fmtDur(average)}` : ''}`;
+  const button = $('sleepButton');
+  if (button){ button.textContent = active ? '结束睡眠' : '开始睡眠'; button.classList.toggle('running', !!active); }
+  const recent = sleepRecords.slice(-5).reverse();
+  $('sleepHistory').textContent = recent.length
+    ? recent.map((r,i) => `${recent.length-i}. ${fmtHM(r.s)} – ${r.e ? fmtHM(r.e) : '进行中'}${r.e ? `（${fmtDur((r.e-r.s)/60000)}）` : ''}`).join('　')
+    : '开始睡眠后，醒来时结束记录。';
+}
+async function analyzeSleep(){
+  const ended = sleepRecords.filter(r => r.s && r.e && r.e > r.s).slice(-30);
+  const recentBreakLines = buildAttendanceLines().filter(x => !x.endsWith('休息 0 次，共 0 分钟'));
+  const active = activeSleepRecord();
+  if (!ended.length && !active) { showInfo('AI 睡眠分析', '目前还没有睡眠记录。点击“开始睡眠”后，醒来时结束记录。'); return; }
+  const lines = ended.map((r,i) => `${i+1}. ${new Date(r.s).toLocaleString('zh-CN')} 至 ${new Date(r.e).toLocaleString('zh-CN')}，${fmtDur((r.e-r.s)/60000)}`);
+  if (active) lines.push(`当前睡眠进行中：开始于 ${new Date(active.s).toLocaleString('zh-CN')}`);
+  showInfo('AI 睡眠与休息分析', '<div style="text-align:center;padding:20px;color:#888;">正在整理睡眠和休息数据…</div>');
+  if (!apiKey){
+    const total = ended.reduce((sum,r) => sum + r.e-r.s, 0);
+    const avg = ended.length ? total / ended.length / 60000 : 0;
+    showInfo('睡眠与休息分析', `<p>已完成睡眠记录 ${ended.length} 次。</p><p>累计睡眠 ${fmtDur(total/60000)}，平均每次 ${fmtDur(avg)}。</p><p>另有休息记录 ${recentBreakLines.length} 天。</p><p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>`);
+    return;
+  }
+  try{
+    const prompt = `请分析以下睡眠与休息记录，指出时长规律、可能的不足，并给出简短可执行建议。不要作医疗诊断。\n睡眠记录：\n${lines.join('\n') || '暂无已完成睡眠'}\n休息记录：\n${recentBreakLines.join('\n') || '暂无休息记录'}\n中文输出，控制在 180 字以内。`;
+    const res = await callAI([{role:'user', content:prompt}]);
+    showInfo('AI 睡眠与休息分析', esc(res).replace(/\n/g, '<br>'));
+  }catch(e){ showInfo('AI 睡眠与休息分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
+}
+
 /* =========================================================
    设置、安装与导入导出
 ========================================================= */
 function saveApiKey(){
   apiKey = $('apiKeyInput').value.trim();
   safeSet('wm_api_key', apiKey);
-  alert('API Key 已保存');
+  showToast('API Key 已保存');
 }
 function saveStats(){ safeSet('wm_stats', JSON.stringify(stats)); updateStatsUI(); }
 function updateStatsUI(){
@@ -1507,12 +1759,23 @@ async function addToHomeScreen(){
     showInfo('添加 DICTIONARY 到主屏幕', '<p>请打开浏览器右上角菜单，选择<strong>安装应用</strong>或<strong>添加到主屏幕</strong>。</p><p>如未显示安装选项，请确认应用通过 HTTPS 访问，并且 PWA 文件与 HTML 位于同一目录。</p>');
   }
 }
+async function refreshAppPage(){
+  const url = new URL(location.href);
+  url.searchParams.set('_app_refresh', String(Date.now()));
+  try{
+    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations){
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(reg => reg.update().catch(() => {})));
+    }
+  }catch(e){}
+  location.replace(url.toString());
+}
 if ('serviceWorker' in navigator && location.protocol !== 'file:'){
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
 
 function exportData(){
-  const data = {words, checklist, stats, attendance, workStart, cardGroups, exportTime:new Date().toISOString()};
+  const data = {words, checklist, stats, attendance, sleepRecords, workStart, cardGroups, exportTime:new Date().toISOString()};
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob); const a = document.createElement('a');
   a.href = url; a.download = `word_memory_backup_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url);
@@ -1527,9 +1790,11 @@ function importData(event){
         words = Array.isArray(data.words) ? data.words : []; checklist = Array.isArray(data.checklist) ? data.checklist : [];
         stats = data.stats || {apiCalls:0, tokens:0}; if (data.attendance) attendance = data.attendance;
         if (data.workStart) { workStart = data.workStart; safeSet('wm_work_start', workStart); }
+        sleepRecords = Array.isArray(data.sleepRecords) ? data.sleepRecords : sleepRecords;
         cardGroups = Array.isArray(data.cardGroups) ? data.cardGroups : cardGroups;
-        ensureCardGroups(); safeSet('wm_checklist', JSON.stringify(checklist)); safeSet('wm_stats', JSON.stringify(stats)); safeSet('wm_attendance', JSON.stringify(attendance));
-        renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
+        ensureCardGroups(); cleanupPhotos(); archiveExpiredCards();
+        safeSet('wm_checklist', JSON.stringify(checklist)); safeSet('wm_stats', JSON.stringify(stats)); safeSet('wm_attendance', JSON.stringify(attendance)); safeSet('wm_sleep_records', JSON.stringify(sleepRecords));
+        renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI();
         showToast('数据恢复成功');
       } else showToast('文件格式不正确');
     }catch(err){ showToast('读取文件失败'); }
