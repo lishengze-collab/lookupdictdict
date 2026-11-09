@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#eef2ee"><meta name="description" content="英文阅读、实时资讯、历史知识与朗读助手">
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-title" content="阅读资讯"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=8"></head><body>
+<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=10"></head><body>
 <header class="bottom-nav"><nav class="tabs" aria-label="主要功能">
 <button class="tab-btn active" data-tab="home">生成</button><button class="tab-btn" data-tab="read">阅读</button><button class="tab-btn" data-tab="quiz">问题</button><button class="tab-btn" data-tab="favorites">收藏</button><button class="tab-btn" data-tab="settings">设置</button>
 </nav></header>
@@ -16,7 +16,7 @@
 </section>
 <section class="panel-card news-zone"><div class="section-heading"><h2>NEWS · 今日热点 / 历史知识</h2><span class="date-label" id="news-date"></span></div>
 <div class="channel-row" id="channel-row">
-<button class="chip active" data-channel="china">中国</button><button class="chip" data-channel="world">海外</button><button class="chip" data-channel="weibo">微博</button><button class="chip" data-channel="douyin">抖音</button><button class="chip" data-channel="x">X</button><button class="chip" data-channel="history">历史知识</button>
+<button class="chip active" data-channel="china">中国</button><button class="chip" data-channel="world">海外</button><button class="chip" data-channel="weibo">微博</button><button class="chip" data-channel="douyin">抖音</button><button class="chip" data-channel="history">历史知识</button>
 </div>
 <div class="news-controls"><div class="picker-wrap" id="category-picker">
 <button class="picker-trigger" id="category-trigger" type="button" aria-expanded="false">综合要闻 <span>⌄</span></button>
@@ -30,7 +30,7 @@
 <div class="picker-menu" id="period-menu" hidden><button data-period="先秦">先秦</button><button data-period="秦汉">秦汉</button><button data-period="魏晋南北朝">魏晋南北朝</button><button data-period="隋唐">隋唐</button><button data-period="宋辽金元">宋辽金元</button><button data-period="明清">明清</button><button data-period="中国近现代">中国近现代</button><button data-period="世界古代">世界古代</button><button data-period="世界中世纪">世界中世纪</button><button data-period="世界近现代">世界近现代</button></div></div>
 <input id="history-topic" class="topic-input" type="text" maxlength="100" placeholder="输入想了解的历史事件 / 人物 / 知识点"></div>
 <div class="news-actions"><button class="btn primary" id="btn-fetch-news">生成热点新闻</button><span class="status" id="news-status" role="status" aria-live="polite">选择频道后获取公开来源</span></div>
-<p class="source-note" id="source-note">实时网页检索。微博、抖音与 X 为公开网页索引结果，不等同于平台官方实时热榜排名。</p>
+<p class="source-note" id="source-note">实时网页检索。微博、抖音为公开网页索引结果，不等同于平台官方实时热榜排名。</p>
 <div id="news-results" class="news-results" aria-live="polite"><div class="empty-state">选择上方频道，生成当天热点或历史知识。</div></div>
 </section></div></section>
 
@@ -52,7 +52,7 @@
 <label class="field-label" for="api-key">DeepSeek API Key</label><input id="api-key" type="password" autocomplete="off" placeholder="sk-…">
 <div class="settings-grid"><div><label class="field-label" for="base-url">接口地址</label><input id="base-url" value="https://api.deepseek.com"></div><div><label class="field-label">模型</label><div class="picker-wrap model-picker">
 <button class="picker-trigger" id="model-trigger" type="button" aria-expanded="false">deepseek-flash <span>⌄</span></button><div class="picker-menu" id="model-menu" hidden><button data-model="deepseek-flash">deepseek-flash · 推荐</button><button data-model="deepseek-v4-pro">deepseek-v4-pro · 高质量</button></div></div></div></div>
-<div class="action-row"><button class="btn primary" id="btn-save-settings">保存设置</button><span class="status" id="save-status"></span></div><p class="security-note">实时热点通过 DeepSeek Search API 获取，需要 API Key。API Key 保存在当前浏览器；不要在公共设备使用。微博、抖音和 X 的结果受公开网页索引覆盖范围限制。</p></section>
+<div class="action-row"><button class="btn primary" id="btn-save-settings">保存设置</button><span class="status" id="save-status"></span></div><p class="security-note">实时热点通过 DeepSeek Search API 获取，需要 API Key。API Key 保存在当前浏览器；不要在公共设备使用。微博、抖音的结果受公开网页索引覆盖范围限制。</p></section>
 <section class="panel-card"><div class="section-heading"><h2>Token 统计</h2><button class="btn subtle" id="btn-reset-stats">重置</button></div><div class="stat-grid">
 <div class="stat"><b id="stat-calls">0</b><span>调用次数</span></div><div class="stat"><b id="stat-prompt">0</b><span>输入 tokens</span></div><div class="stat"><b id="stat-completion">0</b><span>输出 tokens</span></div><div class="stat"><b id="stat-total">0</b><span>总计 tokens</span></div></div></section>
 <section class="panel-card"><div class="section-heading"><h2>生词本</h2><button class="btn subtle" id="btn-copy-words">复制</button></div><div id="word-box" class="word-box">（暂无生词）</div></section></section>
@@ -63,4 +63,4 @@
 
 <div id="selection-popup" class="selection-popup" role="dialog" aria-label="选词工具"><div class="popup-actions"><button id="pop-lookup">查词</button><button id="pop-add">加生词</button><button id="pop-close" aria-label="关闭">×</button></div><div id="pop-meaning" class="meaning" hidden></div></div>
 <div class="modal-layer" id="app-modal" aria-hidden="true"><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><h3 id="modal-title">提示</h3><div id="modal-message" class="modal-message"></div><div id="modal-actions" class="modal-actions"></div></div></div>
-<script src="./app.js?v=9" defer></script></body></html>
+<script src="./app.js?v=10" defer></script></body></html>
