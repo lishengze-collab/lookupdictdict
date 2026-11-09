@@ -45,6 +45,7 @@ button{font-family:inherit;}
   width:100%;max-width:480px;background-color:var(--bg-color);
   position:relative;height:100%;display:flex;flex-direction:column;
   box-shadow:0 0 40px rgba(0,0,0,.06);padding-top:env(safe-area-inset-top);
+  overflow:hidden;
 }
 .content{
   flex:1;min-height:0;overflow-y:auto;
@@ -70,6 +71,7 @@ button{font-family:inherit;}
   border:1px solid var(--primary);border-radius:14px;font-size:15px;cursor:pointer;
 }
 .btn-outline:active{background:var(--primary-light);}
+.btn-outline:disabled{opacity:.5;}
 .empty-hint{font-size:14px;color:#a9b5af;text-align:center;padding:40px 12px;line-height:1.7;}
 .empty-state{width:100%;text-align:center;color:var(--text-muted);margin-top:100px;font-size:15px;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
@@ -181,7 +183,6 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .pv-fav{flex:none;padding:10px 16px;border:0;border-radius:11px;background:var(--primary);color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
 .pv-fav:active{background:var(--primary-dark);}
 .pv-saved{flex:none;padding:10px 14px;border-radius:11px;background:#e6f4ec;color:var(--green);font-size:14px;font-weight:700;}
-.preview-tip{font-size:12px;color:#8c9992;margin-bottom:10px;line-height:1.6;}
 
 /* ============ 语法目录 ============ */
 .grammar-section{margin:0 0 16px;background:#fff;border-radius:17px;padding:15px 14px;box-shadow:var(--shadow);}
@@ -203,32 +204,51 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .group-manager-row{display:flex;align-items:center;gap:7px;padding:8px 0;border-top:1px solid #f0f3f1;font-size:12px;color:var(--text-sub);}
 .group-manager-row strong{color:var(--text-main);font-weight:650;}
 .group-manager-row .group-meta{margin-left:auto;color:var(--text-muted);white-space:nowrap;}
+.group-manager-row strong + .group-meta{margin-left:auto;}
+.group-manager-row .group-meta + .group-meta{margin-left:0;}
 .group-remove{border:0;background:transparent;color:#bd7774;font-size:12px;padding:4px 2px;}
-.card-directory-title{font-size:17px;font-weight:750;color:var(--text-main);margin:4px 2px 12px;}
+.card-directory-title{font-size:17px;font-weight:750;color:var(--text-main);margin:4px 2px 10px;}
+.cat-filter{display:flex;gap:7px;margin:0 0 10px;overflow-x:auto;scrollbar-width:none;}
+.cat-filter::-webkit-scrollbar{display:none;}
+.cat-filter button{flex:none;border:1px solid #dbe6e0;background:#fff;color:var(--text-sub);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:650;cursor:pointer;}
+.cat-filter button i{font-style:normal;font-size:11px;color:var(--text-muted);margin-left:4px;font-weight:500;}
+.cat-filter button.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+.cat-filter button.on i{color:rgba(255,255,255,.75);}
 .card-category{margin:0 0 16px;}
 .card-category-head{font-size:14px;color:var(--primary);font-weight:750;padding:5px 3px 8px;display:flex;justify-content:space-between;}
 .card-category-head span{font-size:12px;color:var(--text-muted);font-weight:500;}
 .card-group{margin:0 0 12px;}
-.card-group-head{font-size:12px;color:#8a9690;padding:4px 4px 6px;}
+.card-group>summary{font-size:12px;color:#7d8a84;padding:6px 6px;cursor:pointer;list-style:none;font-weight:650;display:flex;align-items:center;gap:6px;outline:none;}
+.card-group>summary::-webkit-details-marker{display:none;}
+.card-group>summary:before{content:'▸';font-size:11px;color:#a3b0a9;transition:transform .15s;}
+.card-group[open]>summary:before{transform:rotate(90deg);}
 .card-directory-item{display:flex;align-items:center;gap:11px;background:#fff;border-radius:13px;padding:13px 13px;margin-bottom:7px;box-shadow:var(--shadow);cursor:pointer;min-height:56px;}
 .card-directory-item:active{background:#f1f6f3;}
-.card-directory-item.select-mode{cursor:default;}
-.card-directory-item.select-mode .card-directory-main{pointer-events:none;}
+.card-directory-item.select-mode{cursor:pointer;}
+.card-directory-item.selected{background:#eef6f2;box-shadow:inset 0 0 0 1.5px #9cc2b2;}
 .card-directory-main{flex:1;min-width:0;}
 .card-directory-word{font-size:16px;font-weight:700;color:#28332e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-directory-desc{font-size:13px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-directory-arrow{color:#a7b2ac;font-size:21px;}
 .card-count{font-size:12px;color:var(--text-muted);font-weight:500;}
-.cards-bulk-toolbar{display:flex;align-items:center;justify-content:flex-end;min-height:38px;margin:-4px 0 10px;}
+
+/* 批量工具条（粘性置顶） */
+.cards-bulk-toolbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:flex-end;min-height:40px;margin:0 0 10px;padding:4px 0;background:var(--bg-color);}
 .bulk-entry-buttons{display:flex;gap:7px;}
-.cards-bulk-toolbar>button,#bulkModeActions button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:12px;font-weight:700;padding:8px 12px;}
-#bulkModeActions{width:100%;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
-#bulkSelectedCount{margin-right:auto;font-size:12px;color:var(--text-sub);}
-#bulkModeActions button:disabled{opacity:.4;}
-#bulkModeActions button.bulk-cancel{color:#8a9690;border-color:#e4e9e6;}
+.bulk-entry-buttons button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer;}
+.bulk-entry-buttons button.bulk-classify-entry{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(44,94,79,.2);}
+.bulk-panel{width:100%;display:flex;flex-direction:column;gap:8px;padding:10px 11px;background:#fff;border:1px solid #dfe9e4;border-radius:14px;box-shadow:var(--shadow);}
+.bulk-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+#bulkSelectedCount{margin-right:auto;font-size:13px;font-weight:700;color:var(--primary);}
+.bulk-panel button{border:1px solid #d7e4dd;border-radius:9px;background:#fff;color:var(--primary);font-size:12px;font-weight:700;padding:8px 12px;cursor:pointer;}
+.bulk-panel button:disabled{opacity:.4;}
+.bulk-panel button.bulk-cancel{color:#8a9690;border-color:#e4e9e6;}
+.bulk-panel button.bulk-danger{color:#fff;background:#d65a55;border-color:#d65a55;}
+.bulk-panel button.bulk-apply{color:#fff;background:var(--primary);border-color:var(--primary);}
 .bulk-classify-controls{display:flex;align-items:center;gap:6px;width:100%;}
+.bulk-classify-controls>span{font-size:12px;color:var(--text-sub);flex:none;}
 .bulk-classify-controls select{flex:1;min-width:0;padding:8px 7px;border:1px solid #d7e4dd;border-radius:9px;background:#fff;color:var(--text-main);font-size:12px;}
-.card-select{width:19px;height:19px;flex:none;accent-color:var(--primary);margin:0 2px 0 0;}
+.card-select{width:19px;height:19px;flex:none;accent-color:var(--primary);margin:0 2px 0 0;pointer-events:none;}
 .history-section{margin:18px 0 10px;padding:12px 12px 4px;background:rgba(255,255,255,.68);border:1px solid #e4ebe7;border-radius:16px;}
 .history-section>summary{padding:3px 2px 10px;color:var(--primary);font-size:14px;font-weight:750;cursor:pointer;list-style:none;}
 .history-section>summary::-webkit-details-marker{display:none;}
@@ -277,8 +297,10 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .check-main{flex:1;min-width:0;}
 .check-text{font-size:15px;line-height:1.5;color:var(--text-main);word-break:break-word;}
 .check-text.done{color:#b3b3b3;text-decoration:line-through;}
-.check-photo{width:58px;height:58px;object-fit:cover;border-radius:10px;display:block;border:1px solid var(--line);cursor:zoom-in;filter:blur(5px);transition:filter .18s ease;}
-.check-photo:active{filter:blur(2px);}
+/* 缩略图：强模糊 + 放大裁边，防止边缘透出清晰轮廓 */
+.check-photo-wrap{position:relative;width:58px;height:58px;border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in;background:#e9efec;}
+.check-photo{width:100%;height:100%;object-fit:cover;display:block;filter:blur(14px) saturate(.9);transform:scale(1.35);transition:filter .18s ease;pointer-events:none;}
+.check-photo-wrap:active .check-photo{filter:blur(8px) saturate(.95);}
 .check-photo-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;}
 .check-photo-add{height:58px;min-width:58px;padding:0 9px;border:1px dashed #c9d7cf;border-radius:10px;background:#f8fbf9;color:var(--primary);font-size:11px;font-weight:650;}
 .check-photo-add:disabled{opacity:.4;}
@@ -301,18 +323,13 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .rest-title{font-size:16px;font-weight:750;color:var(--primary);}
 .rest-sub{font-size:12px;color:var(--text-muted);margin-top:4px;}
 .rest-icon{font-size:23px;}
-.rest-summary{margin-top:13px;padding:12px;background:var(--bg-color);border-radius:12px;color:var(--text-sub);font-size:14px;font-weight:650;}
-.rest-action{width:100%;margin-top:11px;padding:12px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:700;}
+.rest-summary{margin-top:13px;padding:12px;background:var(--bg-color);border-radius:12px;color:var(--text-sub);font-size:14px;font-weight:650;line-height:1.8;}
+.rest-actions{display:flex;gap:10px;margin-top:11px;}
+.rest-action{flex:1 1 0;min-width:0;padding:12px 8px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:700;cursor:pointer;}
 .rest-action.running{background:var(--amber);color:#fff;}
-.rest-history{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:8px;}
-.sleep-section{margin-top:15px;padding-top:14px;border-top:1px solid #edf1ef;}
-.sleep-head{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.sleep-title{font-size:14px;font-weight:750;color:var(--primary);}
-.sleep-summary{font-size:12px;color:var(--text-sub);margin-top:8px;padding:10px 11px;border-radius:11px;background:var(--bg-color);}
-.sleep-actions{display:flex;gap:8px;margin-top:9px;}
-.sleep-actions button{flex:1;border:1px solid var(--primary);border-radius:11px;background:#fff;color:var(--primary);padding:10px 8px;font-size:13px;font-weight:650;}
-.sleep-actions button.running{background:var(--amber);border-color:var(--amber);color:#fff;}
-.sleep-history{font-size:11px;color:var(--text-muted);line-height:1.8;margin-top:8px;}
+.rest-action.sleep{background:var(--blue-soft);color:var(--blue);}
+.rest-action.sleep.running{background:var(--blue);color:#fff;}
+.rest-history{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:10px;white-space:pre-line;word-break:break-word;}
 
 /* ============ 选词查询 ============ */
 .sel-bar{
@@ -352,7 +369,6 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .modal-header{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:17px;color:var(--primary);margin-bottom:12px;flex-shrink:0;}
 .modal-head-actions{display:flex;align-items:center;gap:5px;margin-left:auto;}
 .modal-icon-action{width:36px;height:36px;color:var(--primary);}
-.modal-close{border:0;background:transparent;color:#aab3ae;font-size:26px;line-height:1;padding:0 3px;}
 .modal-body{flex:1;min-height:0;overflow-y:auto;font-size:16px;line-height:1.75;color:#333;margin-bottom:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .modal-footer{display:flex;gap:10px;flex-shrink:0;}
 .modal-footer .btn-outline{flex:1;}
@@ -361,7 +377,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 #infoModal.preview-mode .modal-content{padding-top:14px;padding-bottom:14px;}
 #infoModal.preview-mode .modal-body{margin-bottom:0;}
 #infoBody.rd{font-size:20px;}
-.app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:350;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center;}
+.app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:1500;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center;}
 .app-toast.show{opacity:1;transform:translate(-50%,0);}
 .photo-preview-overlay{position:fixed;inset:0;z-index:1400;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(12,18,15,.92);}
 .photo-preview-overlay img{display:block;max-width:96vw;max-height:86vh;object-fit:contain;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.32);}
@@ -443,21 +459,27 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
       <div id="groupManagerList"></div>
     </details>
     <div class="card-directory-title">卡片目录</div>
+    <div class="cat-filter" id="catFilter"></div>
     <div class="cards-bulk-toolbar" id="cardsBulkToolbar">
       <div class="bulk-entry-buttons" id="bulkEntryButtons">
-        <button type="button" id="bulkClassifyButton" onclick="toggleBatchClassifyMode()">批量分类</button>
+        <button type="button" class="bulk-classify-entry" id="bulkClassifyButton" onclick="toggleBatchClassifyMode()">批量分类</button>
         <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
       </div>
-      <div id="bulkModeActions" style="display:none;">
-        <span id="bulkSelectedCount">已选 0 张</span>
-        <button type="button" onclick="selectAllCards()">全选</button>
-        <div class="bulk-classify-controls" id="bulkClassifyControls" style="display:none;">
-          <select id="bulkCategory" aria-label="批量目标类别" onchange="renderBulkGroupOptions()"><option>单词</option><option>语法</option><option>其它</option></select>
-          <select id="bulkGroup" aria-label="批量目标分组"></select>
-          <button type="button" id="bulkApplyButton" onclick="applyBatchClassification()" disabled>应用分类</button>
+      <div class="bulk-panel" id="bulkModeActions" style="display:none;">
+        <div class="bulk-row">
+          <span id="bulkSelectedCount">已选 0 张</span>
+          <button type="button" id="selectAllBtn" onclick="selectAllCards()">全选</button>
+          <button type="button" class="bulk-cancel" onclick="cancelBatchMode()">取消</button>
         </div>
-        <button type="button" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
-        <button type="button" class="bulk-cancel" onclick="cancelBatchMode()">取消</button>
+        <div class="bulk-classify-controls" id="bulkClassifyControls" style="display:none;">
+          <span>移动到</span>
+          <select id="bulkCategory" aria-label="批量目标类别" onchange="renderBulkGroupOptions()"><option>单词</option><option>语法</option><option>其它</option></select>
+          <select id="bulkGroup" aria-label="批量目标分组" onchange="updateBulkDeleteUI()"></select>
+          <button type="button" class="bulk-apply" id="bulkApplyButton" onclick="applyBatchClassification()" disabled>应用</button>
+        </div>
+        <div class="bulk-row" id="bulkDeleteRow" style="display:none;">
+          <button type="button" class="bulk-danger" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
+        </div>
       </div>
     </div>
     <div id="cardsContainer"></div>
@@ -466,20 +488,14 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
   <!-- ================= TAB 4 清单 ================= -->
   <div class="content" id="tab-checklist">
     <div class="rest-card">
-      <div class="rest-head"><div><div class="rest-title">休息记录</div><div class="rest-sub" id="restStatus">今天还没有休息记录</div></div><span class="rest-icon">☕</span></div>
-      <div class="rest-summary" id="restSummary">今日 0 次 · 共 0 分钟</div>
-      <button class="rest-action" id="restButton" onclick="toggleBreak()">开始休息</button>
-      <div class="rest-history" id="restHistory"></div>
-      <button class="w-ai" onclick="analyzeWork()">AI 分析休息习惯</button>
-      <div class="sleep-section">
-        <div class="sleep-head"><div class="sleep-title">睡眠记录</div><span class="rest-icon">🌙</span></div>
-        <div class="sleep-summary" id="sleepSummary">尚无睡眠记录</div>
-        <div class="sleep-actions">
-          <button type="button" id="sleepButton" onclick="toggleSleepRecording()">开始睡眠</button>
-          <button type="button" onclick="analyzeSleep()">AI 分析睡眠</button>
-        </div>
-        <div class="sleep-history" id="sleepHistory">开始睡眠后，醒来时结束记录。</div>
+      <div class="rest-head"><div><div class="rest-title">休息与睡眠</div><div class="rest-sub" id="restStatus">今天还没有记录</div></div><span class="rest-icon">☕🌙</span></div>
+      <div class="rest-summary" id="restSummary"></div>
+      <div class="rest-actions">
+        <button class="rest-action" id="restButton" type="button" onclick="toggleBreak()">开始休息</button>
+        <button class="rest-action sleep" id="sleepButton" type="button" onclick="toggleSleepRecording()">开始睡眠</button>
       </div>
+      <div class="rest-history" id="restHistory"></div>
+      <button class="w-ai" type="button" onclick="analyzeRestSleep()">AI 分析休息与睡眠</button>
     </div>
     <div class="add-check-row">
       <input type="text" id="checkInput" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…" onkeypress="if(event.key==='Enter')addCheckItem()">
@@ -631,24 +647,42 @@ let selectedCardIds = new Set();
 let appDialogAction = null;
 let toastTimer = null;
 let deferredInstallPrompt = null;
+let cardFilter = '全部';
+let groupOpen = {};
+
+if (!Array.isArray(words)) words = [];
+if (!Array.isArray(checklist)) checklist = [];
+if (!Array.isArray(sleepRecords)) sleepRecords = [];
+if (!attendance || typeof attendance !== 'object') attendance = {};
 
 const CARD_CATEGORIES = ['单词','语法','其它'];
 const DEFAULT_GROUPS = [
   {id:'default-word', category:'单词', name:'默认单词', limit:0, isDefault:true},
+  {id:'default-daily', category:'单词', name:'日常生活', limit:0, isDefault:true},
   {id:'default-grammar', category:'语法', name:'默认语法', limit:0, isDefault:true},
   {id:'default-other', category:'其它', name:'默认其它', limit:0, isDefault:true}
 ];
+
+function persistWords(){
+  const ok = safeSet('wm_words', JSON.stringify(words));
+  if (!ok) showToast('本地存储空间不足，卡片未能保存，建议导出备份');
+  return ok;
+}
 
 /* =========================================================
    初始化 / Tab 切换
 ========================================================= */
 function init(){
   $('apiKeyInput').value = apiKey;
-  ensureCardGroups(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
-  renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI();
+  ensureCardGroups(); seedDailyWords(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
+  renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
   renderRecognitionStatus('粘贴内容后，点击放大镜进行 AI 识别');
-  setInterval(() => { if ($('tab-checklist').classList.contains('active')) { renderRestUI(); renderSleepUI(); } }, 1000);
-  setInterval(() => { archiveExpiredCards(); if ($('tab-cards').classList.contains('active')) renderCards(); }, 60000);
+  setInterval(() => { if ($('tab-checklist').classList.contains('active')) renderRestUI(); }, 1000);
+  setInterval(() => {
+    const before = words.filter(w => w.archived).length;
+    archiveExpiredCards();
+    if ($('tab-cards').classList.contains('active') && before !== words.filter(w => w.archived).length) renderCards();
+  }, 60000);
   $('batchInput').addEventListener('keydown', e => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); triggerSearch(); }
   });
@@ -659,6 +693,14 @@ function init(){
       renderRecognitionStatus('输入内容已修改，需要重新识别');
     }
   });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if ($('appDialog').classList.contains('active')) resolveAppDialog(false);
+    else if ($('photoPreviewModal').style.display !== 'none') closePhotoPreview();
+    else if ($('infoModal').classList.contains('active')) closeInfoModal();
+    else if ($('cardModal').classList.contains('active')) closeCardModal();
+    else if ($('photoModal').classList.contains('active')) closePhotoTaskDialog();
+  });
 }
 
 function switchTab(tabId){
@@ -667,9 +709,11 @@ function switchTab(tabId){
   const panel = $('tab-' + tabId); if (!panel) return;
   panel.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(el => { if (el.dataset.tab === tabId) el.classList.add('active'); });
+  hideSelBar();
+  if (tabId !== 'cards' && (batchDeleteMode || batchClassifyMode)) { batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); }
   if (tabId === 'cards') { archiveExpiredCards(); renderCards(); renderGroupManager(); }
   if (tabId === 'grammar') renderGrammarTopics();
-  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI(); }
+  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); updateStatsUI(); }
 }
 
 function showToast(message){
@@ -705,6 +749,7 @@ async function callAI(messages){
       });
       return {response, text: await response.text()};
     })();
+    request.catch(() => {});
     const {response, text} = await Promise.race([request, timeoutPromise]);
     let data;
     try{ data = text ? JSON.parse(text) : null; }catch(e){ throw new Error(`API 返回的不是有效 JSON（HTTP ${response.status}）`); }
@@ -797,7 +842,7 @@ function speak(word, type){ // type: 1 英音, 2 美音
   let fell = false;
   const fallback = () => {
     if (fell) return; fell = true;
-    if (!('speechSynthesis' in window)) { alert('发音失败：网络不可用且浏览器不支持语音'); return; }
+    if (!('speechSynthesis' in window)) { showToast('发音失败：网络不可用且浏览器不支持语音'); return; }
     const u = new SpeechSynthesisUtterance(word);
     u.lang = type === 1 ? 'en-GB' : 'en-US'; u.rate = 0.9;
     speechSynthesis.speak(u);
@@ -869,6 +914,8 @@ async function addLookupWord(){
   try{
     const generated = await generateWordCard(w);
     btn.dataset.state = '';
+    /* 生成期间弹窗已被关闭或换成别的内容，则不再强行弹出预览 */
+    if (!$('infoModal').classList.contains('active') || btn.dataset.w !== w) { btn.innerText = '加入卡片'; btn.disabled = false; return; }
     showGeneratedPreview('单词预览 · ' + w, [normalizeCardData(generated, '单词')]);
   }catch(e){
     btn.innerText = '加入卡片'; btn.disabled = false; btn.dataset.state = '';
@@ -909,7 +956,6 @@ function cardKeys(c){
   if (typeof k === 'string') k = k.split(/[,，、;；\n]+/);
   return Array.isArray(k) ? k.map(x => String(x).trim()).filter(Boolean) : [];
 }
-/* 转义 → **关键词** 高亮；没有 ** 标记时退回到关键词表匹配 */
 /* 按换行与句末标点（。！？ . ! ?）切句，每句一段；数字序号（1.）不单独成段 */
 function splitSentences(t){
   const out = [];
@@ -927,6 +973,7 @@ function splitSentences(t){
   });
   return out;
 }
+/* 转义 → **关键词** 高亮；没有 ** 标记时退回到关键词表匹配 */
 function rich(v, keys){
   const t = toText(v); if (!t) return '';
   const hasMarks = /\*\*[^*]+\*\*/.test(t);
@@ -1018,29 +1065,38 @@ function inferCardCreatedAt(card){
   }
   return Date.now();
 }
-function isArchivedCard(card){ return !!card.archived; }
 function archiveExpiredCards(){
   const cutoff = Date.now() - WEEK_MS; let changed = false;
   words.forEach(card => {
     if (!Number.isFinite(Number(card.createdAt)) || Number(card.createdAt) <= 0) { card.createdAt = inferCardCreatedAt(card); changed = true; }
-    if (!card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
+    /* 内置卡片永不归档 */
+    if (!card.builtin && !card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
   });
-  if (changed) safeSet('wm_words', JSON.stringify(words));
+  if (changed) persistWords();
 }
 function defaultGroupId(category){
   return category === '语法' ? 'default-grammar' : category === '其它' ? 'default-other' : 'default-word';
 }
 function ensureCardGroups(){
   if (!Array.isArray(cardGroups)) cardGroups = [];
-  DEFAULT_GROUPS.forEach(g => { if (!cardGroups.some(x => x.id === g.id)) cardGroups.unshift({...g}); });
+  cardGroups = cardGroups.filter(g => g && g.id && CARD_CATEGORIES.includes(g.category));
+  DEFAULT_GROUPS.forEach((g, i) => {
+    const ex = cardGroups.find(x => x.id === g.id);
+    if (ex) { ex.isDefault = true; return; }
+    /* 保持默认分组在各自类别中的相对顺序 */
+    const firstSame = cardGroups.findIndex(x => x.category === g.category && !x.isDefault);
+    if (firstSame >= 0) cardGroups.splice(firstSame, 0, {...g}); else cardGroups.push({...g});
+  });
+  cardGroups.sort((a, b) => CARD_CATEGORIES.indexOf(a.category) - CARD_CATEGORIES.indexOf(b.category) || (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
   words.forEach(w => {
     if (!w.category || !CARD_CATEGORIES.includes(w.category)) w.category = '单词';
-    if (!w.groupId || !cardGroups.some(g => g.id === w.groupId)) w.groupId = defaultGroupId(w.category);
+    const g = cardGroups.find(x => x.id === w.groupId);
+    if (!g || g.category !== w.category) w.groupId = defaultGroupId(w.category);
     if (!Number.isFinite(Number(w.createdAt)) || Number(w.createdAt) <= 0) w.createdAt = inferCardCreatedAt(w);
     if (typeof w.archived !== 'boolean') w.archived = false;
   });
   persistGroups();
-  safeSet('wm_words', JSON.stringify(words));
+  persistWords();
 }
 function getCardGroup(id){ return cardGroups.find(g => g.id === id); }
 function groupsFor(category){ return cardGroups.filter(g => g.category === category); }
@@ -1054,22 +1110,25 @@ function groupHasRoom(id, excludingId){
 function createCardGroup(){
   const category = $('groupCategory').value;
   const name = $('groupName').value.trim();
-  const limit = Math.max(0, Number($('groupLimit').value || 0));
+  const limit = Math.max(0, Math.floor(Number($('groupLimit').value || 0)) || 0);
   if (!name) { showToast('请填写分组名称'); return; }
   if (cardGroups.some(g => g.category === category && g.name.toLowerCase() === name.toLowerCase())) { showToast('该类别已存在同名分组'); return; }
   cardGroups.push({id:'g-' + Date.now() + '-' + Math.floor(Math.random() * 1000), category, name, limit, isDefault:false});
-  persistGroups(); $('groupName').value = ''; $('groupLimit').value = ''; renderGroupManager(); renderCards(); showToast('分组已创建');
+  ensureCardGroups(); $('groupName').value = ''; $('groupLimit').value = ''; renderGroupManager(); renderCards(); showToast('分组已创建');
 }
 function removeCardGroup(id){
   const g = getCardGroup(id); if (!g || g.isDefault) return;
-  const fallback = defaultGroupId(g.category);
-  words.forEach(w => { if (w.groupId === id) w.groupId = fallback; });
-  cardGroups = cardGroups.filter(x => x.id !== id);
-  persistGroups(); safeSet('wm_words', JSON.stringify(words)); renderGroupManager(); renderCards(); showToast('分组已删除，卡片已移至默认分组');
+  showAppDialog('删除分组', `删除分组“${g.name}”？其中的卡片会移到默认${g.category === '单词' ? '单词' : g.category}分组，不会被删除。`, () => {
+    const fallback = defaultGroupId(g.category);
+    words.forEach(w => { if (w.groupId === id) w.groupId = fallback; });
+    cardGroups = cardGroups.filter(x => x.id !== id);
+    delete groupOpen[id];
+    persistGroups(); persistWords(); renderGroupManager(); renderCards(); showToast('分组已删除，卡片已移至默认分组');
+  });
 }
 function renderGroupManager(){
   const host = $('groupManagerList'); if (!host) return;
-  host.innerHTML = cardGroups.map(g => `<div class="group-manager-row"><strong>${esc(g.category)} · ${esc(g.name)}</strong><span class="group-meta">${countInGroup(g.id)}${g.limit ? '/' + g.limit : ''}</span>${g.isDefault ? '<span class="group-meta">默认</span>' : `<button class="group-remove" type="button" onclick="removeCardGroup('${esc(g.id)}')">删除</button>`}</div>`).join('');
+  host.innerHTML = cardGroups.map(g => `<div class="group-manager-row"><strong>${esc(g.category)} · ${esc(g.name)}</strong><span class="group-meta">${countInGroup(g.id)}${g.limit ? '/' + g.limit : ''}</span>${g.isDefault ? '<span class="group-meta">默认</span>' : `<button class="group-remove" type="button" data-id="${esc(g.id)}" onclick="removeCardGroup(this.dataset.id)">删除</button>`}</div>`).join('');
 }
 
 /* =========================================================
@@ -1149,8 +1208,9 @@ function renderRecognitionStatus(message, state){
 }
 
 /* ---- 预览与收藏 ---- */
+/* 内置卡片不算“已收藏”：用户收藏同名 AI 卡片时，会替换内置的简版卡片 */
 function isSaved(card){
-  return words.some(w => String(w.word).toLowerCase() === String(card.word).toLowerCase() && (w.category || '单词') === card.category);
+  return words.some(w => !w.builtin && String(w.word).toLowerCase() === String(card.word).toLowerCase() && (w.category || '单词') === card.category);
 }
 function renderPreviewList(ctx){
   ensureCardGroups();
@@ -1185,6 +1245,7 @@ function showGeneratedPreview(title, cards){
   $('infoBody').classList.add('rd');
   $('infoFavorite').style.display = 'none';
   $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
+  $('infoSpeak').dataset.w = ''; $('infoAdd').dataset.w = '';
   $('infoModal').classList.add('active');
   refreshPreview('modal'); $('infoBody').scrollTop = 0;
 }
@@ -1198,13 +1259,18 @@ function saveWord(data){
   if (isSaved(data)) return 'dup';
   const g = getCardGroup(data.groupId);
   if (!g || g.category !== data.category) return 'bad';
-  if (!groupHasRoom(data.groupId)) return 'full';
-  data.id = Date.now() + Math.floor(Math.random() * 100000);
+  /* 同名内置卡片将被替换：容量检查时把它视为已释放 */
+  const builtinDup = words.find(w => w.builtin && String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category);
+  if (!groupHasRoom(data.groupId, builtinDup ? builtinDup.id : undefined)) return 'full';
+  if (builtinDup) words = words.filter(w => w !== builtinDup);
+  data.id = Date.now() * 10 + Math.floor(Math.random() * 10);
+  while (words.some(w => w.id === data.id)) data.id++;
   data.time = nowStr();
   data.createdAt = Date.now();
   data.archived = false;
+  delete data.builtin;
   words.push(data);
-  safeSet('wm_words', JSON.stringify(words));
+  persistWords();
   return 'ok';
 }
 function afterSave(ctx){
@@ -1262,7 +1328,8 @@ const GRAMMAR_SECTIONS = [
   ]}
 ];
 function renderGrammarTopics(){
-  const host = $('grammarTopics'); if (!host) return;
+  const host = $('grammarTopics'); if (!host || host.dataset.ready) return;
+  host.dataset.ready = '1';
   host.innerHTML = GRAMMAR_SECTIONS.map(section => `<section class="grammar-section"><div class="grammar-section-title">${esc(section.title)}</div>${section.items.map(group => `<div class="grammar-group-title">${esc(group[0])}</div><div class="grammar-topic-grid">${group.slice(1).map(topic => `<button class="grammar-topic" type="button" data-topic="${esc(topic)}" onclick="generateGrammarTopic(this.dataset.topic)">${esc(topic)}</button>`).join('')}</div>`).join('')}</section>`).join('');
 }
 async function generateGrammarTopic(topic){
@@ -1273,6 +1340,7 @@ async function generateGrammarTopic(topic){
   $('infoBody').classList.add('rd');
   $('infoBody').innerHTML = '<div style="text-align:center;padding:26px;color:#87958d;font-size:16px;">AI 正在整理语法知识…</div>';
   $('infoFavorite').style.display = 'none'; $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
+  $('infoSpeak').dataset.w = ''; $('infoAdd').dataset.w = '';
   $('infoModal').classList.add('active');
   try{
     const prompt = `请用中文为英语学习者讲解英语语法知识点“${topic}”。内容务必准确、实用、结构清楚，按重要性依次给出：
@@ -1286,12 +1354,15 @@ async function generateGrammarTopic(topic){
 所有字段的值必须是字符串（多条内容用换行分隔），不要使用嵌套对象或数组。正文中的关键用法、关键词、关键结构用 **双星号** 包裹以便高亮。
 以 JSON 对象输出，字段为 word（标题，使用“${topic}”）、category（固定为“语法”）、usage、pitfalls、compare、example、definition、structure、keywords。只输出 JSON，不要 Markdown 代码围栏。`;
     const raw = await callAI([{role:'user', content:prompt}]);
+    /* 等待期间用户已关闭弹窗：不再强行弹出结果 */
+    if (!$('infoModal').classList.contains('active')) return;
     let parsed;
     try{ parsed = parseAIJson(raw)[0]; }
     catch(err){ parsed = {usage: raw}; }   // 解析失败时保留原文，保证内容可见
     const card = normalizeCardData({...parsed, word: toText(parsed.word) || topic, category:'语法'}, '语法');
     showGeneratedPreview(`语法预览 · ${topic}`, [card]);
   }catch(e){
+    if (!$('infoModal').classList.contains('active')) return;
     $('infoTitle').textContent = `${topic} · 生成失败`;
     $('infoBody').innerHTML = `<div style="color:#c45b56;font-size:16px;">${esc(e.message || 'AI 生成失败')}</div>`;
     $('infoFavorite').style.display = 'none';
@@ -1299,40 +1370,57 @@ async function generateGrammarTopic(topic){
 }
 
 /* =========================================================
-   卡片目录
+   卡片目录（分类筛选 / 分组折叠 / 批量分类与删除）
 ========================================================= */
+function inSelectMode(){ return batchDeleteMode || batchClassifyMode; }
 function cardDirectoryEntry(w){
-  const id = Number(w.id), checked = selectedCardIds.has(id) ? 'checked' : '';
-  const selecting = batchDeleteMode || batchClassifyMode;
-  const check = selecting ? `<input class="card-select" type="checkbox" ${checked} aria-label="选择 ${esc(w.word)}" onclick="event.stopPropagation()" onchange="toggleCardSelection(${id},this.checked)">` : '';
+  const id = Number(w.id), sel = selectedCardIds.has(id);
+  const selecting = inSelectMode();
+  const check = selecting ? `<input class="card-select" type="checkbox" tabindex="-1" ${sel ? 'checked' : ''} aria-label="选择 ${esc(w.word)}">` : '';
   const arrow = selecting ? '' : '<div class="card-directory-arrow">›</div>';
   const desc = plain(w.cn || w.summary || w.definition || w.usage || w.collins || w.example).replace(/\n/g, ' ') || '点击查看卡片内容';
-  return `<div class="card-directory-item ${selecting ? 'select-mode' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${arrow}</div>`;
+  return `<div class="card-directory-item ${selecting ? 'select-mode' : ''} ${selecting && sel ? 'selected' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${arrow}</div>`;
 }
+function setCardFilter(f){ cardFilter = f; renderCards(); }
+function renderCatFilter(active){
+  const host = $('catFilter'); if (!host) return;
+  const opts = ['全部', ...CARD_CATEGORIES];
+  host.innerHTML = opts.map(o => {
+    const n = o === '全部' ? active.length : active.filter(w => (w.category || '单词') === o).length;
+    return `<button type="button" class="${cardFilter === o ? 'on' : ''}" onclick="setCardFilter('${o}')">${o}<i>${n}</i></button>`;
+  }).join('');
+}
+function setGroupOpen(id, open){ groupOpen[id] = !!open; }
 function renderCards(){
   const container = $('cardsContainer'); if (!container) return;
+  const scrollHost = $('tab-cards'), prevTop = scrollHost.scrollTop;
   ensureCardGroups(); archiveExpiredCards();
   selectedCardIds = new Set([...selectedCardIds].filter(id => words.some(w => Number(w.id) === Number(id))));
   const active = words.filter(w => !w.archived);
   const history = words.filter(w => w.archived);
-  const activeHtml = CARD_CATEGORIES.map(category => {
+  renderCatFilter(active);
+  const cats = cardFilter === '全部' ? CARD_CATEGORIES : [cardFilter];
+  const activeHtml = cats.map(category => {
     const categoryCards = active.filter(w => (w.category || '单词') === category);
     if (!categoryCards.length) return '';
     const groupHtml = groupsFor(category).map(group => {
       const entries = categoryCards.filter(w => (w.groupId || defaultGroupId(category)) === group.id).slice().reverse();
       if (!entries.length) return '';
-      return `<div class="card-group"><div class="card-group-head">${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></div>${entries.map(cardDirectoryEntry).join('')}</div>`;
+      const open = groupOpen[group.id] !== undefined ? groupOpen[group.id] : entries.length <= 30;
+      return `<details class="card-group" ${open ? 'open' : ''} ontoggle="setGroupOpen('${esc(group.id)}',this.open)"><summary>${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></summary>${entries.map(cardDirectoryEntry).join('')}</details>`;
     }).join('');
     return `<section class="card-category"><div class="card-category-head">${category}<span>${categoryCards.length} 张</span></div>${groupHtml}</section>`;
   }).join('');
-  const historyHtml = `<details class="history-section"><summary>历史卡片 · ${history.length} 张（保存超过 7 天）</summary>${history.length ? CARD_CATEGORIES.map(category => {
-    const entries = history.filter(w => (w.category || '单词') === category).slice().reverse();
+  const historyList = history.filter(w => cardFilter === '全部' || (w.category || '单词') === cardFilter);
+  const historyHtml = `<details class="history-section"><summary>历史卡片 · ${historyList.length} 张（保存超过 7 天）</summary>${historyList.length ? cats.map(category => {
+    const entries = historyList.filter(w => (w.category || '单词') === category).slice().reverse();
     return entries.length ? `<section class="history-category"><div class="history-category-title">${category} · ${entries.length} 张</div>${entries.map(cardDirectoryEntry).join('')}</section>` : '';
   }).join('') : '<div class="history-empty">暂无历史卡片。卡片保存满 7 天后会自动归档。</div>'}</details>`;
   container.innerHTML = (activeHtml || '<div class="empty-state" style="margin-top:32px;">暂无进行中的卡片</div>') + historyHtml;
   updateBulkDeleteUI();
+  scrollHost.scrollTop = prevTop;
 }
-function handleCardDirectoryClick(id){ if (batchDeleteMode || batchClassifyMode) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else openCardDetail(id); }
+function handleCardDirectoryClick(id){ if (inSelectMode()) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else openCardDetail(id); }
 function cancelBatchMode(){ batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); renderCards(); }
 function toggleBatchDeleteMode(force){
   batchDeleteMode = typeof force === 'boolean' ? force : !batchDeleteMode;
@@ -1341,29 +1429,51 @@ function toggleBatchDeleteMode(force){
 function toggleBatchClassifyMode(force){
   batchClassifyMode = typeof force === 'boolean' ? force : !batchClassifyMode;
   batchDeleteMode = false; selectedCardIds.clear();
-  if (batchClassifyMode) renderBulkGroupOptions();
+  if (batchClassifyMode) {
+    /* 默认目标类别跟随当前筛选 */
+    if (cardFilter !== '全部' && $('bulkCategory')) $('bulkCategory').value = cardFilter;
+    renderBulkGroupOptions();
+  }
   renderCards();
 }
-function toggleCardSelection(id, checked){ id = Number(id); if (checked) selectedCardIds.add(id); else selectedCardIds.delete(id); updateBulkDeleteUI(); }
-function selectAllCards(){ selectedCardIds = new Set(words.map(w => Number(w.id))); renderCards(); }
+function toggleCardSelection(id, checked){
+  id = Number(id); if (checked) selectedCardIds.add(id); else selectedCardIds.delete(id);
+  renderCards();
+}
+function visibleCardIds(){
+  return words.filter(w => cardFilter === '全部' || (w.category || '单词') === cardFilter).map(w => Number(w.id));
+}
+function selectAllCards(){
+  const ids = visibleCardIds();
+  const all = ids.length && ids.every(id => selectedCardIds.has(id));
+  ids.forEach(id => all ? selectedCardIds.delete(id) : selectedCardIds.add(id));
+  renderCards();
+}
 function renderBulkGroupOptions(){
   const category = $('bulkCategory') ? $('bulkCategory').value : '单词';
   const select = $('bulkGroup'); if (!select) return;
-  const opts = groupsFor(category).map(g => {
+  const prev = select.value;
+  select.innerHTML = groupsFor(category).map(g => {
     const count = countInGroup(g.id), full = g.limit > 0 && count >= g.limit;
     return `<option value="${esc(g.id)}" ${full ? 'disabled' : ''}>${esc(g.name)} · ${count}${g.limit ? '/' + g.limit : ''}${full ? ' · 已满' : ''}</option>`;
-  }).join('');
-  select.innerHTML = opts || '<option value="">暂无可用分组</option>';
+  }).join('') || '<option value="">暂无可用分组</option>';
+  const keep = [...select.options].find(o => o.value === prev && !o.disabled);
+  const first = keep || [...select.options].find(o => !o.disabled);
+  select.value = first ? first.value : '';
+  updateBulkDeleteUI();
 }
 function updateBulkDeleteUI(){
   const actions = $('bulkModeActions'), entries = $('bulkEntryButtons'), count = $('bulkSelectedCount');
-  const del = $('bulkDeleteButton'), classify = $('bulkClassifyControls'), apply = $('bulkApplyButton');
+  const del = $('bulkDeleteButton'), delRow = $('bulkDeleteRow'), classify = $('bulkClassifyControls'), apply = $('bulkApplyButton');
   if (!actions) return;
-  const selecting = batchDeleteMode || batchClassifyMode;
+  const selecting = inSelectMode();
   actions.style.display = selecting ? 'flex' : 'none';
   if (entries) entries.style.display = selecting ? 'none' : 'flex';
   if (count) count.textContent = `已选 ${selectedCardIds.size} 张`;
-  if (del) { del.style.display = batchDeleteMode ? '' : 'none'; del.disabled = selectedCardIds.size === 0; }
+  const allBtn = $('selectAllBtn');
+  if (allBtn){ const ids = visibleCardIds(); allBtn.textContent = ids.length && ids.every(id => selectedCardIds.has(id)) ? '取消全选' : '全选'; }
+  if (delRow) delRow.style.display = batchDeleteMode ? 'flex' : 'none';
+  if (del) del.disabled = selectedCardIds.size === 0;
   if (classify) classify.style.display = batchClassifyMode ? 'flex' : 'none';
   if (apply) apply.disabled = !selectedCardIds.size || !$('bulkGroup') || !$('bulkGroup').value;
 }
@@ -1372,28 +1482,32 @@ function applyBatchClassification(){
   const groupId = $('bulkGroup').value, group = getCardGroup(groupId);
   if (!group) { showToast('请选择有效分组'); return; }
   const selected = words.filter(w => selectedCardIds.has(Number(w.id)));
-  const movingActive = selected.filter(w => !w.archived);
-  const currentCount = countInGroup(groupId);
-  const available = group.limit > 0 ? Math.max(0, group.limit - currentCount + movingActive.filter(w => w.groupId === groupId).length) : Infinity;
-  if (movingActive.filter(w => w.groupId !== groupId).length > available) { showToast('目标分组容量不足，请先调整数量上限'); return; }
   const movingIds = new Set(selected.map(w => Number(w.id)));
-  const existingNames = new Set(words.filter(w => !movingIds.has(Number(w.id))).map(w => `${group.category}|${String(w.word).toLowerCase()}`));
-  let changed = 0, duplicates = 0;
+  /* 同名检查：目标类别中已存在（且不在本次移动内）的同名卡片，以及本次移动内部的同名卡片 */
+  const taken = new Set(words.filter(w => !movingIds.has(Number(w.id)) && (w.category || '单词') === group.category).map(w => String(w.word).toLowerCase()));
+  const movable = [], skipped = [];
   selected.forEach(w => {
-    const key = `${group.category}|${String(w.word).toLowerCase()}`;
-    if (existingNames.has(key)) { duplicates++; return; }
-    w.category = group.category; w.groupId = groupId; existingNames.add(key); changed++;
+    const key = String(w.word).toLowerCase();
+    if (taken.has(key)) skipped.push(w); else { taken.add(key); movable.push(w); }
   });
-  safeSet('wm_words', JSON.stringify(words)); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
+  if (!movable.length) { showToast(skipped.length ? `${skipped.length} 张因目标类别已有同名卡片，未调整` : '没有可调整的卡片'); return; }
+  /* 容量：本次移入的活跃卡片中，原本不在目标分组的才占用新名额 */
+  if (group.limit > 0){
+    const incoming = movable.filter(w => !w.archived && w.groupId !== groupId).length;
+    if (countInGroup(groupId) + incoming > group.limit) { showToast(`目标分组容量不足（上限 ${group.limit}，还可放入 ${Math.max(0, group.limit - countInGroup(groupId))} 张）`); return; }
+  }
+  movable.forEach(w => { w.category = group.category; w.groupId = groupId; });
+  persistWords(); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
+  groupOpen[groupId] = true;
   renderCards(); renderGroupManager(); updateStatsUI();
-  showToast(`已分类 ${changed} 张${duplicates ? `，${duplicates} 张因目标类别重名未调整` : ''}`);
+  showToast(`已分类 ${movable.length} 张到「${group.name}」${skipped.length ? `，${skipped.length} 张因目标类别重名未调整` : ''}`);
 }
 function requestDeleteSelectedCards(){
   const ids = new Set([...selectedCardIds].map(Number).filter(id => words.some(w => Number(w.id) === id)));
   if (!ids.size) { showToast('请先选择要删除的卡片'); return; }
   showAppDialog('删除卡片', `确定删除选中的 ${ids.size} 张卡片吗？此操作无法撤销。`, () => {
     const count = ids.size; words = words.filter(w => !ids.has(Number(w.id)));
-    safeSet('wm_words', JSON.stringify(words)); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
+    persistWords(); selectedCardIds.clear(); batchDeleteMode = false; batchClassifyMode = false;
     renderCards(); renderGroupManager(); updateStatsUI(); showToast(`已批量删除 ${count} 张卡片`);
   });
 }
@@ -1430,8 +1544,8 @@ function changeCardGroup(id, newGroupId){
   const card = words.find(w => Number(w.id) === Number(id)), group = getCardGroup(newGroupId); if (!card || !group) return;
   if (!groupHasRoom(newGroupId, card.id)) { showToast('目标分组已达到数量上限'); openCardDetail(id); return; }
   if (words.some(w => Number(w.id) !== Number(id) && (w.category || '单词') === group.category && String(w.word).toLowerCase() === String(card.word).toLowerCase())) { showToast('目标类别中已有同名卡片'); openCardDetail(id); return; }
-  card.category = group.category; card.groupId = newGroupId; safeSet('wm_words', JSON.stringify(words));
-  renderCards(); renderGroupManager(); openCardDetail(id); showToast('卡片分组已更新');
+  card.category = group.category; card.groupId = newGroupId; persistWords();
+  renderCards(); renderGroupManager(); closeCardModal(); showToast(`卡片已移至「${group.name}」`);
 }
 
 /* =========================================================
@@ -1452,7 +1566,9 @@ function showInfo(title, html, word){
 }
 function closeInfoModal(){
   $('infoModal').classList.remove('active');
+  $('infoModal').classList.remove('preview-mode');
   $('infoFavorite').style.display = 'none';
+  $('infoSpeak').dataset.w = ''; $('infoAdd').dataset.w = '';
   hideSelBar(); stopSpeak();
 }
 
@@ -1477,7 +1593,7 @@ function renderChecklist(){
   if (checklist.length === 0){ container.innerHTML = '<div class="empty-hint" style="padding:24px 0;">暂无清单，添加一项吧</div>'; return; }
   container.innerHTML = checklist.map(item => {
     const photos = Array.isArray(item.photos) ? item.photos : [];
-    const photoHtml = photos.length ? `<div class="check-photo-grid">${photos.map((p, i) => `<img src="${esc(p.src)}" class="check-photo" role="button" tabindex="0" alt="清单照片 ${i+1}" title="点击查看照片" onclick="openPhotoPreview(this.src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.src)">`).join('')}${photos.length < 4 ? `<button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>${photos.length}/4</button>` : ''}</div>` : `<div class="check-photo-grid"><button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>0/4</button></div>`;
+    const photoHtml = `<div class="check-photo-grid">${photos.map((p, i) => `<div class="check-photo-wrap" role="button" tabindex="0" aria-label="查看清单照片 ${i+1}" title="点击查看照片" onclick="openPhotoPreview(this.querySelector('img').src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.querySelector('img').src)"><img src="${esc(p.src)}" class="check-photo" alt="清单照片 ${i+1}"></div>`).join('')}${photos.length < 4 ? `<button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>${photos.length}/4</button>` : ''}</div>`;
     const metaHtml = item.doneTime ? `<div class="check-meta">完成于 ${esc(item.doneTime)}</div>` : '';
     return `
     <div class="check-item">
@@ -1611,7 +1727,7 @@ async function analyzeChecklist(){
 }
 
 /* =========================================================
-   休息记录
+   休息与睡眠（同一行双按钮，统一 AI 分析）
 ========================================================= */
 const dayKey = (d = new Date()) =>
   d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -1626,6 +1742,7 @@ const openBreak = rec => {
   return l && !l.e ? l : null;
 };
 function saveAtt(){ if (!safeSet('wm_attendance', JSON.stringify(attendance))) showToast('本地存储空间不足，建议导出备份'); }
+function saveSleep(){ if (!safeSet('wm_sleep_records', JSON.stringify(sleepRecords))) showToast('本地存储空间不足，建议导出备份'); }
 function breakTotals(rec, now){
   let n = 0, ms = 0, max = 0;
   (rec.breaks || []).forEach(b => { const d = Math.max(0, (b.e || now) - b.s); n++; ms += d; if (d > max) max = d; });
@@ -1637,89 +1754,135 @@ function getTodayAttendance(){
   if (!Array.isArray(attendance[key].breaks)) attendance[key].breaks = [];
   return attendance[key];
 }
+function activeSleepRecord(){ return sleepRecords.findLast ? sleepRecords.findLast(r => !r.e) : [...sleepRecords].reverse().find(r => !r.e); }
 function toggleBreak(){
   const rec = getTodayAttendance(); const active = openBreak(rec);
+  const sleeping = activeSleepRecord();
+  if (sleeping) { sleeping.e = Date.now(); saveSleep(); showToast('已先结束睡眠记录'); }
   if (active) active.e = Date.now(); else rec.breaks.push({s: Date.now()});
   saveAtt(); renderRestUI();
 }
+function toggleSleepRecording(){
+  const active = activeSleepRecord();
+  const rec = attendance[dayKey()], br = rec ? openBreak(rec) : null;
+  if (br) { br.e = Date.now(); saveAtt(); showToast('已先结束休息记录'); }
+  if (active) active.e = Date.now(); else sleepRecords.push({s:Date.now(), e:null});
+  saveSleep(); renderRestUI();
+}
 function renderRestUI(){
   const status = $('restStatus'); if (!status) return;
-  const rec = attendance[dayKey()];
-  const now = Date.now(); const breaks = rec && Array.isArray(rec.breaks) ? rec.breaks : [];
-  const active = rec ? openBreak(rec) : null;
-  let totalMs = 0;
-  breaks.forEach(b => { totalMs += Math.max(0, (b.e || now) - b.s); });
-  $('restSummary').textContent = `今日 ${breaks.length} 次 · 共 ${fmtDur(totalMs / 60000)}`;
-  if (active){
-    status.textContent = `正在休息 · 已 ${fmtDur((now - active.s) / 60000)}`;
-    $('restButton').textContent = '结束休息'; $('restButton').classList.add('running');
-  } else {
-    status.textContent = breaks.length ? `最近一次 ${fmtHM(breaks[breaks.length - 1].e || breaks[breaks.length - 1].s)}` : '今天还没有休息记录';
-    $('restButton').textContent = '开始休息'; $('restButton').classList.remove('running');
-  }
-  $('restHistory').textContent = breaks.length ? breaks.map((b, i) => `${i + 1}. ${fmtHM(b.s)} – ${b.e ? fmtHM(b.e) : '进行中'}（${fmtDur(((b.e || now) - b.s) / 60000)}）`).join('　') : '开始休息后，将自动记录每次休息的时间与时长。';
+  const now = Date.now(), today = dayKey();
+  const rec = attendance[today];
+  const breaks = rec && Array.isArray(rec.breaks) ? rec.breaks : [];
+  const activeB = rec ? openBreak(rec) : null, activeS = activeSleepRecord();
+  let restMs = 0; breaks.forEach(b => { restMs += Math.max(0, (b.e || now) - b.s); });
+  const sleepToday = sleepRecords.filter(r => r.s && r.e && r.e > r.s && dayKey(new Date(r.e)) === today);
+  const sleepMs = sleepToday.reduce((s, r) => s + (r.e - r.s), 0);
+  $('restSummary').innerHTML = `<div>☕ 今日休息 ${breaks.length} 次 · 共 ${esc(fmtDur(restMs / 60000))}</div><div>🌙 今日睡眠 ${sleepToday.length} 次 · 共 ${esc(fmtDur(sleepMs / 60000))}</div>`;
+  if (activeS) status.textContent = `正在睡眠 · 已 ${fmtDur((now - activeS.s) / 60000)}`;
+  else if (activeB) status.textContent = `正在休息 · 已 ${fmtDur((now - activeB.s) / 60000)}`;
+  else if (breaks.length) status.textContent = `最近休息 ${fmtHM(breaks[breaks.length - 1].e || breaks[breaks.length - 1].s)}`;
+  else status.textContent = '今天还没有记录';
+  const rb = $('restButton'), sb = $('sleepButton');
+  rb.textContent = activeB ? '结束休息' : '开始休息'; rb.classList.toggle('running', !!activeB);
+  sb.textContent = activeS ? '结束睡眠' : '开始睡眠'; sb.classList.toggle('running', !!activeS);
+  const lines = [];
+  if (breaks.length) lines.push('休息：' + breaks.map((b, i) => `${i + 1}. ${fmtHM(b.s)}–${b.e ? fmtHM(b.e) : '进行中'}（${fmtDur(((b.e || now) - b.s) / 60000)}）`).join('　'));
+  const recentSleep = sleepRecords.filter(r => r.s).slice(-3).reverse();
+  if (recentSleep.length) lines.push('睡眠：' + recentSleep.map(r => `${fmtHM(r.s)}–${r.e ? fmtHM(r.e) : '进行中'}${r.e ? `（${fmtDur((r.e - r.s) / 60000)}）` : ''}`).join('　'));
+  $('restHistory').textContent = lines.length ? lines.join('\n') : '点击“开始休息”或“开始睡眠”，结束时再点一次即可记录时长。';
 }
 function buildAttendanceLines(){
   const keys = Object.keys(attendance).sort().slice(-30); const now = Date.now();
-  return keys.map(k => { const rec = attendance[k]; const bt = breakTotals(rec, rec.out || now); return `${k}：休息 ${bt.n} 次，共 ${Math.round(bt.ms / 60000)} 分钟`; });
+  return keys.map(k => { const rec = attendance[k]; const bt = breakTotals(rec, rec.out || now); return {day:k, n:bt.n, min:Math.round(bt.ms / 60000), max:Math.round(bt.max / 60000)}; }).filter(x => x.n > 0);
 }
-async function analyzeWork(){
-  const lines = buildAttendanceLines();
-  const restLines = lines.filter(x => !x.endsWith('休息 0 次，共 0 分钟'));
-  if (!restLines.length){ showInfo('AI 休息分析', '目前还没有有效休息记录。'); return; }
-  showInfo('AI 休息习惯分析', '<div style="text-align:center;padding:20px;color:#888;">正在分析…</div>');
+/* 统一 AI 分析：自动识别有哪些数据（休息 / 睡眠 / 两者），并提示可疑记录 */
+async function analyzeRestSleep(){
+  const restDays = buildAttendanceLines();
+  const sleeps = sleepRecords.filter(r => r.s && r.e && r.e > r.s).slice(-30);
+  const activeS = activeSleepRecord();
+  if (!restDays.length && !sleeps.length && !activeS){ showInfo('AI 休息与睡眠分析', '目前还没有记录。点击“开始休息”或“开始睡眠”，结束时再点一次即可。'); return; }
+  const kind = restDays.length && sleeps.length ? '休息与睡眠' : sleeps.length || activeS ? '睡眠' : '休息';
+  const title = `AI ${kind}分析`;
+  const restLines = restDays.map(d => `${d.day}：休息 ${d.n} 次，共 ${d.min} 分钟，最长一次 ${d.max} 分钟`);
+  const sleepLines = sleeps.map((r, i) => `${i + 1}. ${new Date(r.s).toLocaleString('zh-CN')} 至 ${new Date(r.e).toLocaleString('zh-CN')}，${fmtDur((r.e - r.s) / 60000)}`);
+  if (activeS) sleepLines.push(`当前睡眠进行中：开始于 ${new Date(activeS.s).toLocaleString('zh-CN')}`);
+  showInfo(title, '<div style="text-align:center;padding:20px;color:#888;">正在分析…</div>');
   if (!apiKey){
-    const total = Object.keys(attendance).reduce((sum, k) => sum + breakTotals(attendance[k], attendance[k].out || Date.now()).ms, 0);
-    showInfo('休息习惯分析', `<p>已记录 ${restLines.length} 天的休息数据。</p><p>累计休息 ${fmtDur(total / 60000)}。</p><p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>`); return;
-  }
-  try{
-    const res = await callAI([{role:'user', content:`以下是最近的休息记录：\n${restLines.join('\n')}\n请分析休息频率、时长与规律，并给出简短可执行建议。中文输出，控制在 150 字以内。`}]);
-    showInfo('AI 休息习惯分析', esc(res).replace(/\n/g, '<br>'));
-  }catch(e){ showInfo('AI 休息习惯分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
-}
-
-function activeSleepRecord(){ return sleepRecords.findLast ? sleepRecords.findLast(r => !r.e) : [...sleepRecords].reverse().find(r => !r.e); }
-function toggleSleepRecording(){
-  const active = activeSleepRecord();
-  if (active) active.e = Date.now();
-  else sleepRecords.push({s:Date.now(), e:null});
-  safeSet('wm_sleep_records', JSON.stringify(sleepRecords)); renderSleepUI();
-}
-function renderSleepUI(){
-  const summary = $('sleepSummary'); if (!summary) return;
-  const now = Date.now(), active = activeSleepRecord();
-  const ended = sleepRecords.filter(r => r.e && r.s && r.e > r.s);
-  const total = ended.reduce((sum, r) => sum + (r.e-r.s), 0);
-  const average = ended.length ? Math.round(total / ended.length / 60000) : 0;
-  summary.textContent = active
-    ? `正在记录睡眠 · 已 ${fmtDur((now-active.s)/60000)}`
-    : `已记录 ${ended.length} 次 · 累计 ${fmtDur(total/60000)}${ended.length ? ` · 平均 ${fmtDur(average)}` : ''}`;
-  const button = $('sleepButton');
-  if (button){ button.textContent = active ? '结束睡眠' : '开始睡眠'; button.classList.toggle('running', !!active); }
-  const recent = sleepRecords.slice(-5).reverse();
-  $('sleepHistory').textContent = recent.length
-    ? recent.map((r,i) => `${recent.length-i}. ${fmtHM(r.s)} – ${r.e ? fmtHM(r.e) : '进行中'}${r.e ? `（${fmtDur((r.e-r.s)/60000)}）` : ''}`).join('　')
-    : '开始睡眠后，醒来时结束记录。';
-}
-async function analyzeSleep(){
-  const ended = sleepRecords.filter(r => r.s && r.e && r.e > r.s).slice(-30);
-  const recentBreakLines = buildAttendanceLines().filter(x => !x.endsWith('休息 0 次，共 0 分钟'));
-  const active = activeSleepRecord();
-  if (!ended.length && !active) { showInfo('AI 睡眠分析', '目前还没有睡眠记录。点击“开始睡眠”后，醒来时结束记录。'); return; }
-  const lines = ended.map((r,i) => `${i+1}. ${new Date(r.s).toLocaleString('zh-CN')} 至 ${new Date(r.e).toLocaleString('zh-CN')}，${fmtDur((r.e-r.s)/60000)}`);
-  if (active) lines.push(`当前睡眠进行中：开始于 ${new Date(active.s).toLocaleString('zh-CN')}`);
-  showInfo('AI 睡眠与休息分析', '<div style="text-align:center;padding:20px;color:#888;">正在整理睡眠和休息数据…</div>');
-  if (!apiKey){
-    const total = ended.reduce((sum,r) => sum + r.e-r.s, 0);
-    const avg = ended.length ? total / ended.length / 60000 : 0;
-    showInfo('睡眠与休息分析', `<p>已完成睡眠记录 ${ended.length} 次。</p><p>累计睡眠 ${fmtDur(total/60000)}，平均每次 ${fmtDur(avg)}。</p><p>另有休息记录 ${recentBreakLines.length} 天。</p><p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>`);
+    const restTotal = restDays.reduce((s, d) => s + d.min, 0), restCount = restDays.reduce((s, d) => s + d.n, 0);
+    const sleepTotal = sleeps.reduce((s, r) => s + (r.e - r.s), 0) / 60000;
+    let h = '';
+    if (restDays.length) h += `<p>休息：${restDays.length} 天共 ${restCount} 次，累计 ${esc(fmtDur(restTotal))}，平均每次 ${esc(fmtDur(restTotal / Math.max(1, restCount)))}。</p>`;
+    if (sleeps.length) h += `<p>睡眠：已完成 ${sleeps.length} 次，累计 ${esc(fmtDur(sleepTotal))}，平均每次 ${esc(fmtDur(sleepTotal / sleeps.length))}。</p>`;
+    if (activeS) h += '<p>当前有一段睡眠正在记录中。</p>';
+    showInfo(title, h + '<p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>');
     return;
   }
   try{
-    const prompt = `请分析以下睡眠与休息记录，指出时长规律、可能的不足，并给出简短可执行建议。不要作医疗诊断。\n睡眠记录：\n${lines.join('\n') || '暂无已完成睡眠'}\n休息记录：\n${recentBreakLines.join('\n') || '暂无休息记录'}\n中文输出，控制在 180 字以内。`;
+    const prompt = `请分析以下我的休息与睡眠记录。先根据实际数据判断有哪些内容可分析（只有休息、只有睡眠或两者都有），只分析有数据的部分；指出时长与规律、可能的不足，并给出简短可执行建议。如发现疑似异常记录（如休息超过 3 小时、睡眠短于 2 小时或超过 14 小时，可能是忘记结束），请提醒。不要作医疗诊断。
+休息记录（按天）：
+${restLines.join('\n') || '无'}
+睡眠记录：
+${sleepLines.join('\n') || '无'}
+中文输出，纯文本，控制在 200 字以内。`;
     const res = await callAI([{role:'user', content:prompt}]);
-    showInfo('AI 睡眠与休息分析', esc(res).replace(/\n/g, '<br>'));
-  }catch(e){ showInfo('AI 睡眠与休息分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
+    showInfo(title, esc(res).replace(/\n/g, '<br>'));
+  }catch(e){ showInfo(title, `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
+}
+
+/* =========================================================
+   内置「日常生活」词库（约 500 条，首次启动写入一次）
+   格式：场景 → "表达=释义;表达=释义;…"
+========================================================= */
+const DAILY_RAW = [
+['问候社交',`hello=你好;good morning=早上好;good evening=晚上好;good night=晚安;nice to meet you=很高兴认识你;how are you=你好吗;see you later=回头见;take care=保重;thank you=谢谢;you're welcome=不客气;sorry=对不起;excuse me=打扰一下;please=请;congratulations=恭喜;welcome=欢迎;cheers=干杯;bless you=（打喷嚏后）祝你健康;never mind=没关系;of course=当然`],
+['家庭人物',`family=家庭;parent=父母之一;mother=母亲;father=父亲;grandparent=祖父母;sibling=兄弟姐妹;brother=兄弟;sister=姐妹;uncle=叔叔/舅舅;aunt=阿姨/姑姑;cousin=堂/表兄弟姐妹;husband=丈夫;wife=妻子;son=儿子;daughter=女儿;baby=婴儿;child=孩子;teenager=青少年;adult=成年人`],
+['身体部位',`head=头;hair=头发;face=脸;eye=眼睛;ear=耳朵;nose=鼻子;mouth=嘴;tooth=牙齿;neck=脖子;shoulder=肩膀;arm=手臂;hand=手;finger=手指;back=背;stomach=胃/肚子;leg=腿;knee=膝盖;foot=脚;heart=心脏`],
+['医疗健康',`doctor=医生;nurse=护士;hospital=医院;clinic=诊所;pharmacy=药店;medicine=药;prescription=处方;injection=注射;appointment=预约;symptom=症状;headache=头痛;fever=发烧;cough=咳嗽;cold=感冒;allergy=过敏;sore throat=喉咙痛;runny nose=流鼻涕;sprain=扭伤;bandage=绷带`],
+['餐饮用餐',`breakfast=早餐;lunch=午餐;dinner=晚餐;snack=零食;menu=菜单;order=点餐;waiter=服务员;bill=账单;tip=小费;takeaway=外卖;reservation=订位;appetizer=开胃菜;main course=主菜;dessert=甜点;beverage=饮料;vegetarian=素食者;spicy=辣的;sweet=甜的;sour=酸的`],
+['主食饮品',`rice=米饭;noodles=面条;bread=面包;egg=鸡蛋;milk=牛奶;soup=汤;salad=沙拉;beef=牛肉;chicken=鸡肉;pork=猪肉;fish=鱼;shrimp=虾;sausage=香肠;cheese=奶酪;yogurt=酸奶;pizza=比萨;sandwich=三明治;hamburger=汉堡;dumpling=饺子`],
+['水果蔬菜调料',`apple=苹果;banana=香蕉;orange=橙子;grape=葡萄;strawberry=草莓;watermelon=西瓜;lemon=柠檬;peach=桃子;pear=梨;pineapple=菠萝;potato=土豆;tomato=番茄;onion=洋葱;garlic=大蒜;carrot=胡萝卜;cabbage=卷心菜;cucumber=黄瓜;mushroom=蘑菇;corn=玉米`],
+['烹饪厨房',`cook=烹饪;boil=煮;fry=煎/炸;bake=烘焙;steam=蒸;roast=烤;chop=切碎;slice=切片;peel=削皮;stir=搅拌;pour=倒;knife=刀;fork=叉子;spoon=勺子;chopsticks=筷子;plate=盘子;bowl=碗;cup=杯子;pan=平底锅`],
+['家居布置',`living room=客厅;bedroom=卧室;bathroom=浴室;kitchen=厨房;balcony=阳台;door=门;window=窗户;wall=墙;floor=地板;ceiling=天花板;stairs=楼梯;sofa=沙发;bed=床;desk=书桌;chair=椅子;table=桌子;shelf=架子;curtain=窗帘;carpet=地毯`],
+['家务清洁',`clean=打扫;sweep=扫地;mop=拖地;wash=洗;dry=晾干;iron=熨烫;fold=折叠;laundry=洗衣;trash=垃圾;garbage can=垃圾桶;vacuum cleaner=吸尘器;detergent=洗涤剂;soap=肥皂;shampoo=洗发水;toothbrush=牙刷;toothpaste=牙膏;tissue=纸巾;broom=扫帚;bucket=水桶`],
+['衣着穿戴',`shirt=衬衫;T-shirt=T恤;sweater=毛衣;jacket=夹克;coat=外套;jeans=牛仔裤;trousers=长裤;skirt=裙子;dress=连衣裙;suit=西装;shorts=短裤;socks=袜子;shoes=鞋;sneakers=运动鞋;boots=靴子;hat=帽子;scarf=围巾;gloves=手套;belt=腰带`],
+['购物消费',`shop=商店/购物;store=商店;supermarket=超市;market=市场;mall=购物中心;customer=顾客;cashier=收银员;price=价格;discount=折扣;sale=促销;receipt=收据;refund=退款;exchange=换货;cash=现金;credit card=信用卡;bargain=讨价还价;cheap=便宜的;expensive=昂贵的;afford=买得起`],
+['交通出行',`car=汽车;bus=公交车;subway=地铁;train=火车;taxi=出租车;bike=自行车;plane=飞机;ship=船;ticket=票;station=车站;airport=机场;platform=站台;passenger=乘客;driver=司机;traffic=交通;traffic jam=堵车;red light=红灯;crosswalk=人行横道;parking=停车`],
+['旅行酒店',`travel=旅行;luggage=行李;passport=护照;visa=签证;boarding pass=登机牌;check in=办理入住;check out=退房;hotel=酒店;room service=客房服务;single room=单人间;double room=双人间;souvenir=纪念品;sightseeing=观光;map=地图;tourist=游客;guide=导游;itinerary=行程;customs=海关;currency=货币`],
+['城市地点',`street=街道;road=马路;corner=拐角;bridge=桥;park=公园;library=图书馆;museum=博物馆;bank=银行;post office=邮局;police station=警察局;cafe=咖啡馆;cinema=电影院;gym=健身房;bookstore=书店;square=广场;neighborhood=街区;downtown=市中心;suburb=郊区;village=村庄`],
+['学校学习',`school=学校;class=班级/课;teacher=老师;student=学生;classmate=同学;homework=作业;exam=考试;quiz=小测验;grade=成绩;textbook=教科书;notebook=笔记本;pencil=铅笔;pen=钢笔;eraser=橡皮;ruler=尺子;schedule=课程表;subject=科目;lecture=讲座;assignment=任务`],
+['职场工作',`job=工作;office=办公室;company=公司;meeting=会议;project=项目;report=报告;email=电子邮件;salary=薪水;interview=面试;resume=简历;manager=经理;employee=员工;contract=合同;overtime=加班;promotion=晋升;resign=辞职;apply for=申请;client=客户;task=任务`],
+['通讯科技',`phone=电话;smartphone=智能手机;charger=充电器;battery=电池;screen=屏幕;laptop=笔记本电脑;keyboard=键盘;mouse=鼠标;password=密码;wifi=无线网络;internet=互联网;app=应用程序;download=下载;upload=上传;message=信息;call=打电话;voicemail=语音信箱;ringtone=铃声;camera=相机`],
+['天气自然',`weather=天气;sunny=晴朗的;cloudy=多云的;rainy=下雨的;windy=有风的;snowy=下雪的;foggy=有雾的;storm=暴风雨;thunder=雷;lightning=闪电;temperature=温度;humid=潮湿的;dry=干燥的;hot=热的;cold=冷的;warm=温暖的;cool=凉爽的;forecast=预报;season=季节`],
+['时间日期',`today=今天;tomorrow=明天;yesterday=昨天;morning=早上;afternoon=下午;evening=傍晚;night=夜晚;noon=中午;midnight=午夜;week=周;weekend=周末;month=月;year=年;date=日期;calendar=日历;hour=小时;minute=分钟;second=秒;early=早的`],
+['情绪性格',`happy=快乐的;sad=悲伤的;angry=生气的;nervous=紧张的;excited=兴奋的;tired=疲倦的;bored=无聊的;lonely=孤独的;proud=自豪的;worried=担心的;scared=害怕的;surprised=惊讶的;confused=困惑的;relaxed=放松的;stressed=压力大的;shy=害羞的;kind=善良的;polite=有礼貌的;honest=诚实的`],
+['爱好娱乐',`hobby=爱好;music=音乐;movie=电影;concert=音乐会;game=游戏;novel=小说;painting=绘画;photography=摄影;hiking=徒步;camping=露营;fishing=钓鱼;jogging=慢跑;swimming=游泳;yoga=瑜伽;football=足球;basketball=篮球;tennis=网球;badminton=羽毛球;cycling=骑行`],
+['动物植物',`dog=狗;cat=猫;bird=鸟;rabbit=兔子;horse=马;cow=奶牛;pig=猪;sheep=绵羊;duck=鸭子;monkey=猴子;tiger=老虎;lion=狮子;elephant=大象;bear=熊;panda=熊猫;tree=树;flower=花;grass=草;leaf=叶子`],
+['日常动作',`wake up=醒来;get up=起床;brush teeth=刷牙;wash face=洗脸;take a shower=洗澡;get dressed=穿衣服;have breakfast=吃早餐;go to work=去上班;come back=回来;take a nap=小睡;go to bed=上床睡觉;fall asleep=入睡;lie down=躺下;sit down=坐下;stand up=站起来;walk=走;run=跑;jump=跳;climb=爬`],
+['常用口语',`I see=我明白了;it depends=视情况而定;what's up=怎么了/最近怎样;no way=不可能;sounds good=听起来不错;I'm kidding=开玩笑的;let me think=让我想想;go ahead=请便;hold on=等一下;keep in touch=保持联系;make sense=讲得通;by the way=顺便说;as soon as possible=尽快;be careful=小心;hurry up=快点;calm down=冷静;cheer up=振作起来;good luck=祝好运;help yourself=请随便用`],
+['银行邮政',`bank account=银行账户;deposit=存款;withdraw=取款;transfer=转账;balance=余额;ATM=自动取款机;loan=贷款;interest=利息;rent=租金;tax=税;insurance=保险;savings=储蓄;package=包裹;parcel=邮包;mail=邮件;stamp=邮票;envelope=信封;courier=快递员;delivery=送货`],
+['颜色方位',`red=红色;blue=蓝色;green=绿色;yellow=黄色;black=黑色;white=白色;gray=灰色;pink=粉色;purple=紫色;brown=棕色;left=左;right=右;up=上;down=下;front=前面;behind=后面;near=近的;far=远的;inside=里面`]
+];
+const DAILY_SEED_KEY = 'wm_daily_seed_v1';
+function seedDailyWords(){
+  if (localStorage.getItem(DAILY_SEED_KEY)) return;
+  const have = new Set(words.filter(w => (w.category || '单词') === '单词').map(w => String(w.word).toLowerCase()));
+  const base = Date.now() * 10, t = Date.now();
+  const added = [];
+  DAILY_RAW.forEach(([scene, str]) => {
+    str.split(';').forEach(item => {
+      const i = item.indexOf('='); if (i < 1) return;
+      const word = item.slice(0, i).trim(), cn = item.slice(i + 1).trim();
+      const key = word.toLowerCase();
+      if (!word || !cn || have.has(key)) return;
+      have.add(key);
+      added.push({id: base + added.length, word, category:'单词', groupId:'default-daily', cn, usage:'场景：' + scene, builtin:true, createdAt:t, archived:false});
+    });
+  });
+  if (!added.length) { safeSet(DAILY_SEED_KEY, '1'); return; }
+  words.push(...added);
+  if (persistWords()) safeSet(DAILY_SEED_KEY, '1');
+  else words = words.slice(0, words.length - added.length);
 }
 
 /* =========================================================
@@ -1778,7 +1941,7 @@ function exportData(){
   const data = {words, checklist, stats, attendance, sleepRecords, workStart, cardGroups, exportTime:new Date().toISOString()};
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob); const a = document.createElement('a');
-  a.href = url; a.download = `word_memory_backup_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url);
+  a.href = url; a.download = `word_memory_backup_${Date.now()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function importData(event){
   const file = event.target.files[0]; if (!file) return;
@@ -1788,13 +1951,14 @@ function importData(event){
       const data = JSON.parse(e.target.result);
       if (data.words && data.checklist){
         words = Array.isArray(data.words) ? data.words : []; checklist = Array.isArray(data.checklist) ? data.checklist : [];
-        stats = data.stats || {apiCalls:0, tokens:0}; if (data.attendance) attendance = data.attendance;
+        stats = data.stats || {apiCalls:0, tokens:0}; if (data.attendance && typeof data.attendance === 'object') attendance = data.attendance;
         if (data.workStart) { workStart = data.workStart; safeSet('wm_work_start', workStart); }
         sleepRecords = Array.isArray(data.sleepRecords) ? data.sleepRecords : sleepRecords;
         cardGroups = Array.isArray(data.cardGroups) ? data.cardGroups : cardGroups;
+        batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); groupOpen = {};
         ensureCardGroups(); cleanupPhotos(); archiveExpiredCards();
         safeSet('wm_checklist', JSON.stringify(checklist)); safeSet('wm_stats', JSON.stringify(stats)); safeSet('wm_attendance', JSON.stringify(attendance)); safeSet('wm_sleep_records', JSON.stringify(sleepRecords));
-        renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); renderSleepUI(); updateStatsUI();
+        renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
         showToast('数据恢复成功');
       } else showToast('文件格式不正确');
     }catch(err){ showToast('读取文件失败'); }
