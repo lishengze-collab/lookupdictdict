@@ -208,12 +208,72 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .group-manager-row .group-meta + .group-meta{margin-left:0;}
 .group-remove{border:0;background:transparent;color:#bd7774;font-size:12px;padding:4px 2px;}
 .card-directory-title{font-size:17px;font-weight:750;color:var(--text-main);margin:4px 2px 10px;}
-.cat-filter{display:flex;gap:7px;margin:0 0 10px;overflow-x:auto;scrollbar-width:none;}
-.cat-filter::-webkit-scrollbar{display:none;}
-.cat-filter button{flex:none;border:1px solid #dbe6e0;background:#fff;color:var(--text-sub);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:650;cursor:pointer;}
-.cat-filter button i{font-style:normal;font-size:11px;color:var(--text-muted);margin-left:4px;font-weight:500;}
-.cat-filter button.on{background:var(--primary);border-color:var(--primary);color:#fff;}
-.cat-filter button.on i{color:rgba(255,255,255,.75);}
+
+/* ============ 分类与批量：水平一行均等分布 ============ */
+.cards-toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  width: 100%;
+}
+.cat-filter {
+  display: flex;
+  gap: 6px;
+  flex: 4 1 0;
+  min-width: 0;
+}
+.bulk-entry-buttons {
+  display: flex;
+  gap: 6px;
+  flex: 2 1 0;
+  min-width: 0;
+}
+.cat-filter button, .bulk-entry-buttons button {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 34px;
+  padding: 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  border-radius: 17px;
+  border: 1px solid #dbe6e0;
+  background: #fff;
+  color: var(--text-sub);
+  font-weight: 650;
+  cursor: pointer;
+}
+.cat-filter button i {
+  font-style: normal;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: 1px;
+  font-weight: 500;
+  transform: scale(0.9);
+  display: inline-block;
+}
+.cat-filter button.on {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.cat-filter button.on i {
+  color: rgba(255,255,255,.75);
+}
+.bulk-entry-buttons button {
+  border-color: #d7e4dd;
+  color: var(--primary);
+  font-weight: 700;
+}
+.bulk-entry-buttons button.bulk-classify-entry {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(44,94,79,.2);
+}
+
 .card-category{margin:0 0 16px;}
 .card-category-head{font-size:14px;color:var(--primary);font-weight:750;padding:5px 3px 8px;display:flex;justify-content:space-between;}
 .card-category-head span{font-size:12px;color:var(--text-muted);font-weight:500;}
@@ -239,10 +299,6 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 
 /* 批量工具条（粘性置顶） */
 .cards-sticky{position:sticky;top:0;z-index:6;margin:0 -14px 10px;padding:8px 14px 2px;background:var(--bg-color);}
-.cards-bulk-toolbar{display:flex;align-items:center;justify-content:flex-end;min-height:40px;margin:0 0 8px;}
-.bulk-entry-buttons{display:flex;gap:7px;}
-.bulk-entry-buttons button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer;}
-.bulk-entry-buttons button.bulk-classify-entry{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(44,94,79,.2);}
 .bulk-panel{width:100%;display:flex;flex-direction:column;gap:8px;padding:10px 11px;background:#fff;border:1px solid #dfe9e4;border-radius:14px;box-shadow:var(--shadow);}
 .bulk-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 #bulkSelectedCount{margin-right:auto;font-size:13px;font-weight:700;color:var(--primary);}
@@ -412,6 +468,8 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
   .group-create-row input,.group-create-row select{font-size:11px;padding:8px 5px;}
   .grammar-topic-grid{grid-template-columns:1fr;}
   #recognizeMessage{font-size:10px;}
+  .cards-toolbar-row{gap:4px;}
+  .cards-toolbar-row button{font-size:11px;}
 }
 </style>
 </head>
@@ -465,13 +523,16 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
       <div id="groupManagerList"></div>
     </details>
     <div class="card-directory-title">卡片目录</div>
+    
     <div class="cards-sticky">
-    <div class="cat-filter" id="catFilter"></div>
-    <div class="cards-bulk-toolbar" id="cardsBulkToolbar">
-      <div class="bulk-entry-buttons" id="bulkEntryButtons">
-        <button type="button" class="bulk-classify-entry" id="bulkClassifyButton" onclick="toggleBatchClassifyMode()">批量分类</button>
-        <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
+      <div class="cards-toolbar-row">
+        <div class="cat-filter" id="catFilter"></div>
+        <div class="bulk-entry-buttons" id="bulkEntryButtons">
+          <button type="button" class="bulk-classify-entry" id="bulkClassifyButton" onclick="toggleBatchClassifyMode()">批量分类</button>
+          <button type="button" id="bulkModeButton" onclick="toggleBatchDeleteMode()">批量删除</button>
+        </div>
       </div>
+      
       <div class="bulk-panel" id="bulkModeActions" style="display:none;">
         <div class="bulk-row">
           <span id="bulkSelectedCount">已选 0 张</span>
@@ -488,7 +549,6 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
           <button type="button" class="bulk-danger" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
         </div>
       </div>
-    </div>
     </div>
     <div id="cardsContainer"></div>
   </div>
@@ -747,7 +807,6 @@ async function callAI(messages){
   if (!apiKey) throw new Error('请先在“设置与统计”中填写 DeepSeek API Key');
   let timeout;
   try{
-    /* 不使用 AbortSignal：部分 WebView / 预览环境无法克隆 signal；超时改用 Promise.race */
     const timeoutPromise = new Promise((_, reject) => { timeout = setTimeout(() => reject(Object.assign(new Error('timeout'), {name:'AbortError'})), 90000); });
     const request = (async () => {
       const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
@@ -842,7 +901,7 @@ function stopSpeak(){
   if (curAudio) { try { curAudio.pause(); } catch(e){} curAudio = null; }
   if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
-function speak(word, type){ // type: 1 英音, 2 美音
+function speak(word, type){
   word = String(word || '').trim();
   if (!word) return;
   stopSpeak();
@@ -921,7 +980,6 @@ async function addLookupWord(){
   try{
     const generated = await generateWordCard(w);
     btn.dataset.state = '';
-    /* 生成期间弹窗已被关闭或换成别的内容，则不再强行弹出预览 */
     if (!$('infoModal').classList.contains('active') || btn.dataset.w !== w) { btn.innerText = '加入卡片'; btn.disabled = false; return; }
     showGeneratedPreview('单词预览 · ' + w, [normalizeCardData(generated, '单词')]);
   }catch(e){
@@ -963,7 +1021,6 @@ function cardKeys(c){
   if (typeof k === 'string') k = k.split(/[,，、;；\n]+/);
   return Array.isArray(k) ? k.map(x => String(x).trim()).filter(Boolean) : [];
 }
-/* 按换行与句末标点（。！？ . ! ?）切句，每句一段；数字序号（1.）不单独成段 */
 function splitSentences(t){
   const out = [];
   t.split(/\n+/).forEach(line => {
@@ -980,7 +1037,6 @@ function splitSentences(t){
   });
   return out;
 }
-/* 转义 → **关键词** 高亮；没有 ** 标记时退回到关键词表匹配 */
 function rich(v, keys){
   const t = toText(v); if (!t) return '';
   const hasMarks = /\*\*[^*]+\*\*/.test(t);
@@ -998,7 +1054,6 @@ function wordSizeClass(word){
   String(word).split('').forEach(ch => { w += /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/.test(ch) ? 1.7 : 1; });
   return w <= 8 ? '' : w <= 16 ? 'w-m' : w <= 30 ? 'w-s' : 'w-xs';
 }
-/* 各类别内容顺序：语法 → 用法、易错点、相同/相似用法比较、例句、定义、结构 */
 function cardSections(c){
   const cat = c.category || '单词';
   if (cat === '语法') return [
@@ -1076,7 +1131,6 @@ function archiveExpiredCards(){
   const cutoff = Date.now() - WEEK_MS; let changed = false;
   words.forEach(card => {
     if (!Number.isFinite(Number(card.createdAt)) || Number(card.createdAt) <= 0) { card.createdAt = inferCardCreatedAt(card); changed = true; }
-    /* 内置卡片永不归档 */
     if (!card.builtin && !card.pinned && !card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
   });
   if (changed) persistWords();
@@ -1090,7 +1144,6 @@ function ensureCardGroups(){
   getDefaultGroups().forEach((g, i) => {
     const ex = cardGroups.find(x => x.id === g.id);
     if (ex) { ex.isDefault = true; return; }
-    /* 保持默认分组在各自类别中的相对顺序 */
     const firstSame = cardGroups.findIndex(x => x.category === g.category && !x.isDefault);
     if (firstSame >= 0) cardGroups.splice(firstSame, 0, {...g}); else cardGroups.push({...g});
   });
@@ -1215,7 +1268,6 @@ function renderRecognitionStatus(message, state){
 }
 
 /* ---- 预览与收藏 ---- */
-/* 内置卡片不算“已收藏”：用户收藏同名 AI 卡片时，会替换内置的简版卡片 */
 function isSaved(card){
   return words.some(w => !w.builtin && String(w.word).toLowerCase() === String(card.word).toLowerCase() && (w.category || '单词') === card.category);
 }
@@ -1248,7 +1300,7 @@ function refreshPreview(ctx){
 }
 function showGeneratedPreview(title, cards){
   previews.modal = cards;
-  $('infoTitle').textContent = title; $('infoModal').classList.add('preview-mode'); /* 预览隐藏头部与底部，整块空间留给内容 */
+  $('infoTitle').textContent = title; $('infoModal').classList.add('preview-mode');
   $('infoBody').classList.add('rd');
   $('infoFavorite').style.display = 'none';
   $('infoSpeak').style.display = 'none'; $('infoAdd').style.display = 'none';
@@ -1266,7 +1318,6 @@ function saveWord(data){
   if (isSaved(data)) return 'dup';
   const g = getCardGroup(data.groupId);
   if (!g || g.category !== data.category) return 'bad';
-  /* 同名内置卡片将被替换：容量检查时把它视为已释放 */
   const builtinDup = words.find(w => w.builtin && String(w.word).toLowerCase() === String(data.word).toLowerCase() && (w.category || '单词') === data.category);
   if (!groupHasRoom(data.groupId, builtinDup ? builtinDup.id : undefined)) return 'full';
   if (builtinDup) words = words.filter(w => w !== builtinDup);
@@ -1361,11 +1412,10 @@ async function generateGrammarTopic(topic){
 所有字段的值必须是字符串（多条内容用换行分隔），不要使用嵌套对象或数组。正文中的关键用法、关键词、关键结构用 **双星号** 包裹以便高亮。
 以 JSON 对象输出，字段为 word（标题，使用“${topic}”）、category（固定为“语法”）、usage、pitfalls、compare、example、definition、structure、keywords。只输出 JSON，不要 Markdown 代码围栏。`;
     const raw = await callAI([{role:'user', content:prompt}]);
-    /* 等待期间用户已关闭弹窗：不再强行弹出结果 */
     if (!$('infoModal').classList.contains('active')) return;
     let parsed;
     try{ parsed = parseAIJson(raw)[0]; }
-    catch(err){ parsed = {usage: raw}; }   // 解析失败时保留原文，保证内容可见
+    catch(err){ parsed = {usage: raw}; }
     const card = normalizeCardData({...parsed, word: toText(parsed.word) || topic, category:'语法'}, '语法');
     showGeneratedPreview(`语法预览 · ${topic}`, [card]);
   }catch(e){
@@ -1439,7 +1489,6 @@ function toggleBatchClassifyMode(force){
   batchClassifyMode = typeof force === 'boolean' ? force : !batchClassifyMode;
   batchDeleteMode = false; selectedCardIds.clear();
   if (batchClassifyMode) {
-    /* 默认目标类别跟随当前筛选 */
     if (cardFilter !== '全部' && $('bulkCategory')) $('bulkCategory').value = cardFilter;
     renderBulkGroupOptions();
   }
@@ -1492,7 +1541,6 @@ function applyBatchClassification(){
   if (!group) { showToast('请选择有效分组'); return; }
   const selected = words.filter(w => selectedCardIds.has(Number(w.id)));
   const movingIds = new Set(selected.map(w => Number(w.id)));
-  /* 同名检查：目标类别中已存在（且不在本次移动内）的同名卡片，以及本次移动内部的同名卡片 */
   const taken = new Set(words.filter(w => !movingIds.has(Number(w.id)) && (w.category || '单词') === group.category).map(w => String(w.word).toLowerCase()));
   const movable = [], skipped = [];
   selected.forEach(w => {
@@ -1500,7 +1548,6 @@ function applyBatchClassification(){
     if (taken.has(key)) skipped.push(w); else { taken.add(key); movable.push(w); }
   });
   if (!movable.length) { showToast(skipped.length ? `${skipped.length} 张因目标类别已有同名卡片，未调整` : '没有可调整的卡片'); return; }
-  /* 容量：本次移入的活跃卡片中，原本不在目标分组的才占用新名额 */
   if (group.limit > 0){
     const incoming = movable.filter(w => !w.archived && w.groupId !== groupId).length;
     if (countInGroup(groupId) + incoming > group.limit) { showToast(`目标分组容量不足（上限 ${group.limit}，还可放入 ${Math.max(0, group.limit - countInGroup(groupId))} 张）`); return; }
@@ -1697,7 +1744,6 @@ function closePhotoTaskDialog(){
 }
 function takeChecklistPhoto(){
   if (!pendingPhotoTask) { $('photoModal').classList.remove('active'); return; }
-  /* 保持主题弹窗在原位：用户取消系统拍照选择时，仍能看到“必须拍照”的提示 */
   $('checklistCamera').click();
 }
 function handleChecklistPhotoCancel(){
@@ -1845,7 +1891,6 @@ function buildAttendanceLines(){
   const keys = Object.keys(attendance).sort().slice(-30); const now = Date.now();
   return keys.map(k => { const rec = attendance[k]; const bt = breakTotals(rec, rec.out || now); return {day:k, n:bt.n, min:Math.round(bt.ms / 60000), max:Math.round(bt.max / 60000)}; }).filter(x => x.n > 0);
 }
-/* 统一 AI 分析：自动识别有哪些数据（休息 / 睡眠 / 两者），并提示可疑记录 */
 async function analyzeRestSleep(){
   const restDays = buildAttendanceLines();
   const sleeps = sleepRecords.filter(r => r.s && r.e && r.e > r.s).slice(-30);
@@ -1881,7 +1926,6 @@ ${sleepLines.join('\n') || '无'}
 
 /* =========================================================
    内置「日常生活」词库（约 500 条，首次启动写入一次）
-   格式：场景 → "表达=释义;表达=释义;…"
 ========================================================= */
 const DAILY_RAW = [
 ['问候社交',`hello=你好;good morning=早上好;good evening=晚上好;good night=晚安;nice to meet you=很高兴认识你;how are you=你好吗;see you later=回头见;take care=保重;thank you=谢谢;you're welcome=不客气;sorry=对不起;excuse me=打扰一下;please=请;congratulations=恭喜;welcome=欢迎;cheers=干杯;bless you=（打喷嚏后）祝你健康;never mind=没关系;of course=当然`],
@@ -1915,7 +1959,6 @@ const DAILY_RAW = [
 function getDefaultGroups(){
   return DEFAULT_GROUPS.concat(DAILY_RAW.map(([scene], i) => ({id:'daily-' + i, category:'单词', name:'日常 · ' + scene, limit:0, isDefault:true})));
 }
-/* 旧版「日常生活」总分组 → 按场景拆分到各自分组 */
 function migrateDailyGroups(){
   let changed = false;
   words.forEach(w => {
