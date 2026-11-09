@@ -198,6 +198,9 @@ select {
 /* Dedicated reader mode: the article owns the only scroll area while the
    reader action strip and bottom navigation remain fixed outside it. */
 #app-content.reader-mode {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 0 !important;
   padding: 10px 10px 0 !important;
   overflow: hidden !important;
   overscroll-behavior: none;
@@ -216,7 +219,7 @@ select {
   flex: 1 1 auto;
   width: 100%;
   max-width: 800px;
-  height: 100%;
+  height: auto;
   min-height: 0;
   margin: 0 auto;
   padding: 5px 3px calc(145px + env(safe-area-inset-bottom));
