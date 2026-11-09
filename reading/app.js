@@ -6,14 +6,16 @@ function get(k,d){try{const v=localStorage.getItem(k);return v===null?d:v}catch(
 function json(k,d){try{const v=get(k,'');return v?JSON.parse(v):d}catch(e){return d}}
 function put(k,v){try{localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));return true}catch(e){return false}}
 const st0=json(K.stats,{});
-const S={api:get(K.api,''),base:get(K.base,'https://api.deepseek.com'),model:get(K.model,'deepseek-flash'),article:get(K.article,''),words:json(K.words,[]),questions:json(K.questions,[]),stats:{calls:0,prompt:0,completion:0,total:0,...(st0||{})},favorites:json(K.favorites,[]),current:json(K.current,null),font:Number(get(K.font,'22'))||22,channel:'china',category:'综合要闻',period:'',language:'zh'};
+const S={api:get(K.api,''),base:get(K.base,'https://api.deepseek.com'),model:get(K.model,'deepseek-flash'),article:get(K.article,''),words:json(K.words,[]),questions:json(K.questions,[]),stats:{calls:0,prompt:0,completion:0,total:0,...(st0||{})},favorites:json(K.favorites,[]),current:json(K.current,null),font:Number(get(K.font,'22'))||22,channel:'china',category:'综合要闻',period:'',language:'zh',favoriteFilter:'全部'};
 ['calls','prompt','completion','total'].forEach(k=>S.stats[k]=Math.max(0,Number(S.stats[k])||0));
 if(!['deepseek-flash','deepseek-v4-pro'].includes(S.model))S.model='deepseek-flash';
 const CAT={'综合要闻':'最新重点新闻','政治政策':'政治 政策 政府','宏观经济':'宏观经济 GDP 通胀 贸易','金融市场':'股市 金融 市场 债券','科技与人工智能':'科技 人工智能 AI 芯片','国际关系':'外交 国际关系 地缘政治','社会民生':'社会 民生 教育 医疗','商业与产业':'企业 商业 产业 公司','能源与气候':'能源 气候 环境','文化体育娱乐':'文化 体育 娱乐'};
 const CAT_EN={'综合要闻':'top news','政治政策':'politics government policy','宏观经济':'economy inflation GDP trade','金融市场':'finance stock market bonds','科技与人工智能':'technology artificial intelligence AI chips','国际关系':'international relations diplomacy geopolitics','社会民生':'society education healthcare','商业与产业':'business industry companies','能源与气候':'energy climate environment','文化体育娱乐':'culture sports entertainment'};
 const CH={china:'中国',world:'海外',weibo:'微博',douyin:'抖音',x:'X'};
+const FAV_CATEGORIES=['英文文章','中国新闻','海外新闻','社交热点','历史知识','其他'];
 S.words=Array.isArray(S.words)?S.words.filter(x=>typeof x==='string'):[];
 S.favorites=Array.isArray(S.favorites)?S.favorites.filter(x=>x&&typeof x==='object'):[];
+S.favorites.forEach(a=>{if(!FAV_CATEGORIES.includes(a.category))a.category=inferFavoriteCategory(a)});
 S.questions=Array.isArray(S.questions)?S.questions.filter(q=>q&&typeof q.question==='string'&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(Number(q.correctIndex))&&Number(q.correctIndex)>=0&&Number(q.correctIndex)<4).map(q=>({question:q.question,options:q.options.map(String),correctIndex:Number(q.correctIndex),explanation:String(q.explanation||''),evidence:String(q.evidence||''),selected:q.selected===null||q.selected===undefined?null:Number(q.selected),checked:!!q.checked})):[];
 const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 function safe(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
@@ -33,7 +35,7 @@ async function webSearch(q,n){if(!S.api)throw Error('请先在设置页填写 AP
 }
 function parse(raw){let t=String(raw||'').trim().replace(/^\x60{3}(?:json)?\s*/i,'').replace(/\s*\x60{3}$/,'');try{return JSON.parse(t)}catch(e){}const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a){try{return JSON.parse(t.slice(a,b+1))}catch(e){}}throw Error('AI 返回 JSON 格式不正确')}
 function renderStats(){['calls','prompt','completion','total'].forEach(k=>$('#stat-'+k).textContent=Number(S.stats[k]||0).toLocaleString())}
-function switchTab(name){$$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));$('#app-content').scrollTo({top:0,behavior:'auto'});if(name==='favorites')renderFavorites();if(name==='read')updateFavBtn()}
+function switchTab(name){$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));$('#reader-actions').classList.toggle('visible',name==='read');$('#app-content').scrollTo({top:0,behavior:'auto'});if(name==='favorites')renderFavorites();if(name==='read'){updateFavBtn();requestAnimationFrame(scheduleReadingFocus)}}
 $$('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 function channel(c){S.channel=c;$$('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel===c));$('#history-controls').hidden=c!=='history';$('#category-picker').style.display=c==='history'?'none':'block';$('#btn-fetch-news').textContent=c==='history'?'搜索历史知识':'生成热点新闻';$('#source-note').textContent=['weibo','douyin','x'].includes(c)?'公开网页索引结果，不等同于平台官方实时热榜排名。':'实时网页检索，提供来源链接及可用原文。'}
 $$('[data-channel]').forEach(b=>b.addEventListener('click',()=>channel(b.dataset.channel)));
@@ -73,13 +75,82 @@ function htmlArticle(t,hi,kind){const ps=splitP(t);if(!ps.length)return '<div cl
 function minFont(){return window.matchMedia('(max-width:700px)').matches?22:20}
 function setFont(n){S.font=Math.max(minFont(),Math.min(34,Number(n)||minFont()));put(K.font,S.font);$('#article-body').style.fontSize=S.font+'px';$('#font-size-label').textContent=String(S.font);$('#font-down').disabled=S.font<=minFont();$('#font-up').disabled=S.font>=34}
 $('#font-down').addEventListener('click',()=>setFont(S.font-2));$('#font-up').addEventListener('click',()=>setFont(S.font+2));window.addEventListener('resize',()=>{if(S.font<minFont())setFont(minFont())});
+function inferFavoriteCategory(a){
+ const channel=String(a&&a.channel||'');
+ if(a&&a.kind==='history'||channel==='历史知识')return '历史知识';
+ if(channel==='中国')return '中国新闻';
+ if(channel==='海外')return '海外新闻';
+ if(['微博','抖音','X'].includes(channel))return '社交热点';
+ if(a&&a.kind==='pasted'||channel==='粘贴导入')return '英文文章';
+ return '其他';
+}
 function favKey(a){return String(a.url||a.id||a.title||'article')}
 function isFav(a){return S.favorites.some(x=>favKey(x)===favKey(a))}
 function updateFavBtn(){const b=$('#btn-favorite-current'),yes=!!S.current&&isFav(S.current);b.innerHTML=icon(yes?'starOn':'star');b.classList.toggle('active',yes);b.title=yes?'取消收藏':'收藏文章'}
-function reader(){const a=S.current||{title:'',content:S.article};$('#reader-title').textContent=a.title||'';$('#reader-meta').textContent=[a.channel||'',a.source||'',a.date?dateText(a.date):''].filter(Boolean).join(' · ');const hasOriginal=!!String(a.originalText||'').trim();$('#reader-summary').hidden=!hasOriginal||!a.summary;$('#reader-summary').textContent=a.summary||'';const l=$('#reader-source'),u=safe(a.url);l.hidden=!u;if(u)l.href=u;$('#article-body').innerHTML=htmlArticle(a.content||a.originalText||a.summary||S.article,a.highlight||'',a.kind||'pasted');$('#original-note').hidden=!a.note;$('#original-note').textContent=a.note||'';setFont(S.font);updateFavBtn()}
+function scheduleReadingFocus(){
+ if(S.focusFrame)return;
+ S.focusFrame=requestAnimationFrame(()=>{S.focusFrame=0;updateReadingFocus()});
+}
+function updateReadingFocus(){
+ if(!$('#tab-read').classList.contains('active'))return;
+ const root=$('#app-content'),body=$('#article-body');if(!root||!body)return;
+ const rr=root.getBoundingClientRect(),target=rr.top+Math.max(85,Math.min(rr.height*.43,rr.height-140));
+ let best=null,bestDistance=Infinity;
+ body.querySelectorAll('.article-sentence').forEach(el=>{
+  Array.from(el.getClientRects()).forEach(rect=>{
+   if(rect.bottom<rr.top+55||rect.top>rr.bottom-125)return;
+   const center=(rect.top+rect.bottom)/2,distance=Math.abs(center-target);
+   if(distance<bestDistance){bestDistance=distance;best=el}
+  });
+ });
+ body.querySelectorAll('.article-sentence.is-focused').forEach(el=>el.classList.remove('is-focused'));
+ body.querySelectorAll('.article-paragraph.is-focused-paragraph').forEach(el=>el.classList.remove('is-focused-paragraph'));
+ if(best){best.classList.add('is-focused');const p=best.closest('.article-paragraph');if(p)p.classList.add('is-focused-paragraph')}
+}
+$('#app-content').addEventListener('scroll',scheduleReadingFocus,{passive:true});
+function reader(){
+ const a=S.current||{title:'',content:S.article};
+ $('#reader-title').textContent=a.title||'';
+ $('#reader-meta').textContent=[a.channel||'',a.source||'',a.date?dateText(a.date):''].filter(Boolean).join(' · ');
+ const hasOriginal=!!String(a.originalText||'').trim();$('#reader-summary').hidden=!hasOriginal||!a.summary;$('#reader-summary').textContent=a.summary||'';
+ const l=$('#reader-source'),u=safe(a.url);l.hidden=!u;if(u)l.href=u;
+ $('#article-body').innerHTML=htmlArticle(a.content||a.originalText||a.summary||S.article,a.highlight||'',a.kind||'pasted');
+ $('#original-note').hidden=!a.note;$('#original-note').textContent=a.note||'';
+ setFont(S.font);updateFavBtn();scheduleReadingFocus();
+}
 function openArticle(a){S.current=a;S.article=a.content||a.originalText||a.summary||'';put(K.current,a);put(K.article,S.article);reader();switchTab('read')}
-$('#btn-favorite-current').addEventListener('click',()=>{if(!S.current)return;const i=S.favorites.findIndex(x=>favKey(x)===favKey(S.current));if(i>=0)S.favorites.splice(i,1);else S.favorites.unshift({...S.current});put(K.favorites,S.favorites);updateFavBtn()});
-function renderFavorites(){const box=$('#favorite-list');box.innerHTML='';$('#favorite-count').textContent=S.favorites.length+' 篇';if(!S.favorites.length){box.innerHTML='<div class="empty-state">收藏的文章会保存在这台设备上。</div>';return}S.favorites.forEach((a,i)=>{const row=document.createElement('div');row.className='favorite-item';const op=document.createElement('button');op.className='favorite-open';op.innerHTML='<div class="favorite-title">'+esc(a.title||'未命名文章')+'</div><div class="favorite-meta">'+esc(a.channel||a.kind||'文章')+' · '+esc(a.source||'本地保存')+'</div>';op.addEventListener('click',()=>openArticle(a));const rm=document.createElement('button');rm.className='favorite-remove';rm.textContent='移除';rm.addEventListener('click',()=>{S.favorites.splice(i,1);put(K.favorites,S.favorites);renderFavorites();updateFavBtn()});row.append(op,rm);box.appendChild(row)})}
+$('#btn-favorite-current').addEventListener('click',()=>{
+ if(!S.current)return;
+ const i=S.favorites.findIndex(x=>favKey(x)===favKey(S.current));
+ if(i>=0)S.favorites.splice(i,1);
+ else{S.current.category=S.current.category||inferFavoriteCategory(S.current);S.favorites.unshift({...S.current})}
+ put(K.favorites,S.favorites);updateFavBtn();
+});
+function renderFavorites(){
+ const box=$('#favorite-list');box.innerHTML='';$('#favorite-count').textContent=S.favorites.length+' 篇';
+ $('#favorite-filters [data-fav-filter]').forEach(b=>b.classList.toggle('active',b.dataset.favFilter===S.favoriteFilter));
+ if(!S.favorites.length){box.innerHTML='<div class="empty-state">收藏的文章会保存在这台设备上。</div>';return}
+ const visible=S.favorites.filter(a=>S.favoriteFilter==='全部'||(a.category||inferFavoriteCategory(a))===S.favoriteFilter);
+ if(!visible.length){box.innerHTML='<div class="favorite-empty-filter">这个分类还没有文章。</div>';return}
+ visible.forEach(a=>{
+  const realIndex=S.favorites.indexOf(a),row=document.createElement('div');row.className='favorite-item';
+  const main=document.createElement('div');main.className='favorite-item-main';
+  const op=document.createElement('button');op.className='favorite-open';op.innerHTML='<div class="favorite-title">'+esc(a.title||'未命名文章')+'</div><div class="favorite-meta">'+esc(a.channel||a.kind||'文章')+' · '+esc(a.source||'本地保存')+'</div>';
+  op.addEventListener('click',()=>openArticle(a));main.appendChild(op);
+  const tools=document.createElement('div');tools.className='favorite-item-tools';
+  const wrap=document.createElement('div');wrap.className='favorite-category-wrap';
+  const trigger=document.createElement('button');trigger.className='favorite-category-trigger';trigger.type='button';trigger.textContent=(a.category||inferFavoriteCategory(a))+' ⌄';
+  const menu=document.createElement('div');menu.className='favorite-category-menu';menu.hidden=true;
+  FAV_CATEGORIES.forEach(cat=>{const pick=document.createElement('button');pick.type='button';pick.textContent=cat;pick.addEventListener('click',()=>{a.category=cat;put(K.favorites,S.favorites);renderFavorites()});menu.appendChild(pick)});
+  trigger.addEventListener('click',e=>{e.stopPropagation();const open=menu.hidden;$('.favorite-category-menu').forEach(m=>m.hidden=true);menu.hidden=!open});
+  wrap.append(trigger,menu);
+  const rm=document.createElement('button');rm.className='favorite-remove';rm.textContent='移除';
+  rm.addEventListener('click',()=>{S.favorites.splice(realIndex,1);put(K.favorites,S.favorites);renderFavorites();updateFavBtn()});
+  tools.append(wrap,rm);row.append(main,tools);box.appendChild(row);
+ });
+}
+$('#favorite-filters [data-fav-filter]').forEach(b=>b.addEventListener('click',()=>{S.favoriteFilter=b.dataset.favFilter;renderFavorites()}));
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.favorite-category-wrap'))$('.favorite-category-menu').forEach(m=>m.hidden=true)});
 function pasteArticle(t){openArticle({id:'paste-'+Date.now(),title:'我的阅读文章',kind:'pasted',channel:'粘贴导入',content:t,originalText:t})}
 $('#btn-clean').addEventListener('click',async()=>{const t=$('#raw-input').value.trim();if(!t){$('#clean-status').textContent='请先粘贴英文内容';return}const b=$('#btn-clean');b.disabled=true;$('#clean-status').textContent='AI 正在整理…';$('#clean-status').className='status';try{const out=await ai([{role:'system',content:'清理英文网页内容，删除导航、广告、评论、版权声明；保留标题、原文、段落、句子和引号，不要总结、翻译或改写，只返回正文。'},{role:'user',content:t}],{temperature:.1,maxTokens:10000});if(!out.trim())throw Error('没有提取到正文');$('#clean-status').textContent='整理完成';$('#clean-status').className='status ok';$('#clean-stats').textContent=out.split(/\s+/).length+' words · '+out.length+' characters';pasteArticle(out)}catch(e){$('#clean-status').textContent=e.message;$('#clean-status').className='status bad'}finally{b.disabled=false}});
 $('#raw-input').addEventListener('input',()=>$('#input-counter').textContent=$('#raw-input').value.length.toLocaleString()+' / 120,000');$('#btn-clear-input').addEventListener('click',()=>{$('#raw-input').value='';$('#input-counter').textContent='0 / 120,000';$('#clean-status').textContent='';$('#clean-stats').textContent=''});
