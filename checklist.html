@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f5f7f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="DAILY">
+<meta name="apple-mobile-web-app-title" content="RCS">
+<meta name="application-name" content="RCS">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="mobile-web-app-capable" content="yes">
-<title>DAILY · 休息与清单</title>
+<link rel="manifest" href="./checklist.webmanifest?v=1">
+<link rel="icon" type="image/svg+xml" href="./checklist-icon.svg?v=1">
+<link rel="apple-touch-icon" sizes="180x180" href="./checklist-icon-180.png?v=1">
+<title>RCS · 休息与清单</title>
 <style>
 :root{
   --primary:#2c5e4f;--primary-dark:#1f4a3d;--primary-soft:#e8f0ed;
@@ -23,11 +28,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue"
 button,input{font:inherit}
 button{cursor:pointer}
 #app{width:100%;max-width:480px;height:100%;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg-color);padding-top:env(safe-area-inset-top);overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.06)}
-.topbar{height:54px;flex:none;display:flex;align-items:center;padding:0 17px;background:var(--bg-color)}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-mark{width:31px;height:31px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--primary);color:#fff;font-size:10px;letter-spacing:.2px;font-weight:900}
-.brand-title{font-size:16px;font-weight:800;color:var(--primary)}
-.brand-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
 .content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 14px calc(94px + env(safe-area-inset-bottom));display:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .content.active{display:block}
 #tab-r,#tab-c,#tab-s{scrollbar-width:thin}
@@ -120,10 +120,6 @@ button{cursor:pointer}
 </head>
 <body>
 <div id="app">
-  <header class="topbar">
-    <div class="brand"><div class="brand-mark">RCS</div><div><div class="brand-title">日常记录</div><div class="brand-sub">休息 · 清单 · 设置</div></div></div>
-  </header>
-
   <main class="content" id="tab-r">
     <div class="rest-card">
       <div class="rest-head"><div><div class="rest-title">休息与睡眠</div><div class="rest-sub" id="restStatus">今天还没有记录</div></div><span class="rest-icon">☕🌙</span></div>
@@ -167,7 +163,7 @@ button{cursor:pointer}
         <button type="button" onclick="exportData()">导出备份</button>
         <button type="button" class="solid" onclick="$('importFile').click()">导入恢复</button>
       </div>
-      <div class="settings-note">本页面与原 DICT 使用同一浏览器存储。清单、休息、睡眠记录和 API Key 会自动共用；在另一个页面修改数据后，本页面会同步刷新。</div>
+      <div class="settings-note">本页面与原 DICT 使用同一浏览器存储。清单、休息、睡眠记录和 API Key 会自动共用；在另一个页面修改数据后，本页面会同步刷新。<br>添加主屏幕：iPhone 请用 Safari 打开，选择“分享 → 添加到主屏幕”；Android 请在 Chrome 菜单中选择“安装应用”或“添加到主屏幕”。应用图标为绿色 RCS。</div>
     </section>
   </main>
 
@@ -538,6 +534,7 @@ function init(){
   });
 }
 init();
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 </script>
 </body>
 </html>
