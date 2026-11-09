@@ -4,7 +4,7 @@
 <meta name="theme-color" content="#eef2ee"><meta name="description" content="英文阅读、实时资讯、历史知识与朗读助手">
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-title" content="阅读资讯"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=4"></head><body>
+<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=5"></head><body>
 <header class="bottom-nav"><nav class="tabs" aria-label="主要功能">
 <button class="tab-btn active" data-tab="home">粘贴·NEWS</button><button class="tab-btn" data-tab="read">阅读</button><button class="tab-btn" data-tab="quiz">问题</button><button class="tab-btn" data-tab="favorites">收藏</button><button class="tab-btn" data-tab="settings">设置</button>
 </nav></header>
@@ -34,10 +34,7 @@
 <div id="news-results" class="news-results" aria-live="polite"><div class="empty-state">选择上方频道，生成当天热点或历史知识。</div></div>
 </section></div></section>
 
-<section id="tab-read" class="tab-panel reader-panel"><div class="reader-actions">
-<button class="icon-btn" id="btn-favorite-current" aria-label="收藏文章" title="收藏文章"></button><button class="icon-btn" id="btn-speak" aria-label="朗读文章" title="朗读"></button><button class="icon-btn" id="btn-stop-speak" aria-label="停止朗读" title="停止朗读"></button>
-<div class="font-tools"><button class="icon-btn" id="font-down" aria-label="缩小字号">A−</button><span id="font-size-label">22</span><button class="icon-btn" id="font-up" aria-label="放大字号">A+</button></div></div>
-<article class="reading-document"><h1 id="reader-title" class="reader-title"></h1><div id="reader-meta" class="reader-meta"></div>
+<section id="tab-read" class="tab-panel reader-panel"><article class="reading-document"><h1 id="reader-title" class="reader-title"></h1><div id="reader-meta" class="reader-meta"></div>
 <div id="reader-summary" class="reader-summary" hidden></div><a id="reader-source" class="source-link" target="_blank" rel="noopener noreferrer" hidden>查看原文来源 ↗</a>
 <div id="article-body" class="article-body"><div class="empty-state">从粘贴区导入文章，或从 NEWS 点击一条内容开始阅读。</div></div><div id="original-note" class="original-note" hidden></div></article></section>
 
@@ -45,7 +42,11 @@
 <div class="quiz-controls"><label class="count-control"><span>题目数量</span><input id="q-count" type="number" min="1" max="20" value="5"></label><button class="btn primary" id="btn-gen-q">生成选择题</button><span id="q-status" class="status"></span></div></section>
 <div id="questions" class="questions-list"><div class="empty-state">先准备一篇文章，再生成阅读理解选择题。</div></div></section>
 
-<section id="tab-favorites" class="tab-panel"><div class="section-heading favorites-heading"><h2>文章收藏</h2><span id="favorite-count" class="counter">0 篇</span></div><div id="favorite-list" class="favorites-list"><div class="empty-state">收藏的文章会保存在这台设备上。</div></div></section>
+<section id="tab-favorites" class="tab-panel"><div class="section-heading favorites-heading"><h2>文章收藏</h2><span id="favorite-count" class="counter">0 篇</span></div>
+<div id="favorite-filters" class="favorite-filters">
+<button class="chip active" data-fav-filter="全部">全部</button><button class="chip" data-fav-filter="英文文章">英文文章</button><button class="chip" data-fav-filter="中国新闻">中国新闻</button><button class="chip" data-fav-filter="海外新闻">海外新闻</button><button class="chip" data-fav-filter="社交热点">社交热点</button><button class="chip" data-fav-filter="历史知识">历史知识</button>
+</div>
+<div id="favorite-list" class="favorites-list"><div class="empty-state">收藏的文章会保存在这台设备上。</div></div></section>
 
 <section id="tab-settings" class="tab-panel"><section class="panel-card settings-card"><h2>API 设置</h2>
 <label class="field-label" for="api-key">DeepSeek API Key</label><input id="api-key" type="password" autocomplete="off" placeholder="sk-…">
@@ -56,6 +57,10 @@
 <div class="stat"><b id="stat-calls">0</b><span>调用次数</span></div><div class="stat"><b id="stat-prompt">0</b><span>输入 tokens</span></div><div class="stat"><b id="stat-completion">0</b><span>输出 tokens</span></div><div class="stat"><b id="stat-total">0</b><span>总计 tokens</span></div></div></section>
 <section class="panel-card"><div class="section-heading"><h2>生词本</h2><button class="btn subtle" id="btn-copy-words">复制</button></div><div id="word-box" class="word-box">（暂无生词）</div></section></section>
 </main>
+<div class="reader-actions">
+<button class="icon-btn" id="btn-favorite-current" aria-label="收藏文章" title="收藏文章"></button><button class="icon-btn" id="btn-speak" aria-label="朗读文章" title="朗读"></button><button class="icon-btn" id="btn-stop-speak" aria-label="停止朗读" title="停止朗读"></button>
+<div class="font-tools"><button class="icon-btn" id="font-down" aria-label="缩小字号">A−</button><span id="font-size-label">22</span><button class="icon-btn" id="font-up" aria-label="放大字号">A+</button></div></div>
+
 <div id="selection-popup" class="selection-popup" role="dialog" aria-label="选词工具"><div class="popup-actions"><button id="pop-lookup">查词</button><button id="pop-add">加生词</button><button id="pop-close" aria-label="关闭">×</button></div><div id="pop-meaning" class="meaning" hidden></div></div>
 <div class="modal-layer" id="app-modal" aria-hidden="true"><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><h3 id="modal-title">提示</h3><div id="modal-message" class="modal-message"></div><div id="modal-actions" class="modal-actions"></div></div></div>
-<script src="./app.js?v=4" defer></script></body></html>
+<script src="./app.js?v=5" defer></script></body></html>
