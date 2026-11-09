@@ -152,3 +152,44 @@ html,body{background:#fff!important;color:#29382f}
 
 /* Prevent iOS Safari from auto-zooming when the paste textarea receives focus */
 #raw-input{font-size:16px!important;-webkit-text-size-adjust:100%;}
+
+
+/* Stop iOS Safari focus zoom on every editable field, not only the article paste box.
+   Keep pinch-to-zoom available for accessibility. */
+input,
+textarea,
+select {
+  font-size:16px !important;
+  -webkit-text-size-adjust:100%;
+}
+
+/* Reader: keep the article in normal flow inside the single scrolling viewport.
+   Avoid a viewport-sized minimum-height on a hidden tab causing collapsed/overflow states. */
+#tab-read {
+  min-height:0 !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+#tab-read.active {
+  display:block !important;
+}
+#tab-read .reading-document {
+  display:block;
+  width:100%;
+  min-height:1px;
+  overflow:visible;
+}
+#tab-read #article-body {
+  display:block;
+  width:100%;
+  min-height:1em;
+  visibility:visible;
+  opacity:1;
+  overflow:visible;
+  white-space:normal;
+}
+#tab-read .article-paragraph {
+  display:block;
+  white-space:normal;
+  overflow:visible;
+}
