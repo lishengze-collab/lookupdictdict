@@ -11,6 +11,9 @@ const S={api:get(K.api,''),base:get(K.base,'https://api.deepseek.com'),model:get
 if(!['deepseek-flash','deepseek-v4-pro'].includes(S.model))S.model='deepseek-flash';
 const CAT={'综合要闻':'最新重点新闻','政治政策':'政治 政策 政府','宏观经济':'宏观经济 GDP 通胀 贸易','金融市场':'股市 金融 市场 债券','科技与人工智能':'科技 人工智能 AI 芯片','国际关系':'外交 国际关系 地缘政治','社会民生':'社会 民生 教育 医疗','商业与产业':'企业 商业 产业 公司','能源与气候':'能源 气候 环境','文化体育娱乐':'文化 体育 娱乐'};
 const CH={china:'中国',world:'海外',weibo:'微博',douyin:'抖音',x:'X'};
+S.words=Array.isArray(S.words)?S.words.filter(x=>typeof x==='string'):[];
+S.favorites=Array.isArray(S.favorites)?S.favorites.filter(x=>x&&typeof x==='object'):[];
+S.questions=Array.isArray(S.questions)?S.questions.filter(q=>q&&typeof q.question==='string'&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(Number(q.correctIndex))&&Number(q.correctIndex)>=0&&Number(q.correctIndex)<4).map(q=>({question:q.question,options:q.options.map(String),correctIndex:Number(q.correctIndex),explanation:String(q.explanation||''),evidence:String(q.evidence||''),selected:q.selected===null||q.selected===undefined?null:Number(q.selected),checked:!!q.checked})):[];
 const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 function safe(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:''}catch(e){return ''}}
 function base(){let u;try{u=new URL(S.base.replace(/\/+$/,''))}catch(e){throw Error('接口地址格式不正确')}if(!['https:','http:'].includes(u.protocol))throw Error('接口地址只支持 HTTP 或 HTTPS');return u.href.replace(/\/+$/,'')}
@@ -83,5 +86,5 @@ $('#api-key').value=S.api;$('#base-url').value=S.base;$('#model-trigger').innerH
 $('#btn-reset-stats').addEventListener('click',async()=>{if(await notify('确定清空 Token 使用统计吗？')){S.stats={calls:0,prompt:0,completion:0,total:0};put(K.stats,S.stats);renderStats()}});
 $('#btn-copy-words').addEventListener('click',async()=>{const v=S.words.join(', ');if(!v){await notify('生词本目前为空。');return}try{await navigator.clipboard.writeText(v)}catch(e){const t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}$('#btn-copy-words').textContent='已复制';setTimeout(()=>$('#btn-copy-words').textContent='复制',1300)});
 if(S.current&&typeof S.current==='object'){S.article=S.current.content||S.current.originalText||S.article;reader()}else if(S.article){S.current={id:'stored',title:'上次阅读文章',content:S.article};reader()}
-S.font=Math.max(minFont(),Math.min(34,S.font));setFont(S.font);renderStats();renderWords();renderFavorites();channel('china');
+S.font=Math.max(minFont(),Math.min(34,S.font));setFont(S.font);renderStats();renderWords();renderQuestions();renderFavorites();channel('china');
 })();
