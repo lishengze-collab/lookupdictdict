@@ -112,3 +112,39 @@ html,body{background:#fff!important;color:#29382f}
 .icon-btn{font-size:15px}
 .reader-actions{gap:7px}
 .reader-actions .icon-btn{min-width:40px}
+
+
+/* Home layout: compact fixed paste editor, NEWS takes the released height */
+#tab-home .home-stack{
+  min-height:calc(100dvh - 195px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  gap:10px;
+}
+#tab-home .editor-zone{
+  flex:0 0 auto;
+  min-height:0;
+  margin-bottom:0;
+}
+#tab-home .news-zone{
+  flex:1 0 340px;
+  min-height:340px;
+  margin-bottom:0;
+}
+#raw-input{
+  height:clamp(105px,18vh,145px)!important;
+  min-height:105px!important;
+  max-height:145px!important;
+  resize:none!important;
+}
+@media(min-width:701px){
+  #tab-home .home-stack{min-height:calc(100dvh - 195px)}
+  #raw-input{height:clamp(115px,17vh,155px)!important;min-height:115px!important;max-height:155px!important}
+}
+@media(max-width:700px){
+  #tab-home .home-stack{min-height:calc(100dvh - 190px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+  #tab-home .news-zone{flex:1 0 320px;min-height:320px}
+  #raw-input{height:clamp(100px,17vh,132px)!important;min-height:100px!important;max-height:132px!important}
+}
+/* Ensure navigation stays above the scroll area and its hit targets remain clickable */
+.bottom-nav{z-index:120;pointer-events:auto}
+.bottom-nav .tabs,.bottom-nav .tab-btn{pointer-events:auto;touch-action:manipulation}
+#app-content{position:relative;z-index:1}
