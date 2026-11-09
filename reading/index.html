@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#eef2ee">
 <meta name="description" content="英文阅读辅助工具">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1">
+<meta name="apple-mobile-web-app-title" content="阅读助手">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>英文阅读助手</title>
 <style>
@@ -104,6 +106,26 @@ textarea{line-height:1.75}
 .modal-card{border-radius:22px}
 #selection-popup{border:1px solid rgba(255,255,255,.3)}
 @media(max-width:700px){header{width:calc(100% - 22px);bottom:calc(8px + env(safe-area-inset-bottom));border-radius:18px}.tab-btn{min-height:44px;font-size:13px;padding:7px 3px;flex-direction:row}main{padding:12px 10px calc(100px + env(safe-area-inset-bottom))}.card{padding:15px;border-radius:19px}#raw-input{min-height:205px;padding:13px}.reader-toolbar{padding:11px 12px}}
+
+/* Safari touch feedback: keep tab navigation text-only in every pointer state */
+*{-webkit-tap-highlight-color:rgba(0,0,0,0)!important}
+.tabs .tab-btn,
+.tabs .tab-btn:hover,
+.tabs .tab-btn:active,
+.tabs .tab-btn:focus,
+.tabs .tab-btn:focus-visible,
+.tabs .tab-btn.active{
+  -webkit-appearance:none!important;appearance:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+  background:transparent!important;background-color:transparent!important;
+  border-color:transparent!important;box-shadow:none!important;
+}
+.tabs .tab-btn:focus{outline:none!important}
+.tabs .tab-btn:focus-visible{outline:2px solid rgba(116,142,125,.34)!important;outline-offset:-3px}
+.tabs .tab-btn.active{color:var(--green2)!important;font-weight:800}
+.tabs .tab-btn:not(.active){color:#849088!important}
+#tab-4 .stat-grid{margin-top:16px}
+#tab-4 .word-box{margin-top:16px}
 </style>
 </head>
 <body>
