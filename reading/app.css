@@ -148,3 +148,7 @@ html,body{background:#fff!important;color:#29382f}
 .bottom-nav{z-index:120;pointer-events:auto}
 .bottom-nav .tabs,.bottom-nav .tab-btn{pointer-events:auto;touch-action:manipulation}
 #app-content{position:relative;z-index:1}
+
+
+/* Prevent iOS Safari from auto-zooming when the paste textarea receives focus */
+#raw-input{font-size:16px!important;-webkit-text-size-adjust:100%;}
