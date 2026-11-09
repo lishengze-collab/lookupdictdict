@@ -97,3 +97,18 @@ html,body{background:#fff!important;color:#29382f}
 .favorite-category-menu button{display:block;width:100%;padding:8px 9px;text-align:left;border:0;border-radius:7px;background:#fff;color:#536257;font-size:12px}
 .favorite-category-menu button:active{background:#f1f4f1}
 .favorite-empty-filter{padding:22px 10px;text-align:center;color:#89938b;font-size:13px}
+
+
+/* Final readability and restrained color pass */
+.stat{background:#f7f8f7}
+.stat b{color:#536056}
+.reader-summary{background:#f6f7f6;border-left-color:#d2d9d3;color:#505b53}
+.status.ok,.status.bad{color:#69746c}
+.option-btn{font-size:14px}
+.picker-menu button{font-size:14px}
+.favorite-category-trigger{font-size:14px}
+.favorite-category-menu button{font-size:14px}
+.favorite-remove{font-size:13px}
+.icon-btn{font-size:15px}
+.reader-actions{gap:7px}
+.reader-actions .icon-btn{min-width:40px}
