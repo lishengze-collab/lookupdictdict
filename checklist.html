@@ -296,10 +296,10 @@ function renderChecklist(){
     container.innerHTML=checklist.map(item=>{
       const photos=Array.isArray(item.photos)?item.photos:[];
       const photoHtml='<div class="check-photo-grid">'+photos.map((p,i)=>
-        '<div class="check-photo-wrap" role="button" tabindex="0" aria-label="查看清单照片 '+(i+1)+'" title="点击查看照片" onclick="openPhotoPreview(this.querySelector(\\'img\\').src)" onkeydown="if(event.key===\\'Enter\\')openPhotoPreview(this.querySelector(\\'img\\').src)"><img src="'+esc(p.src)+'" class="check-photo" alt="清单照片 '+(i+1)+'"></div>'
+        '<div class="check-photo-wrap" role="button" tabindex="0" aria-label="查看清单照片 '+(i+1)+'" title="点击查看照片" onclick="openPhotoPreview(this.querySelector(\'img\').src)" onkeydown="if(event.key===\'Enter\')openPhotoPreview(this.querySelector(\'img\').src)"><img src="'+esc(p.src)+'" class="check-photo" alt="清单照片 '+(i+1)+'"></div>'
       ).join('')+(photos.length<4?'<button type="button" class="check-photo-add" onclick="addChecklistPhoto('+item.id+')">＋照片<br>'+photos.length+'/4</button>':'')+'</div>';
       const meta=item.doneTime?'<div class="check-meta">完成于 '+esc(item.doneTime)+'</div>':'';
-      return '<div class="check-item"><div class="check-box '+(item.done?'done':'')+'" role="button" tabindex="0" aria-label="'+(item.done?'重新打开':'完成事项')+'" onclick="toggleCheck('+item.id+')" onkeydown="if(event.key===\\'Enter\\')toggleCheck('+item.id+')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="check-main"><div class="check-text '+(item.done?'done':'')+'">'+esc(item.text)+'</div>'+photoHtml+meta+'</div><button class="delete-btn" type="button" onclick="deleteCheckItem('+item.id+')">删除</button></div>';
+      return '<div class="check-item"><div class="check-box '+(item.done?'done':'')+'" role="button" tabindex="0" aria-label="'+(item.done?'重新打开':'完成事项')+'" onclick="toggleCheck('+item.id+')" onkeydown="if(event.key===\'Enter\')toggleCheck('+item.id+')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="check-main"><div class="check-text '+(item.done?'done':'')+'">'+esc(item.text)+'</div>'+photoHtml+meta+'</div><button class="delete-btn" type="button" onclick="deleteCheckItem('+item.id+')">删除</button></div>';
     }).join('');
   }
   $('checkCountLabel').textContent=checklist.length+' 项';
