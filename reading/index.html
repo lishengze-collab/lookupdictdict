@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=yes">
-<meta name="theme-color" content="#0b4b40">
-<meta name="description" content="英文阅读助手：AI 正文提取、专注阅读、阅读理解练习与生词管理。">
+<meta name="theme-color" content="#eef2ee">
+<meta name="description" content="英文阅读辅助工具">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>READING SPACE · 英文阅读助手</title>
+<title>英文阅读助手</title>
 <style>
 :root{
   --bg:#e9f1ee;--bg2:#dfeae6;--glass:rgba(255,255,255,.70);--glass-strong:rgba(255,255,255,.88);
@@ -62,127 +62,48 @@ textarea{resize:vertical;min-height:140px}.btn{border:1px solid var(--line);bord
 @media(min-width:701px) and (max-width:1024px){:root{--reader-size:19px}#article-body{font-size:19px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
-/* ===== Reading Space visual refinement ===== */
-:root{
-  --bg:#edf3ef;--bg2:#e3ece7;--glass:rgba(255,255,255,.82);--glass-strong:rgba(255,255,255,.94);
-  --line:rgba(17,75,63,.13);--text:#18352f;--muted:#6b817b;--green:#0d6554;--green2:#0a493e;
-  --green3:#16816b;--mint:#e5f4ed;--focus:#fff3b7;--mark:#ffdc67;--ok:#187a51;--bad:#b83f49;
-  --shadow:0 14px 36px rgba(21,67,56,.085);--radius:24px;
-}
-html{background:#e9f0ec}
-body{
-  background:
-    radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.94),transparent 34%),
-    radial-gradient(ellipse at 94% 18%,rgba(186,219,204,.28),transparent 32%),
-    linear-gradient(145deg,#edf3ef,#e4ede8);
-}
-body::before{background:linear-gradient(120deg,rgba(255,255,255,.16),transparent 42%,rgba(11,101,84,.035))}
-header{
-  width:min(760px,calc(100% - 28px));left:50%;right:auto;transform:translateX(-50%);
-  bottom:calc(12px + env(safe-area-inset-bottom));padding:7px;
-  border:1px solid rgba(255,255,255,.18);border-radius:21px;
-  background:rgba(7,63,54,.94);box-shadow:0 12px 34px rgba(4,40,34,.22);
-}
-.tabs{max-width:none;gap:5px}
-.tab-btn{
-  display:flex;align-items:center;justify-content:center;gap:7px;
-  min-height:46px;border:1px solid transparent;border-radius:15px;
-  background:transparent;color:rgba(236,249,244,.78);font-size:13px;font-weight:650;
-}
-.tab-btn::before{font-size:15px;line-height:1}
-.tab-btn[data-tab="1"]::before{content:"✎"}
-.tab-btn[data-tab="2"]::before{content:"▤"}
-.tab-btn[data-tab="3"]::before{content:"◇"}
-.tab-btn[data-tab="4"]::before{content:"⚙"}
-.tab-btn.active{
-  background:rgba(255,255,255,.96);color:var(--green2);border-color:rgba(255,255,255,.95);
-  box-shadow:0 5px 16px rgba(0,0,0,.12)
-}
-main{max-width:920px;padding:26px 18px calc(112px + env(safe-area-inset-bottom))}
-.app-intro{
-  position:relative;overflow:hidden;display:flex;align-items:center;gap:15px;
-  margin:0 0 18px;padding:20px 22px;border-radius:26px;color:#fff;
-  background:linear-gradient(118deg,#0b5145 0%,#0d6a57 58%,#267c66 100%);
-  box-shadow:0 16px 34px rgba(8,74,61,.18)
-}
-.app-intro::after{
-  content:"";position:absolute;width:230px;height:230px;border-radius:50%;
-  right:-70px;top:-145px;border:1px solid rgba(255,255,255,.13);
-  box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 50px rgba(255,255,255,.025)
-}
-.brand-mark{
-  flex:0 0 48px;width:48px;height:48px;display:grid;place-items:center;
-  border:1px solid rgba(255,255,255,.23);border-radius:16px;
-  background:rgba(255,255,255,.12);font:800 19px/1 Georgia,serif;letter-spacing:-1px
-}
-.app-intro-copy{min-width:0;position:relative;z-index:1}
-.app-eyebrow{display:block;margin-bottom:3px;color:#c5e7da;font-size:10px;font-weight:800;letter-spacing:1.7px}
-.app-intro h1{font-size:21px;line-height:1.25;letter-spacing:.3px}
-.app-intro p{margin:4px 0 0;color:rgba(240,250,246,.78);font-size:12px}
-.intro-tag{
-  position:relative;z-index:1;margin-left:auto;white-space:nowrap;
-  padding:7px 10px;border:1px solid rgba(255,255,255,.2);border-radius:999px;
-  background:rgba(255,255,255,.10);color:#e9f7f1;font-size:11px
-}
-.card{
-  background:rgba(255,255,255,.83);border:1px solid rgba(255,255,255,.9);
-  box-shadow:0 10px 28px rgba(18,66,54,.075);border-radius:23px;padding:19px
-}
-h2{font-size:16px;font-weight:800;letter-spacing:.1px}
-.hint{line-height:1.7;color:#71847e}
-textarea,input,select{
-  border:1px solid rgba(19,83,69,.16);border-radius:15px;
-  background:rgba(250,253,251,.92);transition:border-color .18s,box-shadow .18s
-}
-textarea:focus,input:focus,select:focus{border-color:rgba(15,112,91,.54);box-shadow:0 0 0 4px rgba(22,129,107,.09);outline:none}
+/* Muted sage theme and text-only navigation */
+:root{--bg:#f0f3f0;--bg2:#e7ece8;--glass:rgba(255,255,255,.86);--glass-strong:rgba(255,255,255,.96);--line:rgba(77,99,87,.14);--text:#263931;--muted:#78847d;--green:#7b9083;--green2:#596f63;--green3:#879b8f;--mint:#e9efea;--focus:#f7f0d9;--mark:#e9d89a;--ok:#718a78;--bad:#b7797e;--shadow:0 12px 30px rgba(44,65,54,.07);--radius:22px}
+html{background:#edf1ed}
+body{background:radial-gradient(ellipse at 12% 0%,rgba(255,255,255,.94),transparent 34%),radial-gradient(ellipse at 94% 18%,rgba(201,214,204,.23),transparent 32%),linear-gradient(145deg,#f0f3f0,#e8ede9)}
+body::before{background:linear-gradient(120deg,rgba(255,255,255,.18),transparent 42%,rgba(87,111,96,.025))}
+header{width:min(760px,calc(100% - 28px));left:50%;right:auto;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));padding:7px 10px;border:1px solid rgba(91,112,98,.13);border-radius:19px;background:rgba(249,251,249,.96);box-shadow:0 8px 26px rgba(43,63,51,.10);backdrop-filter:blur(22px) saturate(120%);-webkit-backdrop-filter:blur(22px) saturate(120%)}
+.tabs{max-width:none;gap:0}
+.tab-btn{display:flex;align-items:center;justify-content:center;gap:0;min-height:44px;border:0;border-radius:0;background:transparent;color:#849088;font-size:13px;font-weight:600;padding:8px 10px;box-shadow:none;flex-direction:row}
+.tab-btn::before{display:none!important;content:none!important}
+.tab-btn.active{background:transparent;color:var(--green2);border-color:transparent;box-shadow:none;font-weight:800}
+.tab-btn:focus-visible{outline:2px solid rgba(116,142,125,.38);outline-offset:-2px;border-radius:10px}
+main{max-width:920px;padding:18px 18px calc(104px + env(safe-area-inset-bottom))}
+.card{background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.94);box-shadow:0 9px 25px rgba(44,65,54,.065);border-radius:22px;padding:19px}
+h2{font-size:16px;font-weight:800;letter-spacing:.1px;color:var(--green2)}
+.hint{line-height:1.65;color:#7b8780}
+textarea,input,select{border:1px solid rgba(91,112,98,.17);border-radius:14px;background:rgba(252,253,252,.96);transition:border-color .18s,box-shadow .18s}
+textarea:focus,input:focus,select:focus{border-color:rgba(111,139,120,.55);box-shadow:0 0 0 4px rgba(125,151,133,.10);outline:none}
 textarea{line-height:1.75}
 #raw-input{min-height:220px;padding:16px;font-size:14px}
-.btn{border-radius:14px;font-size:13px;font-weight:750;letter-spacing:.1px}
-.btn.primary{background:linear-gradient(145deg,#16816b,#0a4d41);box-shadow:0 7px 16px rgba(8,88,71,.17)}
-.btn.primary:hover{filter:brightness(1.04)}
+.btn{border-radius:13px;font-size:13px;font-weight:750;letter-spacing:.1px}
+.btn.primary{background:linear-gradient(145deg,#879b8f,#6e8578);border-color:rgba(86,111,95,.32);box-shadow:0 6px 14px rgba(73,96,81,.13)}
+.btn.primary:hover{filter:brightness(1.025)}
 .status{font-size:12px}
 #clean-status{display:inline-flex;align-items:center;gap:6px}
-#clean-status.ok::before{content:"";width:7px;height:7px;border-radius:50%;background:#1b9a66}
-#clean-status.bad::before{content:"";width:7px;height:7px;border-radius:50%;background:#c7464e}
+#clean-status.ok::before{content:"";width:7px;height:7px;border-radius:50%;background:#7b9a83}
+#clean-status.bad::before{content:"";width:7px;height:7px;border-radius:50%;background:#ba7a80}
 #clean-stats{margin-top:10px}
-.reader-card{border-radius:24px}
-.reader-toolbar{background:rgba(247,251,248,.94);padding:14px 17px}
+.reader-card{border-radius:22px}
+.reader-toolbar{background:rgba(249,251,249,.96);padding:14px 17px}
 .reader-toolbar h2{margin:0}
-.size-group{border:1px solid rgba(7,63,54,.08);background:#eaf1ed}
+.size-group{border:1px solid rgba(91,112,98,.09);background:#eef2ee}
 .size-btn{cursor:pointer}
-#article-body{color:#203a33}
+#article-body{color:#293c33}
 .q-item{padding:16px 0}
-.q-text{line-height:1.65;color:#21463c}
-.q-item textarea{background:#fbfdfc}
-.stat{background:linear-gradient(145deg,#edf6f1,#e6f1ec);border-radius:17px;padding:14px}
-.stat .num{font-variant-numeric:tabular-nums}
-.word-box{background:#f0f6f2;line-height:1.85}
-.modal-card{border-radius:24px}
+.q-text{line-height:1.65;color:#344b3e}
+.q-item textarea{background:#fcfdfc}
+.stat{background:linear-gradient(145deg,#f0f4f0,#e9efea);border-radius:16px;padding:14px}
+.stat .num{font-variant-numeric:tabular-nums;color:var(--green2)}
+.word-box{background:#f1f4f1;line-height:1.85}
+.modal-card{border-radius:22px}
 #selection-popup{border:1px solid rgba(255,255,255,.3)}
-@media(max-width:700px){
-  header{width:calc(100% - 22px);bottom:calc(8px + env(safe-area-inset-bottom));border-radius:19px}
-  .tab-btn{min-height:45px;font-size:12px;gap:4px;flex-direction:column;padding:5px 3px}
-  .tab-btn::before{font-size:14px}
-  main{padding:14px 10px calc(102px + env(safe-area-inset-bottom))}
-  .app-intro{margin-bottom:13px;padding:16px;border-radius:21px;gap:11px}
-  .brand-mark{width:42px;height:42px;flex-basis:42px;border-radius:14px}
-  .app-intro h1{font-size:19px}
-  .app-intro p{font-size:11px}
-  .intro-tag{font-size:10px;padding:6px 8px}
-  .card{padding:15px;border-radius:20px}
-  #raw-input{min-height:205px;padding:13px}
-  .reader-toolbar{padding:11px 12px}
-}
-@media(max-width:390px){
-  .intro-tag{display:none}
-  .app-intro{padding:15px}
-}
-@media(min-width:701px){
-  main{padding-top:32px}
-  .app-intro{padding:23px 26px}
-  .app-intro h1{font-size:23px}
-}
-
+@media(max-width:700px){header{width:calc(100% - 22px);bottom:calc(8px + env(safe-area-inset-bottom));border-radius:18px}.tab-btn{min-height:44px;font-size:13px;padding:7px 3px;flex-direction:row}main{padding:12px 10px calc(100px + env(safe-area-inset-bottom))}.card{padding:15px;border-radius:19px}#raw-input{min-height:205px;padding:13px}.reader-toolbar{padding:11px 12px}}
 </style>
 </head>
 <body>
@@ -192,26 +113,13 @@ textarea{line-height:1.75}
   </nav>
 </header>
 <main>
-<div class="app-intro" aria-label="英文阅读助手">
-  <div class="brand-mark" aria-hidden="true">R.</div>
-  <div class="app-intro-copy">
-    <span class="app-eyebrow">READING SPACE · AI ASSISTANT</span>
-    <h1>英文阅读助手</h1>
-    <p>整理原文、专注阅读，把每一次阅读变成积累。</p>
-  </div>
-  <span class="intro-tag">✦ 本地保存进度</span>
-</div>
-<section id="tab-1" class="tab-panel active">
+ <section id="tab-1" class="tab-panel active">
   <div class="card">
-    <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div><h2>导入英文原文</h2><p class="hint">粘贴网页正文或文章内容，AI 将过滤导航、广告和无关信息。</p></div>
-      <span class="intro-tag" style="background:#edf6f1;color:#17604f;border-color:#d9e9e1">01 / IMPORT</span>
-    </div>
+    <h2>导入英文原文</h2>
     <textarea id="raw-input" aria-label="英文原文输入框" maxlength="120000" placeholder="在此粘贴英文文章…&#10;&#10;Paste your article here."></textarea>
     <div class="row" style="justify-content:space-between;margin-top:8px">
       <span class="status" id="input-counter">0 / 120,000</span>
-      <span class="status">建议一次导入一篇文章</span>
-    </div>
+     </div>
     <div class="row" style="margin-top:12px">
       <button class="btn primary" id="btn-clean">✦ 识别并去噪</button>
       <button class="btn" id="btn-clear-input">清空</button>
@@ -224,15 +132,14 @@ textarea{line-height:1.75}
 <section id="tab-2" class="tab-panel">
   <div class="card reader-card" id="reader-card">
     <div class="reader-toolbar"><h2>阅读区</h2><div class="reader-tools"><div class="size-group" aria-label="字号"><button class="size-btn" data-size="17">A−</button><button class="size-btn active" data-size="20">A</button><button class="size-btn" data-size="22">A+</button></div><button class="btn" id="btn-clear-marks">清除高亮</button><button class="btn primary" id="btn-fullscreen">专注阅读</button></div></div>
-    <p class="hint reader-note" id="reader-hint">手机专注模式会固定中部阅读焦点，滚动时自动突出当前句子。长按选择单词或短语可查词或加入生词本。</p>
-    <div class="article-shell" id="article-shell"><div class="focus-guide" aria-hidden="true"></div><article id="article-body"></article></div>
+       <div class="article-shell" id="article-shell"><div class="focus-guide" aria-hidden="true"></div><article id="article-body"></article></div>
   </div>
 </section>
 <section id="tab-3" class="tab-panel">
-  <div class="card"><div class="row"><label class="hint" for="q-count">题目数量</label><input type="number" id="q-count" value="12" min="5" max="20" style="width:84px"><button class="btn primary" id="btn-gen-q">生成问题</button><span class="status" id="q-status"></span></div><p class="hint">每题可单独批改。点击“显示原文”后，阅读区会定位并高亮相关原句。</p></div><div id="questions" aria-live="polite"></div>
+  <div class="card"><div class="row"><label class="hint" for="q-count">题目数量</label><input type="number" id="q-count" value="12" min="5" max="20" style="width:84px"><button class="btn primary" id="btn-gen-q">生成问题</button><span class="status" id="q-status"></span></div> </div><div id="questions" aria-live="polite"></div>
 </section>
 <section id="tab-4" class="tab-panel">
-  <div class="card"><h2>API 设置</h2><label class="hint" for="api-key">API Key，仅保存在当前浏览器</label><input type="password" id="api-key" placeholder="sk-..."><div class="row" style="margin-top:10px"><div style="flex:1;min-width:210px"><label class="hint" for="base-url">接口地址</label><input id="base-url" value="https://api.deepseek.com"></div><div style="flex:1;min-width:170px"><label class="hint" for="model">模型</label><select id="model"><option value="deepseek-v4-flash">deepseek-v4-flash · 推荐</option><option value="deepseek-v4-pro">deepseek-v4-pro · 高质量</option></select></div></div><div class="row" style="margin-top:10px"><button class="btn primary" id="btn-save-settings">保存设置</button><span class="status" id="save-status"></span></div><p class="hint">安全提示：API Key 仅保存在本机浏览器，但前端调用无法防止密钥被本机脚本读取。请勿在公共电脑使用；公开分享前，建议改为 Worker 等服务端代理。</p></div>
+  <div class="card"><h2>API 设置</h2><label class="hint" for="api-key">API Key，仅保存在当前浏览器</label><input type="password" id="api-key" placeholder="sk-..."><div class="row" style="margin-top:10px"><div style="flex:1;min-width:210px"><label class="hint" for="base-url">接口地址</label><input id="base-url" value="https://api.deepseek.com"></div><div style="flex:1;min-width:170px"><label class="hint" for="model">模型</label><select id="model"><option value="deepseek-v4-flash">deepseek-v4-flash · 推荐</option><option value="deepseek-v4-pro">deepseek-v4-pro · 高质量</option></select></div></div><div class="row" style="margin-top:10px"><button class="btn primary" id="btn-save-settings">保存设置</button><span class="status" id="save-status"></span></div><p class="hint">API Key 保存在本机浏览器；请勿在公共设备使用。</p></div>
   <div class="card"><div class="row" style="justify-content:space-between"><h2>Token 统计</h2><button class="btn danger" id="btn-reset-stats">重置</button></div><div class="stat-grid"><div class="stat"><div class="num" id="stat-calls">0</div><div class="lbl">调用次数</div></div><div class="stat"><div class="num" id="stat-prompt">0</div><div class="lbl">输入 tokens</div></div><div class="stat"><div class="num" id="stat-completion">0</div><div class="lbl">输出 tokens</div></div><div class="stat"><div class="num" id="stat-total">0</div><div class="lbl">总计 tokens</div></div></div></div>
   <div class="card"><div class="row" style="justify-content:space-between"><h2>生词本</h2><button class="btn" id="btn-copy-words">复制</button></div><div class="word-box" id="word-box">（暂无生词）</div></div>
 </section>
