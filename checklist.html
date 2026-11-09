@@ -2,103 +2,213 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f5f7f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>清单 · DICTIONARY</title>
+<meta name="apple-mobile-web-app-title" content="DAILY">
+<meta name="mobile-web-app-capable" content="yes">
+<title>DAILY · 休息与清单</title>
 <style>
 :root{
   --primary:#2c5e4f;--primary-dark:#1f4a3d;--primary-soft:#e8f0ed;
   --primary-light:#f2f7f5;--bg-color:#f5f7f6;--card:#fff;
   --text-main:#1f2523;--text-sub:#5c6662;--text-muted:#9aa5a0;
-  --line:#e8edeb;--red:#d93b3b;--amber:#d98a1f;--amber-soft:#fdf3e1;
+  --line:#e8edeb;--white:#fff;--red:#d93b3b;--amber:#d98a1f;
+  --amber-soft:#fdf3e1;--blue:#2f5f9e;--blue-soft:#e8f0fb;
   --green:#2f9e6a;--radius:18px;--shadow:0 2px 12px rgba(31,74,61,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;height:100%;}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;background:var(--bg-color);color:var(--text-main);display:flex;justify-content:center;overflow:hidden}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;background:var(--bg-color);color:var(--text-main);display:flex;justify-content:center;height:100vh;height:100dvh;overflow:hidden}
 button,input{font:inherit}
 button{cursor:pointer}
-#app{width:100%;max-width:560px;height:100%;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg-color);padding-top:env(safe-area-inset-top)}
-.topbar{height:58px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(245,247,246,.96);border-bottom:1px solid rgba(224,233,228,.75)}
-.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:31px;height:31px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--primary);color:#fff;font-size:10px;letter-spacing:.2px;font-weight:900}.brand-title{font-size:17px;font-weight:800;color:var(--primary)}.brand-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
-.home-link{font-size:12px;text-decoration:none;color:var(--primary);border:1px solid #d4e1da;background:#fff;padding:8px 11px;border-radius:11px}
-.scroller{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:14px 14px calc(28px + env(safe-area-inset-bottom))}
-.section-label{font-size:13px;font-weight:800;color:var(--primary);margin:2px 2px 10px;display:flex;align-items:center;justify-content:space-between}.section-label small{font-size:11px;font-weight:500;color:var(--text-muted)}
-.rest-card{background:#fff;border-radius:18px;padding:16px;margin:0 0 16px;box-shadow:var(--shadow)}
-.rest-head{display:flex;align-items:center;justify-content:space-between}.rest-title{font-size:16px;font-weight:800;color:var(--primary)}.rest-sub{font-size:12px;color:var(--text-muted);margin-top:4px}.rest-icon{font-size:22px}
-.rest-summary{margin-top:12px;padding:11px 12px;background:var(--bg-color);border-radius:12px;color:var(--text-sub);font-size:13px;font-weight:700}
-.rest-action{width:100%;margin-top:10px;padding:12px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:800}.rest-action.running{background:var(--amber);color:#fff}
-.rest-history{font-size:11px;color:var(--text-muted);line-height:1.8;margin-top:8px;word-break:break-word}
-.w-ai{width:100%;margin-top:10px;padding:11px;border-radius:12px;font-size:13px;cursor:pointer;background:#fff;color:var(--primary);border:1px solid var(--primary);font-weight:750}.w-ai:active{background:var(--primary-light)}
-.sleep-section{margin-top:15px;padding-top:14px;border-top:1px solid #edf1ef}.sleep-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.sleep-title{font-size:14px;font-weight:800;color:var(--primary)}.sleep-summary{font-size:12px;color:var(--text-sub);margin-top:8px;padding:10px 11px;border-radius:11px;background:var(--bg-color)}.sleep-actions{display:flex;gap:8px;margin-top:9px}.sleep-actions button{flex:1;border:1px solid var(--primary);border-radius:11px;background:#fff;color:var(--primary);padding:10px 8px;font-size:13px;font-weight:700}.sleep-actions button.running{background:var(--amber);border-color:var(--amber);color:#fff}.sleep-history{font-size:11px;color:var(--text-muted);line-height:1.8;margin-top:8px;word-break:break-word}
-.add-check-row{display:flex;gap:9px;margin-bottom:12px}.add-check-row input{flex:1;min-width:0;padding:13px 14px;border:1px solid var(--line);background:#fff;border-radius:13px;font-size:14px;outline:none}.add-check-row input:focus{border-color:var(--primary)}.add-check-row button{padding:0 19px;border-radius:13px;border:0;background:var(--primary);color:#fff;font-size:14px;font-weight:750}
-.check-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.check-toolbar button{padding:11px 8px;border-radius:12px;font-size:13px;cursor:pointer;background:#fff;color:var(--primary);border:1px solid var(--primary);font-weight:700}.check-toolbar button.ghost{color:#7f8984;border-color:#dce3df}
-.check-stats{display:flex;justify-content:space-between;gap:8px;padding:11px 13px;margin-bottom:10px;background:#fff;border-radius:13px;box-shadow:var(--shadow);font-size:12px;color:var(--text-sub)}.check-stats strong{color:var(--primary);font-size:14px}
-.check-item{display:flex;align-items:flex-start;gap:11px;padding:13px;background:#fff;border-radius:15px;margin-bottom:9px;box-shadow:var(--shadow);animation:fadeIn .2s ease}
-.check-box{width:24px;height:24px;border-radius:50%;border:2px solid #ccd6d1;flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;cursor:pointer;color:#fff}.check-box.done{background:var(--primary);border-color:var(--primary)}.check-box svg{opacity:0}.check-box.done svg{opacity:1}.check-main{flex:1;min-width:0}.check-text{font-size:14px;line-height:1.55;color:var(--text-main);word-break:break-word}.check-text.done{color:#a9b2ad;text-decoration:line-through}.check-photo-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.check-photo{width:58px;height:58px;object-fit:cover;border-radius:10px;display:block;border:1px solid var(--line);cursor:zoom-in;filter:blur(5px);transition:filter .18s ease}.check-photo:active{filter:blur(2px)}.check-photo-add{height:58px;min-width:58px;padding:0 8px;border:1px dashed #c9d7cf;border-radius:10px;background:#f8fbf9;color:var(--primary);font-size:11px;font-weight:700}.check-photo-add:disabled{opacity:.4}.check-meta{font-size:11px;color:#aab4ae;margin-top:5px}.delete-btn{color:#d96b68;font-size:12px;background:none;border:none;flex:none;padding:4px 0 4px 5px}
-.empty-hint{font-size:13px;color:#a9b5af;text-align:center;padding:30px 12px;line-height:1.7;background:#fff;border-radius:15px}
-.settings{margin-top:16px;background:#fff;border-radius:15px;padding:14px 15px;box-shadow:var(--shadow)}.settings summary{font-size:13px;font-weight:750;color:var(--primary);cursor:pointer;list-style:none}.settings summary::-webkit-details-marker{display:none}.settings-body{padding-top:13px}.settings-label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:7px}.settings-input{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fbfcfb;font-size:13px;outline:none}.settings-actions{display:flex;gap:8px;margin-top:9px}.settings-actions button{flex:1;border:1px solid var(--primary);border-radius:10px;padding:10px 6px;background:#fff;color:var(--primary);font-size:12px;font-weight:700}.settings-actions .solid{background:var(--primary);color:#fff}
-.modal{display:none;position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:16px}.modal.active{display:flex}.modal-content{background:#fff;width:100%;max-height:86vh;max-height:86dvh;border-radius:20px;padding:17px 16px 15px;display:flex;flex-direction:column;min-height:160px;box-shadow:0 12px 40px rgba(0,0,0,.16)}.modal-header{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:16px;color:var(--primary);margin-bottom:12px;flex:none}.modal-close{border:0;background:transparent;color:#aab3ae;font-size:25px;line-height:1;padding:0 3px}.modal-body{flex:1;min-height:0;overflow-y:auto;font-size:14px;line-height:1.75;color:#333;margin-bottom:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;word-break:break-word}.modal-body p{margin-bottom:7px}.modal-footer{display:flex;gap:9px;flex:none}.modal-footer button{flex:1;padding:11px;border-radius:11px;font-size:13px;font-weight:750;border:1px solid var(--primary);background:#fff;color:var(--primary)}.modal-footer button.primary{background:var(--primary);color:#fff}.modal-footer button.danger{border-color:#e4b9b6;color:#c75a56}.photo-preview-overlay{position:absolute;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(12,18,15,.94)}.photo-preview-overlay.active{display:flex}.photo-preview-overlay img{display:block;max-width:96%;max-height:85%;object-fit:contain;border-radius:12px}.photo-preview-close{position:absolute;top:calc(13px + env(safe-area-inset-top));right:17px;width:40px;height:40px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:28px;line-height:1}
-.app-toast{position:absolute;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:300;max-width:88%;padding:10px 14px;background:rgba(31,45,39,.92);color:#fff;border-radius:11px;font-size:12px;line-height:1.45;opacity:0;pointer-events:none;transition:all .2s;text-align:center}.app-toast.show{opacity:1;transform:translate(-50%,0)}
-@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
-@media(min-width:560px){.scroller{padding-left:18px;padding-right:18px}.topbar{padding-left:21px;padding-right:21px}}
+#app{width:100%;max-width:480px;height:100%;height:100dvh;display:flex;flex-direction:column;position:relative;background:var(--bg-color);padding-top:env(safe-area-inset-top);overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.06)}
+.topbar{height:54px;flex:none;display:flex;align-items:center;padding:0 17px;background:var(--bg-color)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:31px;height:31px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--primary);color:#fff;font-size:10px;letter-spacing:.2px;font-weight:900}
+.brand-title{font-size:16px;font-weight:800;color:var(--primary)}
+.brand-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+.content{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:12px 14px calc(94px + env(safe-area-inset-bottom));display:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.content.active{display:block}
+#tab-r,#tab-c,#tab-s{scrollbar-width:thin}
+.rest-card{background:#fff;border-radius:18px;padding:17px;margin:0 0 18px;box-shadow:var(--shadow)}
+.rest-head{display:flex;align-items:center;justify-content:space-between}
+.rest-title{font-size:16px;font-weight:750;color:var(--primary)}
+.rest-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.rest-icon{font-size:23px}
+.rest-summary{margin-top:13px;padding:12px;background:var(--bg-color);border-radius:12px;color:var(--text-sub);font-size:14px;font-weight:650;line-height:1.8}
+.rest-actions{display:flex;gap:10px;margin-top:11px}
+.rest-action{flex:1 1 0;min-width:0;padding:12px 8px;border:0;border-radius:12px;background:var(--amber-soft);color:var(--amber);font-size:14px;font-weight:700;cursor:pointer}
+.rest-action.running{background:var(--amber);color:#fff}
+.rest-action.sleep{background:var(--blue-soft);color:var(--blue)}
+.rest-action.sleep.running{background:var(--blue);color:#fff}
+.rest-history{font-size:12px;color:var(--text-muted);line-height:1.8;margin-top:10px;white-space:pre-line;word-break:break-word}
+.w-ai{width:100%;margin-top:12px;padding:12px;border-radius:14px;font-size:14px;cursor:pointer;background:var(--white);color:var(--primary);border:1px solid var(--primary);font-weight:600}
+.w-ai:active{background:var(--primary-light)}
+.check-section-head{display:flex;align-items:center;justify-content:space-between;margin:3px 2px 12px}
+.check-section-title{font-size:17px;font-weight:750;color:var(--text-main)}
+.check-section-count{font-size:12px;color:var(--text-muted)}
+.add-check-row{display:flex;gap:10px;margin-bottom:14px}
+.add-check-row input{flex:1;min-width:0;padding:14px;border:1px solid var(--line);background:var(--white);border-radius:14px;font-size:15px;outline:none}
+.add-check-row input:focus{border-color:var(--primary)}
+.add-check-row button{padding:0 22px;border-radius:14px;border:none;background:var(--primary);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.check-toolbar{display:flex;gap:10px;margin-bottom:18px}
+.check-toolbar button{flex:1;padding:12px;border-radius:14px;font-size:14px;cursor:pointer;background:var(--white);color:var(--primary);border:1px solid var(--primary)}
+.check-toolbar button.ghost{color:#888;border-color:#ddd}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--white);border-radius:16px;margin-bottom:10px;box-shadow:var(--shadow);animation:fadeIn .25s ease}
+.check-box{width:24px;height:24px;border-radius:50%;border:2px solid #ccd6d1;flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;cursor:pointer;transition:all .2s}
+.check-box.done{background:var(--primary);border-color:var(--primary);color:#fff}
+.check-box svg{opacity:0;transition:opacity .2s}
+.check-box.done svg{opacity:1}
+.check-main{flex:1;min-width:0}
+.check-text{font-size:15px;line-height:1.5;color:var(--text-main);word-break:break-word}
+.check-text.done{color:#b3b3b3;text-decoration:line-through}
+.check-photo-wrap{position:relative;width:58px;height:58px;border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in;background:#e9efec}
+.check-photo{width:100%;height:100%;object-fit:cover;display:block;filter:blur(14px) saturate(.9);transform:scale(1.35);transition:filter .18s ease;pointer-events:none}
+.check-photo-wrap:active .check-photo{filter:blur(8px) saturate(.95)}
+.check-photo-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.check-photo-add{height:58px;min-width:58px;padding:0 9px;border:1px dashed #c9d7cf;border-radius:10px;background:#f8fbf9;color:var(--primary);font-size:11px;font-weight:650}
+.check-photo-add:disabled{opacity:.4}
+.check-meta{font-size:11px;color:#bbb;margin-top:4px}
+.delete-btn{color:#e0605f;font-size:13px;background:none;border:none;cursor:pointer;flex:none;padding:4px 0 4px 8px}
+.empty-hint{font-size:14px;color:#a9b5af;text-align:center;padding:40px 12px;line-height:1.7;background:#fff;border-radius:15px}
+.settings-card{background:#fff;border-radius:18px;padding:16px 17px;margin-bottom:14px;box-shadow:var(--shadow)}
+.settings-title{font-size:16px;font-weight:750;color:var(--primary);margin-bottom:13px}
+.stats-box{background:var(--bg-color);padding:16px;border-radius:14px;margin-bottom:16px}
+.stats-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px;color:var(--text-sub)}
+.stats-row:last-child{margin-bottom:0}
+.stats-val{font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums}
+.setting-item{margin-bottom:13px}
+.setting-item label{display:block;font-size:12px;margin-bottom:8px;color:var(--text-muted)}
+.setting-item input{width:100%;padding:13px;border:1px solid var(--line);background:var(--bg-color);border-radius:12px;font-size:14px;outline:none}
+.setting-item input:focus{border-color:var(--primary)}
+.settings-actions{display:flex;gap:9px;margin-top:10px}
+.settings-actions button{flex:1;min-width:0;padding:11px 8px;border-radius:12px;border:1px solid var(--primary);background:#fff;color:var(--primary);font-size:13px;font-weight:700}
+.settings-actions button.solid{background:var(--primary);color:#fff}
+.settings-note{font-size:11px;line-height:1.7;color:var(--text-muted);margin-top:12px}
+.bottom-nav{position:absolute;bottom:calc(10px + env(safe-area-inset-bottom));left:10px;right:10px;height:58px;background:rgba(255,255,255,.95);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-radius:20px;box-shadow:0 4px 22px rgba(31,74,61,.12);display:flex;justify-content:space-around;align-items:center;padding:6px;gap:4px;z-index:20}
+.nav-item{border:0;background:transparent;color:#8d9993;font-size:15px;font-weight:600;flex:1;text-align:center;height:100%;line-height:46px;cursor:pointer;transition:all .2s;border-radius:14px}
+.nav-item.active{color:var(--primary);background:var(--primary-soft);font-weight:800}
+.modal{display:none;position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal.active{display:flex}
+.modal-content{background:#fff;width:100%;max-height:86vh;max-height:86dvh;border-radius:22px;padding:18px 17px 16px;display:flex;flex-direction:column;min-height:180px;box-shadow:0 12px 40px rgba(0,0,0,.16)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:17px;color:var(--primary);margin-bottom:12px;flex:none}
+.modal-close{border:0;background:transparent;color:#aab3ae;font-size:26px;line-height:1;padding:0 3px}
+.modal-body{flex:1;min-height:0;overflow-y:auto;font-size:15px;line-height:1.75;color:#333;margin-bottom:12px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;word-break:break-word}
+.modal-body p{margin-bottom:8px}
+.modal-footer{display:flex;gap:10px;flex:none}
+.modal-footer button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:700;border:1px solid var(--primary);background:#fff;color:var(--primary)}
+.modal-footer button.primary{background:var(--primary);color:#fff}
+.app-dialog{display:none;position:absolute;inset:0;z-index:1200;align-items:center;justify-content:center;padding:18px;background:rgba(14,25,19,.48);backdrop-filter:blur(3px)}
+.app-dialog.active{display:flex}
+.app-dialog-card{width:100%;max-width:360px;background:#fff;border:1px solid #e5ede8;border-radius:20px;padding:19px 18px 16px;box-shadow:0 14px 40px rgba(18,46,33,.22)}
+.app-dialog-title{font-size:17px;font-weight:800;color:var(--primary);margin-bottom:9px}
+.app-dialog-message{font-size:14px;line-height:1.7;color:var(--text-sub);white-space:pre-line}
+.app-dialog-actions{display:flex;gap:9px;margin-top:18px}
+.app-dialog-actions button{flex:1;border-radius:12px;padding:12px 10px;font-size:14px;font-weight:700;border:1px solid var(--primary)}
+.app-dialog-cancel{background:#fff;color:var(--text-sub);border-color:#e0e8e3!important}
+.app-dialog-confirm{background:var(--primary);color:#fff}
+.photo-preview-overlay{position:absolute;inset:0;z-index:1400;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(12,18,15,.94)}
+.photo-preview-overlay.active{display:flex}
+.photo-preview-overlay img{display:block;max-width:96vw;max-height:86vh;object-fit:contain;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.32)}
+.photo-preview-close{position:absolute;top:calc(16px + env(safe-area-inset-top));right:18px;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1}
+.app-toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:1500;max-width:88%;padding:10px 15px;background:rgba(31,45,39,.91);color:#fff;border-radius:12px;font-size:12px;line-height:1.4;opacity:0;pointer-events:none;transition:all .22s;white-space:normal;text-align:center}
+.app-toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:370px){.content{padding-left:12px;padding-right:12px}.rest-card{padding:15px}.check-item{padding:12px;gap:9px}.check-text{font-size:14px}.settings-actions{gap:6px}.settings-actions button{font-size:12px;padding:10px 5px}}
 </style>
 </head>
 <body>
 <div id="app">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark">DICT</div><div><div class="brand-title">清单</div><div class="brand-sub">任务 · 休息 · 睡眠 · AI 分析</div></div></div>
-    <a class="home-link" href="./index.html">返回 DICTIONARY</a>
+    <div class="brand"><div class="brand-mark">RCS</div><div><div class="brand-title">日常记录</div><div class="brand-sub">休息 · 清单 · 设置</div></div></div>
   </header>
-  <main class="scroller">
-    <div class="section-label">休息与睡眠 <small>自动按本地日期记录</small></div>
-    <section class="rest-card">
-      <div class="rest-head"><div><div class="rest-title">休息记录</div><div class="rest-sub" id="restStatus">今天还没有休息记录</div></div><span class="rest-icon">☕</span></div>
-      <div class="rest-summary" id="restSummary">今日 0 次 · 共 0 分钟</div>
-      <button class="rest-action" id="restButton" type="button" onclick="toggleBreak()">开始休息</button>
-      <div class="rest-history" id="restHistory">开始休息后，将自动记录每次休息的时间与时长。</div>
-      <button class="w-ai" type="button" onclick="analyzeWork()">AI 分析休息习惯</button>
-      <div class="sleep-section">
-        <div class="sleep-head"><div class="sleep-title">睡眠记录</div><span class="rest-icon">🌙</span></div>
-        <div class="sleep-summary" id="sleepSummary">尚无睡眠记录</div>
-        <div class="sleep-actions"><button type="button" id="sleepButton" onclick="toggleSleepRecording()">开始睡眠</button><button type="button" onclick="analyzeSleep()">AI 分析睡眠</button></div>
-        <div class="sleep-history" id="sleepHistory">开始睡眠后，醒来时结束记录。</div>
-      </div>
-    </section>
 
-    <div class="section-label">我的清单 <small id="checkCountLabel">0 项</small></div>
-    <div class="add-check-row"><input type="text" id="checkInput" maxlength="300" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…"><button type="button" onclick="addCheckItem()">添加</button></div>
-    <div class="check-toolbar"><button type="button" onclick="resetChecklist()">一键循环刷新</button><button class="ghost" type="button" onclick="analyzeChecklist()">AI 分析清单</button></div>
-    <div class="check-stats"><span>已完成 <strong id="doneCount">0</strong></span><span>待办 <strong id="pendingCount">0</strong></span><span>照片 <strong id="photoCount">0</strong></span></div>
-    <div id="checklistContainer"></div>
-
-    <details class="settings" id="settingsFold">
-      <summary>设置与数据备份</summary>
-      <div class="settings-body">
-        <label class="settings-label" for="apiKeyInput">DeepSeek API Key（与原 DICTIONARY 共用，仅保存在此浏览器）</label>
-        <input class="settings-input" type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
-        <div class="settings-actions"><button type="button" class="solid" onclick="saveApiKey()">保存 API Key</button><button type="button" onclick="exportData()">导出完整备份</button><button type="button" onclick="$('importFile').click()">导入恢复</button></div>
-        <div style="font-size:11px;color:#a0aaa4;line-height:1.6;margin-top:9px">本页面与原网站使用同一浏览器存储。清单、休息、睡眠记录可在两个页面之间同步；API Key 也共用。</div>
+  <main class="content" id="tab-r">
+    <div class="rest-card">
+      <div class="rest-head"><div><div class="rest-title">休息与睡眠</div><div class="rest-sub" id="restStatus">今天还没有记录</div></div><span class="rest-icon">☕🌙</span></div>
+      <div class="rest-summary" id="restSummary"></div>
+      <div class="rest-actions">
+        <button class="rest-action" id="restButton" type="button" onclick="toggleBreak()">开始休息</button>
+        <button class="rest-action sleep" id="sleepButton" type="button" onclick="toggleSleepRecording()">开始睡眠</button>
       </div>
-    </details>
+      <div class="rest-history" id="restHistory"></div>
+      <button class="w-ai" type="button" onclick="analyzeRestSleep()">AI 分析休息与睡眠</button>
+    </div>
   </main>
+
+  <main class="content active" id="tab-c">
+    <div class="check-section-head"><div class="check-section-title">我的清单</div><div class="check-section-count" id="checkCountLabel">0 项</div></div>
+    <div class="add-check-row">
+      <input type="text" id="checkInput" maxlength="300" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…">
+      <button type="button" onclick="addCheckItem()">添加</button>
+    </div>
+    <div class="check-toolbar">
+      <button type="button" onclick="resetChecklist()">一键循环刷新</button>
+      <button class="ghost" type="button" onclick="analyzeChecklist()">AI 分析</button>
+    </div>
+    <div id="checklistContainer"></div>
+  </main>
+
+  <main class="content" id="tab-s">
+    <section class="settings-card">
+      <div class="settings-title">设置与统计</div>
+      <div class="stats-box">
+        <div class="stats-row"><span>API 调用次数</span><span class="stats-val" id="stat-api-calls">0</span></div>
+        <div class="stats-row"><span>估算 TOKEN 量</span><span class="stats-val" id="stat-tokens">0</span></div>
+        <div class="stats-row"><span>清单事项数</span><span class="stats-val" id="stat-checks">0</span></div>
+        <div class="stats-row"><span>睡眠记录数</span><span class="stats-val" id="stat-sleeps">0</span></div>
+      </div>
+      <div class="setting-item">
+        <label for="apiKeyInput">DeepSeek API Key（与 DICT 共用，仅保存在此浏览器）</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
+      </div>
+      <button type="button" class="w-ai" style="margin-top:0" onclick="saveApiKey()">保存 API Key</button>
+      <div class="settings-actions">
+        <button type="button" onclick="exportData()">导出备份</button>
+        <button type="button" class="solid" onclick="$('importFile').click()">导入恢复</button>
+      </div>
+      <div class="settings-note">本页面与原 DICT 使用同一浏览器存储。清单、休息、睡眠记录和 API Key 会自动共用；在另一个页面修改数据后，本页面会同步刷新。</div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="主导航">
+    <button type="button" class="nav-item" data-tab="r" aria-label="休息与睡眠" onclick="switchTab('r')">R</button>
+    <button type="button" class="nav-item active" data-tab="c" aria-label="清单" onclick="switchTab('c')">C</button>
+    <button type="button" class="nav-item" data-tab="s" aria-label="设置" onclick="switchTab('s')">S</button>
+  </nav>
 
   <input type="file" id="checklistCamera" accept="image/*" capture="environment" hidden>
   <input type="file" id="importFile" accept=".json,application/json" hidden>
 
-  <div class="modal" id="photoModal" role="dialog" aria-modal="true">
-    <div class="modal-content"><div class="modal-header"><span id="photoModalTitle">完成前拍照</span><button class="modal-close" type="button" onclick="closePhotoTaskDialog()">×</button></div><div class="modal-body" id="photoModalBody">完成事项前必须拍照记录。</div><div class="modal-footer"><button type="button" onclick="closePhotoTaskDialog()">取消</button><button type="button" class="primary" onclick="takeChecklistPhoto()">打开相机</button></div></div>
+  <div class="modal" id="photoModal" role="dialog" aria-modal="true" onclick="if(event.target===this)closePhotoTaskDialog()">
+    <div class="modal-content">
+      <div class="modal-header"><span id="photoModalTitle">完成前拍照</span><button class="modal-close" type="button" onclick="closePhotoTaskDialog()">×</button></div>
+      <div class="modal-body" id="photoModalBody">完成事项前必须拍照记录。</div>
+      <div class="modal-footer"><button type="button" onclick="closePhotoTaskDialog()">取消</button><button type="button" class="primary" onclick="takeChecklistPhoto()">拍照</button></div>
+    </div>
   </div>
   <div class="modal" id="appDialog" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle">
-    <div class="modal-content"><div class="modal-header" id="appDialogTitle">确认操作</div><div class="modal-body" id="appDialogMessage"></div><div class="modal-footer"><button type="button" onclick="resolveAppDialog(false)">取消</button><button type="button" class="primary" onclick="resolveAppDialog(true)">确定</button></div></div>
+    <div class="app-dialog-card">
+      <div class="app-dialog-title" id="appDialogTitle">确认操作</div>
+      <div class="app-dialog-message" id="appDialogMessage"></div>
+      <div class="app-dialog-actions"><button type="button" class="app-dialog-cancel" onclick="resolveAppDialog(false)">取消</button><button type="button" class="app-dialog-confirm" onclick="resolveAppDialog(true)">确定</button></div>
+    </div>
   </div>
   <div class="modal" id="infoModal" role="dialog" aria-modal="true" onclick="if(event.target===this)closeInfoModal()">
-    <div class="modal-content"><div class="modal-header"><span id="infoTitle">AI 分析</span><button class="modal-close" type="button" onclick="closeInfoModal()">×</button></div><div class="modal-body" id="infoBody"></div><div class="modal-footer"><button type="button" onclick="closeInfoModal()">关闭</button></div></div>
+    <div class="modal-content">
+      <div class="modal-header"><span id="infoTitle">AI 分析</span><button class="modal-close" type="button" onclick="closeInfoModal()">×</button></div>
+      <div class="modal-body" id="infoBody"></div>
+      <div class="modal-footer"><button type="button" onclick="closeInfoModal()">关闭</button></div>
+    </div>
   </div>
-  <div class="photo-preview-overlay" id="photoPreviewModal" onclick="closePhotoPreview()"><button type="button" class="photo-preview-close" aria-label="关闭" onclick="closePhotoPreview()">×</button><img id="photoPreviewImage" alt="清单照片放大预览" onclick="event.stopPropagation()"></div>
+  <div class="photo-preview-overlay" id="photoPreviewModal" onclick="closePhotoPreview()">
+    <button type="button" class="photo-preview-close" aria-label="关闭" onclick="closePhotoPreview()">×</button>
+    <img id="photoPreviewImage" alt="清单照片放大预览" onclick="event.stopPropagation()">
+  </div>
   <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
 </div>
+
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
@@ -111,79 +221,324 @@ let sleepRecords=load('wm_sleep_records',[]);
 let stats=load('wm_stats',{apiCalls:0,tokens:0});
 let apiKey=localStorage.getItem('wm_api_key')||'';
 let pendingPhotoTask=null,appDialogAction=null,toastTimer=null,aiBusy=false;
+
 const nowStr=()=>new Date().toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
 function showToast(message){const el=$('appToast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2400);}
 function showAppDialog(title,message,action){appDialogAction=typeof action==='function'?action:null;$('appDialogTitle').textContent=title||'确认操作';$('appDialogMessage').textContent=message||'';$('appDialog').classList.add('active');}
 function resolveAppDialog(ok){$('appDialog').classList.remove('active');const fn=appDialogAction;appDialogAction=null;if(ok&&fn)fn();}
 function showInfo(title,html){$('infoTitle').textContent=title;$('infoBody').innerHTML=html;$('infoModal').classList.add('active');}
 function closeInfoModal(){$('infoModal').classList.remove('active');}
-function saveStats(){safeSet('wm_stats',JSON.stringify(stats));}
+function switchTab(tab){
+  document.querySelectorAll('.content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.tab===tab));
+  const panel=$('tab-'+tab);if(panel)panel.classList.add('active');
+  if(tab==='r')renderRestUI();
+  if(tab==='c')renderChecklist();
+  if(tab==='s')updateStatsUI();
+}
+function updateStatsUI(){
+  stats=load('wm_stats',{apiCalls:0,tokens:0});
+  $('stat-api-calls').textContent=stats.apiCalls||0;
+  $('stat-tokens').textContent=stats.tokens||0;
+  $('stat-checks').textContent=checklist.length;
+  $('stat-sleeps').textContent=sleepRecords.length;
+}
 async function callAI(messages){
   apiKey=localStorage.getItem('wm_api_key')||apiKey;
-  if(!apiKey)throw new Error('请先在设置中填写 DeepSeek API Key');
+  if(!apiKey)throw new Error('请先在 S 设置中填写 DeepSeek API Key');
   let timer;
   try{
     const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>reject(Object.assign(new Error('timeout'),{name:'AbortError'})),90000);});
-    const request=(async()=>{const response=await fetch('https://api.deepseek.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model:'deepseek-chat',messages,temperature:.25,max_tokens:4096})});return {response,text:await response.text()};})();
-    const {response,text}=await Promise.race([request,timeout]);let data;
-    try{data=text?JSON.parse(text):null;}catch(e){throw new Error(`API 返回的不是有效 JSON（HTTP ${response.status}）`);}
-    if(!response.ok)throw new Error(data?.error?.message||`API 请求失败（HTTP ${response.status}）`);
-    const content=data?.choices?.[0]?.message?.content;
-    const result=Array.isArray(content)?content.map(x=>x.text||'').join(''):content;
-    if(typeof result!=='string'||!result.trim())throw new Error('AI 返回内容为空，请重新尝试');
-    stats.apiCalls=(stats.apiCalls||0)+1;stats.tokens=(stats.tokens||0)+Math.round(JSON.stringify(messages).length/2)+300;saveStats();return result.trim();
-  }catch(e){if(e?.name==='AbortError')throw new Error('AI 请求超过 90 秒仍未完成，请检查网络后重试');if(e instanceof TypeError)throw new Error('网络连接失败，无法访问 DeepSeek API');throw e;}finally{clearTimeout(timer);}
+    const request=(async()=>{
+      const response=await fetch('https://api.deepseek.com/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+        body:JSON.stringify({model:'deepseek-chat',messages,temperature:.25,max_tokens:4096})
+      });
+      return {response,text:await response.text()};
+    })();
+    const result=await Promise.race([request,timeout]);
+    let data;try{data=result.text?JSON.parse(result.text):null;}catch(e){throw new Error('API 返回的不是有效 JSON（HTTP '+result.response.status+'）');}
+    if(!result.response.ok)throw new Error(data&&data.error&&data.error.message||('API 请求失败（HTTP '+result.response.status+'）'));
+    const content=data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+    const answer=Array.isArray(content)?content.map(x=>x.text||'').join(''):content;
+    if(typeof answer!=='string'||!answer.trim())throw new Error('AI 返回内容为空，请重新尝试');
+    stats.apiCalls=(stats.apiCalls||0)+1;
+    stats.tokens=(stats.tokens||0)+Math.round(JSON.stringify(messages).length/2)+300;
+    safeSet('wm_stats',JSON.stringify(stats));updateStatsUI();
+    return answer.trim();
+  }catch(e){
+    if(e&&e.name==='AbortError')throw new Error('AI 请求超过 90 秒仍未完成，请检查网络后重试');
+    if(e instanceof TypeError)throw new Error('网络连接失败，无法访问 DeepSeek API');
+    throw e;
+  }finally{clearTimeout(timer);}
 }
-function cleanupPhotos(){let changed=false;checklist.forEach(item=>{if(!Array.isArray(item.photos)){item.photos=item.photo?[{src:item.photo,ts:item.photoTs||Date.now()}]:[];changed=true;}item.photos=item.photos.filter(p=>p&&typeof p.src==='string'&&/^data:image\//i.test(p.src)).slice(-4);if('photo'in item){delete item.photo;changed=true;}if('photoTs'in item){delete item.photoTs;changed=true;}});if(changed)safeSet('wm_checklist',JSON.stringify(checklist));}
-function saveChecklist(){if(!safeSet('wm_checklist',JSON.stringify(checklist)))showToast('本地存储空间不足，请减少照片或导出备份');renderChecklist();}
+
+/* 清单：样式、照片与交互和当前 DICT 版本保持一致 */
+function cleanupPhotos(){
+  let changed=false;
+  checklist.forEach(item=>{
+    if(!Array.isArray(item.photos)){item.photos=item.photo?[{src:item.photo,ts:item.photoTs||Date.now()}]:[];changed=true;}
+    item.photos=item.photos.filter(p=>p&&typeof p.src==='string').slice(-4);
+    if('photo'in item){delete item.photo;changed=true;}
+    if('photoTs'in item){delete item.photoTs;changed=true;}
+  });
+  if(changed)safeSet('wm_checklist',JSON.stringify(checklist));
+}
+function saveChecklist(){
+  if(!safeSet('wm_checklist',JSON.stringify(checklist)))showToast('本地存储空间不足，建议减少照片或导出备份');
+  updateStatsUI();
+}
 function renderChecklist(){
   const container=$('checklistContainer');
-  if(!checklist.length){container.innerHTML='<div class="empty-hint">暂无清单，添加一项吧</div>';}
-  else container.innerHTML=checklist.map(item=>{
-    const id=Number(item.id);const photos=Array.isArray(item.photos)?item.photos:[];
-    const images=photos.map((p,i)=>`<img src="${esc(p.src)}" class="check-photo" role="button" tabindex="0" alt="清单照片 ${i+1}" title="点击查看照片" onclick="openPhotoPreview(this.src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.src)">`).join('');
-    const add=photos.length<4?`<button type="button" class="check-photo-add" onclick="addChecklistPhoto(${id})">＋照片<br>${photos.length}/4</button>`:'';
-    return `<div class="check-item"><div class="check-box ${item.done?'done':''}" role="button" tabindex="0" aria-label="${item.done?'重新打开':'完成事项'}" onclick="toggleCheck(${id})" onkeydown="if(event.key==='Enter')toggleCheck(${id})"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="check-main"><div class="check-text ${item.done?'done':''}">${esc(item.text)}</div><div class="check-photo-grid">${images}${add}</div>${item.doneTime?`<div class="check-meta">完成于 ${esc(item.doneTime)}</div>`:''}</div><button class="delete-btn" type="button" onclick="deleteCheckItem(${id})">删除</button></div>`;
-  }).join('');
-  const done=checklist.filter(x=>x.done).length;const photos=checklist.reduce((n,x)=>n+(Array.isArray(x.photos)?x.photos.length:0),0);
-  $('doneCount').textContent=done;$('pendingCount').textContent=checklist.length-done;$('photoCount').textContent=photos;$('checkCountLabel').textContent=`${checklist.length} 项`;
+  if(!checklist.length){container.innerHTML='<div class="empty-hint" style="padding:24px 0">暂无清单，添加一项吧</div>';}
+  else{
+    container.innerHTML=checklist.map(item=>{
+      const photos=Array.isArray(item.photos)?item.photos:[];
+      const photoHtml='<div class="check-photo-grid">'+photos.map((p,i)=>
+        '<div class="check-photo-wrap" role="button" tabindex="0" aria-label="查看清单照片 '+(i+1)+'" title="点击查看照片" onclick="openPhotoPreview(this.querySelector(\\'img\\').src)" onkeydown="if(event.key===\\'Enter\\')openPhotoPreview(this.querySelector(\\'img\\').src)"><img src="'+esc(p.src)+'" class="check-photo" alt="清单照片 '+(i+1)+'"></div>'
+      ).join('')+(photos.length<4?'<button type="button" class="check-photo-add" onclick="addChecklistPhoto('+item.id+')">＋照片<br>'+photos.length+'/4</button>':'')+'</div>';
+      const meta=item.doneTime?'<div class="check-meta">完成于 '+esc(item.doneTime)+'</div>':'';
+      return '<div class="check-item"><div class="check-box '+(item.done?'done':'')+'" role="button" tabindex="0" aria-label="'+(item.done?'重新打开':'完成事项')+'" onclick="toggleCheck('+item.id+')" onkeydown="if(event.key===\\'Enter\\')toggleCheck('+item.id+')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="check-main"><div class="check-text '+(item.done?'done':'')+'">'+esc(item.text)+'</div>'+photoHtml+meta+'</div><button class="delete-btn" type="button" onclick="deleteCheckItem('+item.id+')">删除</button></div>';
+    }).join('');
+  }
+  $('checkCountLabel').textContent=checklist.length+' 项';
 }
-function addCheckItem(){const input=$('checkInput'),text=input.value.trim();if(!text)return;checklist.push({id:Date.now(),text,done:false,photos:[]});input.value='';saveChecklist();}
-function deleteCheckItem(id){const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;showAppDialog('删除清单事项',`确定删除“${item.text}”吗？该事项及其照片都会被删除。`,()=>{checklist=checklist.filter(x=>Number(x.id)!==Number(id));saveChecklist();});}
-function toggleCheck(id){const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;if(item.done){showAppDialog('重新打开事项','将此事项恢复为待办状态？已保存的照片会保留。',()=>{item.done=false;delete item.doneTime;saveChecklist();});}else requestChecklistPhoto(id,true);}
-function requestChecklistPhoto(id,complete){const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;const photos=Array.isArray(item.photos)?item.photos:[];if(!complete&&photos.length>=4){showToast('每项最多保存 4 张照片');return;}pendingPhotoTask={id:Number(id),complete:!!complete};$('photoModalTitle').textContent=complete?'完成前拍照':'添加清单照片';$('photoModalBody').textContent=complete?`“${item.text}”完成前必须拍照。拍摄成功后才会标记为完成。`:`为“${item.text}”添加照片。每项最多保存 4 张，目前已有 ${photos.length} 张。`;$('photoModal').classList.add('active');}
-function closePhotoTaskDialog(){if(pendingPhotoTask?.complete)showToast('完成事项必须先拍照');$('photoModal').classList.remove('active');pendingPhotoTask=null;}
+function addCheckItem(){
+  const input=$('checkInput'),text=input.value.trim();if(!text)return;
+  checklist.push({id:Date.now(),text,done:false,photos:[]});
+  input.value='';saveChecklist();renderChecklist();
+}
+function deleteCheckItem(id){
+  const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;
+  showAppDialog('删除清单事项','确定删除“'+item.text+'”吗？该事项及其照片都会被删除。',()=>{
+    checklist=checklist.filter(x=>Number(x.id)!==Number(id));saveChecklist();renderChecklist();
+  });
+}
+function toggleCheck(id){
+  const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;
+  if(item.done){
+    showAppDialog('重新打开事项','将此事项恢复为待办状态？已保存的照片会保留。',()=>{
+      item.done=false;delete item.doneTime;saveChecklist();renderChecklist();
+    });
+  }else requestChecklistPhoto(id,true);
+}
+function requestChecklistPhoto(id,complete){
+  const item=checklist.find(x=>Number(x.id)===Number(id));if(!item)return;
+  const photos=Array.isArray(item.photos)?item.photos:[];
+  if(!complete&&photos.length>=4){showToast('每项最多保存 4 张照片');return;}
+  pendingPhotoTask={id:Number(id),complete:!!complete};
+  $('photoModalTitle').textContent=complete?'完成前拍照':'添加清单照片';
+  $('photoModalBody').textContent=complete?'“'+item.text+'”完成前必须拍照。拍摄成功后才会标记为完成。':'为“'+item.text+'”添加照片。每项最多保存 4 张，目前已有 '+photos.length+' 张。';
+  $('photoModal').classList.add('active');
+}
+function closePhotoTaskDialog(){$('photoModal').classList.remove('active');pendingPhotoTask=null;}
 function takeChecklistPhoto(){if(!pendingPhotoTask){$('photoModal').classList.remove('active');return;}$('photoModal').classList.remove('active');$('checklistCamera').click();}
+function savePhotoItem(id,photo,complete){
+  const item=checklist.find(x=>Number(x.id)===Number(id));if(!item||!photo)return false;
+  if(!Array.isArray(item.photos))item.photos=[];
+  if(complete&&item.photos.length>=4)item.photos.shift();
+  if(!complete&&item.photos.length>=4){showToast('每项最多保存 4 张照片');return false;}
+  item.photos.push({src:photo,ts:Date.now()});
+  if(complete){item.done=true;item.doneTime=nowStr();}
+  saveChecklist();renderChecklist();return true;
+}
 function addChecklistPhoto(id){requestChecklistPhoto(id,false);}
-function compressImage(file,maxW=800,quality=.66){return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{try{const scale=Math.min(1,maxW/img.width),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);const ctx=canvas.getContext('2d');if(!ctx)throw new Error('无法处理图片');ctx.drawImage(img,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);resolve(canvas.toDataURL('image/jpeg',quality));}catch(e){URL.revokeObjectURL(url);reject(e);}};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('图片读取失败'));};img.src=url;});}
-function completeItem(id,photo){const item=checklist.find(x=>Number(x.id)===Number(id));if(!item||!photo)return false;if(!Array.isArray(item.photos))item.photos=[];if(item.photos.length>=4)item.photos.shift();item.photos.push({src:photo,ts:Date.now()});item.done=true;item.doneTime=nowStr();saveChecklist();return true;}
-function addPhotoToChecklistItem(id,photo){const item=checklist.find(x=>Number(x.id)===Number(id));if(!item||!photo)return false;if(!Array.isArray(item.photos))item.photos=[];if(item.photos.length>=4){showToast('每项最多保存 4 张照片');return false;}item.photos.push({src:photo,ts:Date.now()});saveChecklist();return true;}
-async function handleChecklistPhoto(event){const file=event.target.files?.[0];event.target.value='';if(!file){if(pendingPhotoTask?.complete)showToast('未拍照，事项仍保持待办状态');pendingPhotoTask=null;return;}const task=pendingPhotoTask;if(!task)return;try{const photo=await compressImage(file,800,.66);const saved=task.complete?completeItem(task.id,photo):addPhotoToChecklistItem(task.id,photo);if(saved)showToast(task.complete?'已拍照并完成事项':'照片已添加');}catch(e){showToast('照片处理失败，请重新拍摄');}finally{pendingPhotoTask=null;}}
-function resetChecklist(){showAppDialog('一键循环刷新','开始新一轮清单？所有事项将恢复为待办，并清除上一轮任务留下的照片。',()=>{checklist.forEach(item=>{item.done=false;delete item.doneTime;item.photos=[];delete item.photo;delete item.photoTs;});saveChecklist();showToast('新一轮清单已刷新，旧照片已清除');});}
+function compressImage(file,maxW,quality){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{
+      try{
+        const scale=Math.min(1,maxW/img.width),canvas=document.createElement('canvas');
+        canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+        const ctx=canvas.getContext('2d');if(!ctx)throw new Error('无法处理图片');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      }catch(e){URL.revokeObjectURL(url);reject(e);}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('图片读取失败'));};
+    img.src=url;
+  });
+}
+async function handleChecklistPhoto(event){
+  const file=event.target.files&&event.target.files[0];event.target.value='';
+  if(!file){if(pendingPhotoTask)$('photoModal').classList.add('active');return;}
+  const task=pendingPhotoTask;if(!task)return;
+  $('photoModal').classList.remove('active');
+  try{
+    const photo=await compressImage(file,800,.66);
+    const saved=savePhotoItem(task.id,photo,task.complete);
+    if(saved)showToast(task.complete?'已拍照并完成事项':'照片已添加');
+    pendingPhotoTask=null;
+  }catch(e){$('photoModal').classList.add('active');showToast('照片处理失败，请重新拍摄');}
+}
+function handleCameraCancel(){if(pendingPhotoTask)$('photoModal').classList.add('active');}
+function resetChecklist(){
+  showAppDialog('一键循环刷新','开始新一轮清单？所有事项将恢复为待办，并清除上一轮任务留下的照片。',()=>{
+    checklist.forEach(item=>{item.done=false;delete item.doneTime;item.photos=[];delete item.photo;delete item.photoTs;});
+    saveChecklist();renderChecklist();showToast('新一轮清单已刷新，旧照片已清除');
+  });
+}
 function openPhotoPreview(src){if(!src)return;$('photoPreviewImage').src=src;$('photoPreviewModal').classList.add('active');}
 function closePhotoPreview(){$('photoPreviewModal').classList.remove('active');$('photoPreviewImage').removeAttribute('src');}
-async function analyzeChecklist(){const pending=checklist.filter(i=>!i.done),done=checklist.filter(i=>i.done);if(!checklist.length){showToast('清单为空');return;}showInfo('AI 清单分析','<p style="text-align:center;color:#888">正在分析...</p>');if(!apiKey){showInfo('AI 清单分析',`<p><strong>本地统计：</strong></p><p>您共有 ${done.length} 项已完成，${pending.length} 项待办。</p><p>${pending.length?'未完成事项：'+esc(pending.map(p=>p.text).join('、')):'所有事项均已完成，太棒了！'}</p><p style="color:#999;font-size:12px">未配置 API Key，未调用 AI。</p>`);return;}if(aiBusy)return;aiBusy=true;try{const prompt=`我有一份出行清单，状态如下：\n已完成：${done.map(d=>d.text).join('、')||'无'}\n待办：${pending.map(p=>p.text).join('、')||'无'}\n请给我一段简短的分析或提醒（100字以内），纯文本输出。`;const res=await callAI([{role:'user',content:prompt}]);showInfo('AI 清单分析',esc(res).replace(/\n/g,'<br>'));}catch(e){showInfo('AI 清单分析',`<span style="color:red">分析失败：${esc(e.message)}</span>`);}finally{aiBusy=false;}}
+async function analyzeChecklist(){
+  const pending=checklist.filter(i=>!i.done),done=checklist.filter(i=>i.done);
+  if(!checklist.length){showToast('清单为空');return;}
+  showInfo('AI 清单分析','<div style="text-align:center;padding:20px;color:#888">正在分析...</div>');
+  if(!apiKey){
+    showInfo('AI 清单分析','<p><strong>本地统计：</strong></p><p>您共有 '+done.length+' 项已完成，'+pending.length+' 项待办。</p><p>'+(pending.length>0?'未完成事项：'+esc(pending.map(p=>p.text).join('、')):'所有事项均已完成，太棒了！')+'</p><p style="color:#999;font-size:12px;margin-top:10px">(未配置 API Key，未调用 AI)</p>');
+    return;
+  }
+  const prompt='我有一份出行清单，状态如下：\n已完成：'+(done.map(d=>d.text).join('、')||'无')+'\n待办：'+(pending.map(p=>p.text).join('、')||'无')+'\n请给我一段简短的分析或提醒（100字以内），纯文本输出。';
+  if(aiBusy)return;aiBusy=true;
+  try{const res=await callAI([{role:'user',content:prompt}]);showInfo('AI 清单分析',esc(res).replace(/\n/g,'<br>'));}
+  catch(e){showInfo('AI 清单分析','<span style="color:red">分析失败：'+esc(e.message)+'</span>');}
+  finally{aiBusy=false;}
+}
+
+/* R：休息与睡眠，沿用 DICT 最新的合并统计和 AI 分析逻辑 */
 const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const fmtHM=ts=>ts?new Date(ts).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false}):'--:--';
-const fmtDur=min=>{min=Math.max(0,Math.round(min));const h=Math.floor(min/60),m=min%60;return h?`${h}小时${m}分`:`${m}分钟`;};
+const fmtDur=min=>{min=Math.max(0,Math.round(min));const h=Math.floor(min/60),m=min%60;return h?h+'小时'+m+'分':m+'分钟';};
 const openBreak=rec=>{const list=rec&&Array.isArray(rec.breaks)?rec.breaks:[];const last=list[list.length-1];return last&&!last.e?last:null;};
-function saveAtt(){if(!safeSet('wm_attendance',JSON.stringify(attendance)))showToast('本地存储空间不足，请导出备份');}
-function breakTotals(rec,now){let n=0,ms=0,max=0;(rec?.breaks||[]).forEach(b=>{const d=Math.max(0,(b.e||now)-b.s);n++;ms+=d;if(d>max)max=d;});return {n,ms,max};}
+function saveAtt(){if(!safeSet('wm_attendance',JSON.stringify(attendance)))showToast('本地存储空间不足，建议导出备份');}
+function saveSleep(){if(!safeSet('wm_sleep_records',JSON.stringify(sleepRecords)))showToast('本地存储空间不足，建议导出备份');updateStatsUI();}
+function breakTotals(rec,now){let n=0,ms=0,max=0;(rec.breaks||[]).forEach(b=>{const d=Math.max(0,(b.e||now)-b.s);n++;ms+=d;if(d>max)max=d;});return {n,ms,max};}
 function getTodayAttendance(){const key=dayKey();if(!attendance[key])attendance[key]={in:null,out:null,sched:null,late:0,breaks:[]};if(!Array.isArray(attendance[key].breaks))attendance[key].breaks=[];return attendance[key];}
-function toggleBreak(){const rec=getTodayAttendance(),active=openBreak(rec);if(active)active.e=Date.now();else rec.breaks.push({s:Date.now()});saveAtt();renderRestUI();}
-function renderRestUI(){const status=$('restStatus');if(!status)return;const rec=attendance[dayKey()],now=Date.now(),breaks=rec&&Array.isArray(rec.breaks)?rec.breaks:[],active=rec?openBreak(rec):null;let totalMs=0;breaks.forEach(b=>totalMs+=Math.max(0,(b.e||now)-b.s));$('restSummary').textContent=`今日 ${breaks.length} 次 · 共 ${fmtDur(totalMs/60000)}`;if(active){status.textContent=`正在休息 · 已 ${fmtDur((now-active.s)/60000)}`;$('restButton').textContent='结束休息';$('restButton').classList.add('running');}else{status.textContent=breaks.length?`最近一次 ${fmtHM(breaks[breaks.length-1].e||breaks[breaks.length-1].s)}`:'今天还没有休息记录';$('restButton').textContent='开始休息';$('restButton').classList.remove('running');}$('restHistory').textContent=breaks.length?breaks.map((b,i)=>`${i+1}. ${fmtHM(b.s)} – ${b.e?fmtHM(b.e):'进行中'}（${fmtDur(((b.e||now)-b.s)/60000)}）`).join('　'):'开始休息后，将自动记录每次休息的时间与时长。';}
-function buildAttendanceLines(){const keys=Object.keys(attendance).sort().slice(-30),now=Date.now();return keys.map(k=>{const rec=attendance[k],bt=breakTotals(rec,rec.out||now);return `${k}：休息 ${bt.n} 次，共 ${Math.round(bt.ms/60000)} 分钟`;});}
-async function analyzeWork(){const lines=buildAttendanceLines(),restLines=lines.filter(x=>!x.endsWith('休息 0 次，共 0 分钟'));if(!restLines.length){showInfo('AI 休息分析','目前还没有有效休息记录。');return;}showInfo('AI 休息习惯分析','<p style="text-align:center;color:#888">正在分析…</p>');if(!apiKey){const total=Object.keys(attendance).reduce((sum,k)=>sum+breakTotals(attendance[k],attendance[k].out||Date.now()).ms,0);showInfo('休息习惯分析',`<p>已记录 ${restLines.length} 天的休息数据。</p><p>累计休息 ${fmtDur(total/60000)}。</p><p style="color:#999;font-size:12px">未配置 API Key，以上为本地统计。</p>`);return;}if(aiBusy)return;aiBusy=true;try{const res=await callAI([{role:'user',content:`以下是最近的休息记录：\n${restLines.join('\n')}\n请分析休息频率、时长与规律，并给出简短可执行建议。中文输出，控制在 150 字以内。`}]);showInfo('AI 休息习惯分析',esc(res).replace(/\n/g,'<br>'));}catch(e){showInfo('AI 休息习惯分析',`<span style="color:red">分析失败：${esc(e.message)}</span>`);}finally{aiBusy=false;}}
 function activeSleepRecord(){return sleepRecords.findLast?sleepRecords.findLast(r=>!r.e):[...sleepRecords].reverse().find(r=>!r.e);}
-function toggleSleepRecording(){const active=activeSleepRecord();if(active)active.e=Date.now();else sleepRecords.push({s:Date.now(),e:null});safeSet('wm_sleep_records',JSON.stringify(sleepRecords));renderSleepUI();}
-function renderSleepUI(){const summary=$('sleepSummary');if(!summary)return;const now=Date.now(),active=activeSleepRecord(),ended=sleepRecords.filter(r=>r.e&&r.s&&r.e>r.s),total=ended.reduce((sum,r)=>sum+(r.e-r.s),0),average=ended.length?Math.round(total/ended.length/60000):0;summary.textContent=active?`正在记录睡眠 · 已 ${fmtDur((now-active.s)/60000)}`:`已记录 ${ended.length} 次 · 累计 ${fmtDur(total/60000)}${ended.length?` · 平均 ${fmtDur(average)}`:''}`;const button=$('sleepButton');if(button){button.textContent=active?'结束睡眠':'开始睡眠';button.classList.toggle('running',!!active);}const recent=sleepRecords.slice(-5).reverse();$('sleepHistory').textContent=recent.length?recent.map((r,i)=>`${recent.length-i}. ${fmtHM(r.s)} – ${r.e?fmtHM(r.e):'进行中'}${r.e?`（${fmtDur((r.e-r.s)/60000)}）`:''}`).join('　'):'开始睡眠后，醒来时结束记录。';}
-async function analyzeSleep(){const ended=sleepRecords.filter(r=>r.s&&r.e&&r.e>r.s).slice(-30),recentBreakLines=buildAttendanceLines().filter(x=>!x.endsWith('休息 0 次，共 0 分钟')),active=activeSleepRecord();if(!ended.length&&!active){showInfo('AI 睡眠分析','目前还没有睡眠记录。点击“开始睡眠”后，醒来时结束记录。');return;}const lines=ended.map((r,i)=>`${i+1}. ${new Date(r.s).toLocaleString('zh-CN')} 至 ${new Date(r.e).toLocaleString('zh-CN')}，${fmtDur((r.e-r.s)/60000)}`);if(active)lines.push(`当前睡眠进行中：开始于 ${new Date(active.s).toLocaleString('zh-CN')}`);showInfo('AI 睡眠与休息分析','<p style="text-align:center;color:#888">正在整理睡眠和休息数据…</p>');if(!apiKey){const total=ended.reduce((sum,r)=>sum+r.e-r.s,0),avg=ended.length?total/ended.length/60000:0;showInfo('睡眠与休息分析',`<p>已完成睡眠记录 ${ended.length} 次。</p><p>累计睡眠 ${fmtDur(total/60000)}，平均每次 ${fmtDur(avg)}。</p><p>另有休息记录 ${recentBreakLines.length} 天。</p><p style="color:#999;font-size:12px">未配置 API Key，以上为本地统计。</p>`);return;}if(aiBusy)return;aiBusy=true;try{const prompt=`请分析以下睡眠与休息记录，指出时长规律、可能的不足，并给出简短可执行建议。不要作医疗诊断。\n睡眠记录：\n${lines.join('\n')||'暂无已完成睡眠'}\n休息记录：\n${recentBreakLines.join('\n')||'暂无休息记录'}\n中文输出，控制在 180 字以内。`;const res=await callAI([{role:'user',content:prompt}]);showInfo('AI 睡眠与休息分析',esc(res).replace(/\n/g,'<br>'));}catch(e){showInfo('AI 睡眠与休息分析',`<span style="color:red">分析失败：${esc(e.message)}</span>`);}finally{aiBusy=false;}}
-function saveApiKey(){apiKey=$('apiKeyInput').value.trim();if(safeSet('wm_api_key',apiKey))showToast('API Key 已保存');else showToast('保存失败，请检查浏览器存储设置');}
-function exportData(){const data={words:load('wm_words',[]),checklist,stats:load('wm_stats',{apiCalls:0,tokens:0}),attendance,sleepRecords,workStart:localStorage.getItem('wm_work_start')||'09:00',cardGroups:load('wm_card_groups',[]),exportTime:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`dictionary_backup_${Date.now()}.json`;a.click();URL.revokeObjectURL(url);}
-function importData(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const data=JSON.parse(e.target.result);if(!Array.isArray(data.checklist))throw new Error('bad');checklist=data.checklist; if(data.attendance&&typeof data.attendance==='object')attendance=data.attendance;if(Array.isArray(data.sleepRecords))sleepRecords=data.sleepRecords;if(data.stats&&typeof data.stats==='object')stats=data.stats;cleanupPhotos();safeSet('wm_checklist',JSON.stringify(checklist));safeSet('wm_attendance',JSON.stringify(attendance));safeSet('wm_sleep_records',JSON.stringify(sleepRecords));safeSet('wm_stats',JSON.stringify(stats));renderChecklist();renderRestUI();renderSleepUI();showToast('清单与休息睡眠数据已恢复');}catch(err){showToast('备份文件格式不正确');}};reader.readAsText(file);event.target.value='';}
-function init(){apiKey=$('apiKeyInput').value=localStorage.getItem('wm_api_key')||'';if(!Array.isArray(checklist))checklist=[];if(!Array.isArray(sleepRecords))sleepRecords=[];if(!attendance||typeof attendance!=='object')attendance={};cleanupPhotos();renderChecklist();renderRestUI();renderSleepUI();$('checkInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addCheckItem();}});$('checklistCamera').addEventListener('change',handleChecklistPhoto);$('checklistCamera').addEventListener('cancel',()=>{if(pendingPhotoTask?.complete)showToast('未拍照，事项仍保持待办状态');pendingPhotoTask=null;});$('importFile').addEventListener('change',importData);setInterval(()=>{renderRestUI();renderSleepUI();},1000);}
-window.addEventListener('storage',event=>{if(!event.key||['wm_checklist','wm_attendance','wm_sleep_records','wm_api_key','wm_stats'].includes(event.key)){checklist=load('wm_checklist',[]);attendance=load('wm_attendance',{});sleepRecords=load('wm_sleep_records',[]);apiKey=localStorage.getItem('wm_api_key')||'';$('apiKeyInput').value=apiKey;cleanupPhotos();renderChecklist();renderRestUI();renderSleepUI();}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePhotoPreview();closePhotoTaskDialog();resolveAppDialog(false);closeInfoModal();}});
+function toggleBreak(){
+  const rec=getTodayAttendance(),active=openBreak(rec),sleeping=activeSleepRecord();
+  if(sleeping){sleeping.e=Date.now();saveSleep();showToast('已先结束睡眠记录');}
+  if(active)active.e=Date.now();else rec.breaks.push({s:Date.now()});
+  saveAtt();renderRestUI();
+}
+function toggleSleepRecording(){
+  const active=activeSleepRecord(),rec=attendance[dayKey()],br=rec?openBreak(rec):null;
+  if(br){br.e=Date.now();saveAtt();showToast('已先结束休息记录');}
+  if(active)active.e=Date.now();else sleepRecords.push({s:Date.now(),e:null});
+  saveSleep();renderRestUI();
+}
+function renderRestUI(){
+  const status=$('restStatus');if(!status)return;
+  const now=Date.now(),today=dayKey(),rec=attendance[today];
+  const breaks=rec&&Array.isArray(rec.breaks)?rec.breaks:[];
+  const activeB=rec?openBreak(rec):null,activeS=activeSleepRecord();
+  let restMs=0;breaks.forEach(b=>{restMs+=Math.max(0,(b.e||now)-b.s);});
+  const sleepToday=sleepRecords.filter(r=>r.s&&r.e&&r.e>r.s&&dayKey(new Date(r.e))===today);
+  const sleepMs=sleepToday.reduce((s,r)=>s+(r.e-r.s),0);
+  $('restSummary').innerHTML='<div>☕ 今日休息 '+breaks.length+' 次 · 共 '+esc(fmtDur(restMs/60000))+'</div><div>🌙 今日睡眠 '+sleepToday.length+' 次 · 共 '+esc(fmtDur(sleepMs/60000))+'</div>';
+  if(activeS)status.textContent='正在睡眠 · 已 '+fmtDur((now-activeS.s)/60000);
+  else if(activeB)status.textContent='正在休息 · 已 '+fmtDur((now-activeB.s)/60000);
+  else if(breaks.length)status.textContent='最近休息 '+fmtHM(breaks[breaks.length-1].e||breaks[breaks.length-1].s);
+  else status.textContent='今天还没有记录';
+  const rb=$('restButton'),sb=$('sleepButton');
+  rb.textContent=activeB?'结束休息':'开始休息';rb.classList.toggle('running',!!activeB);
+  sb.textContent=activeS?'结束睡眠':'开始睡眠';sb.classList.toggle('running',!!activeS);
+  const lines=[];
+  if(breaks.length)lines.push('休息：'+breaks.map((b,i)=>(i+1)+'. '+fmtHM(b.s)+'–'+(b.e?fmtHM(b.e):'进行中')+'（'+fmtDur(((b.e||now)-b.s)/60000)+'）').join('　'));
+  const recentSleep=sleepRecords.filter(r=>r.s).slice(-3).reverse();
+  if(recentSleep.length)lines.push('睡眠：'+recentSleep.map(r=>fmtHM(r.s)+'–'+(r.e?fmtHM(r.e):'进行中')+(r.e?'（'+fmtDur((r.e-r.s)/60000)+'）':'')).join('　'));
+  $('restHistory').textContent=lines.length?lines.join('\n'):'点击“开始休息”或“开始睡眠”，结束时再点一次即可记录时长。';
+}
+function buildAttendanceLines(){
+  const keys=Object.keys(attendance).sort().slice(-30),now=Date.now();
+  return keys.map(k=>{const rec=attendance[k],bt=breakTotals(rec,rec.out||now);return {day:k,n:bt.n,min:Math.round(bt.ms/60000),max:Math.round(bt.max/60000)};}).filter(x=>x.n>0);
+}
+async function analyzeRestSleep(){
+  const restDays=buildAttendanceLines(),sleeps=sleepRecords.filter(r=>r.s&&r.e&&r.e>r.s).slice(-30),activeS=activeSleepRecord();
+  if(!restDays.length&&!sleeps.length&&!activeS){showInfo('AI 休息与睡眠分析','目前还没有记录。点击“开始休息”或“开始睡眠”，结束时再点一次即可。');return;}
+  const kind=restDays.length&&sleeps.length?'休息与睡眠':sleeps.length||activeS?'睡眠':'休息';
+  const title='AI '+kind+'分析';
+  const restLines=restDays.map(d=>d.day+'：休息 '+d.n+' 次，共 '+d.min+' 分钟，最长一次 '+d.max+' 分钟');
+  const sleepLines=sleeps.map((r,i)=>(i+1)+'. '+new Date(r.s).toLocaleString('zh-CN')+' 至 '+new Date(r.e).toLocaleString('zh-CN')+'，'+fmtDur((r.e-r.s)/60000));
+  if(activeS)sleepLines.push('当前睡眠进行中：开始于 '+new Date(activeS.s).toLocaleString('zh-CN'));
+  showInfo(title,'<div style="text-align:center;padding:20px;color:#888">正在分析…</div>');
+  if(!apiKey){
+    const restTotal=restDays.reduce((s,d)=>s+d.min,0),restCount=restDays.reduce((s,d)=>s+d.n,0);
+    const sleepTotal=sleeps.reduce((s,r)=>s+(r.e-r.s),0)/60000;
+    let h='';
+    if(restDays.length)h+='<p>休息：'+restDays.length+' 天共 '+restCount+' 次，累计 '+esc(fmtDur(restTotal))+'，平均每次 '+esc(fmtDur(restTotal/Math.max(1,restCount)))+'。</p>';
+    if(sleeps.length)h+='<p>睡眠：已完成 '+sleeps.length+' 次，累计 '+esc(fmtDur(sleepTotal))+'，平均每次 '+esc(fmtDur(sleepTotal/sleeps.length))+'。</p>';
+    if(activeS)h+='<p>当前有一段睡眠正在记录中。</p>';
+    showInfo(title,h+'<p style="color:#999;font-size:12px">未配置 API Key，以上为本地统计。</p>');
+    return;
+  }
+  if(aiBusy)return;aiBusy=true;
+  try{
+    const prompt='请分析以下我的休息与睡眠记录。先根据实际数据判断有哪些内容可分析（只有休息、只有睡眠或两者都有），只分析有数据的部分；指出时长与规律、可能的不足，并给出简短可执行建议。如发现疑似异常记录（如休息超过 3 小时、睡眠短于 2 小时或超过 14 小时，可能是忘记结束），请提醒。不要作医疗诊断。\n休息记录（按天）：\n'+(restLines.join('\n')||'无')+'\n睡眠记录：\n'+(sleepLines.join('\n')||'无')+'\n中文输出，纯文本，控制在 200 字以内。';
+    const res=await callAI([{role:'user',content:prompt}]);
+    showInfo(title,esc(res).replace(/\n/g,'<br>'));
+  }catch(e){showInfo(title,'<span style="color:red">分析失败：'+esc(e.message)+'</span>');}
+  finally{aiBusy=false;}
+}
+
+/* S：设置、统计与备份 */
+function saveApiKey(){
+  apiKey=$('apiKeyInput').value.trim();
+  if(safeSet('wm_api_key',apiKey))showToast('API Key 已保存');
+  else showToast('保存失败，请检查浏览器存储设置');
+}
+function exportData(){
+  const data={
+    words:load('wm_words',[]),checklist:checklist,stats:load('wm_stats',{apiCalls:0,tokens:0}),
+    attendance:attendance,sleepRecords:sleepRecords,workStart:localStorage.getItem('wm_work_start')||'09:00',
+    cardGroups:load('wm_card_groups',[]),exportTime:new Date().toISOString()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='dictionary_backup_'+Date.now()+'.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function importData(event){
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data.checklist))throw new Error('bad');
+      checklist=data.checklist;
+      if(data.attendance&&typeof data.attendance==='object')attendance=data.attendance;
+      if(Array.isArray(data.sleepRecords))sleepRecords=data.sleepRecords;
+      if(data.stats&&typeof data.stats==='object')stats=data.stats;
+      cleanupPhotos();
+      safeSet('wm_checklist',JSON.stringify(checklist));
+      safeSet('wm_attendance',JSON.stringify(attendance));
+      safeSet('wm_sleep_records',JSON.stringify(sleepRecords));
+      safeSet('wm_stats',JSON.stringify(stats));
+      renderChecklist();renderRestUI();updateStatsUI();showToast('清单与休息睡眠数据已恢复');
+    }catch(err){showToast('备份文件格式不正确');}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+function refreshFromStorage(){
+  checklist=load('wm_checklist',[]);
+  attendance=load('wm_attendance',{});
+  sleepRecords=load('wm_sleep_records',[]);
+  stats=load('wm_stats',{apiCalls:0,tokens:0});
+  apiKey=localStorage.getItem('wm_api_key')||'';
+  $('apiKeyInput').value=apiKey;
+  cleanupPhotos();renderChecklist();renderRestUI();updateStatsUI();
+}
+function init(){
+  if(!Array.isArray(checklist))checklist=[];
+  if(!attendance||typeof attendance!=='object')attendance={};
+  if(!Array.isArray(sleepRecords))sleepRecords=[];
+  $('apiKeyInput').value=apiKey;
+  cleanupPhotos();renderChecklist();renderRestUI();updateStatsUI();
+  $('checkInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addCheckItem();}});
+  $('checklistCamera').addEventListener('change',handleChecklistPhoto);
+  $('checklistCamera').addEventListener('cancel',handleCameraCancel);
+  $('importFile').addEventListener('change',importData);
+  setInterval(()=>{renderRestUI();},1000);
+  window.addEventListener('storage',event=>{
+    if(!event.key||['wm_checklist','wm_attendance','wm_sleep_records','wm_api_key','wm_stats'].includes(event.key))refreshFromStorage();
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      closePhotoPreview();closePhotoTaskDialog();resolveAppDialog(false);closeInfoModal();
+    }
+  });
+}
 init();
 </script>
 </body>
