@@ -54,7 +54,7 @@ button{font-family:inherit;}
   -webkit-overflow-scrolling:touch;
 }
 .content.active{display:block;}
-#tab-cards{padding:12px 14px 100px;}
+#tab-cards{padding:0 14px 100px;}
 #tab-grammar{padding:14px 16px 100px;}
 #tab-checklist{padding:14px 16px 110px;}
 
@@ -194,7 +194,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .grammar-topic:active{background:var(--primary-soft);border-color:#cbdcd4;}
 
 /* ============ 卡片目录与分组 ============ */
-.group-manager{margin:0 0 16px;padding:14px 14px;border-radius:16px;}
+.group-manager{margin:12px 0 16px;padding:14px 14px;border-radius:16px;}
 .group-manager summary{color:var(--primary);}
 .group-create-row{display:grid;grid-template-columns:78px minmax(0,1fr) 76px 54px;gap:6px;margin-top:13px;}
 .group-create-row input,.group-create-row select{min-width:0;width:100%;padding:9px 7px;border:1px solid var(--line);border-radius:10px;background:#fbfcfb;color:var(--text-main);font:inherit;font-size:12px;outline:none;}
@@ -231,9 +231,15 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 .card-directory-desc{font-size:13px;color:var(--text-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .card-directory-arrow{color:#a7b2ac;font-size:21px;}
 .card-count{font-size:12px;color:var(--text-muted);font-weight:500;}
+.click-badge{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;padding:0 7px;border-radius:10px;background:#eef2f0;color:#8a9690;font-size:11px;font-weight:700;white-space:nowrap;}
+.card-ai-row{margin-top:18px;}
+.card-ai-btn{width:100%;padding:12px;border-radius:12px;border:1px solid var(--primary);background:var(--primary-soft);color:var(--primary);font-size:15px;font-weight:700;cursor:pointer;}
+.card-ai-btn:active{background:#d9e8e1;}
+.card-ai-btn:disabled{opacity:.6;}
 
 /* 批量工具条（粘性置顶） */
-.cards-bulk-toolbar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:flex-end;min-height:40px;margin:0 0 10px;padding:4px 0;background:var(--bg-color);}
+.cards-sticky{position:sticky;top:0;z-index:6;margin:0 -14px 10px;padding:8px 14px 2px;background:var(--bg-color);}
+.cards-bulk-toolbar{display:flex;align-items:center;justify-content:flex-end;min-height:40px;margin:0 0 8px;}
 .bulk-entry-buttons{display:flex;gap:7px;}
 .bulk-entry-buttons button{border:1px solid #d7e4dd;border-radius:10px;background:#fff;color:var(--primary);font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer;}
 .bulk-entry-buttons button.bulk-classify-entry{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(44,94,79,.2);}
@@ -459,6 +465,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
       <div id="groupManagerList"></div>
     </details>
     <div class="card-directory-title">卡片目录</div>
+    <div class="cards-sticky">
     <div class="cat-filter" id="catFilter"></div>
     <div class="cards-bulk-toolbar" id="cardsBulkToolbar">
       <div class="bulk-entry-buttons" id="bulkEntryButtons">
@@ -481,6 +488,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
           <button type="button" class="bulk-danger" id="bulkDeleteButton" onclick="requestDeleteSelectedCards()" disabled>删除选中</button>
         </div>
       </div>
+    </div>
     </div>
     <div id="cardsContainer"></div>
   </div>
@@ -658,7 +666,6 @@ if (!attendance || typeof attendance !== 'object') attendance = {};
 const CARD_CATEGORIES = ['单词','语法','其它'];
 const DEFAULT_GROUPS = [
   {id:'default-word', category:'单词', name:'默认单词', limit:0, isDefault:true},
-  {id:'default-daily', category:'单词', name:'日常生活', limit:0, isDefault:true},
   {id:'default-grammar', category:'语法', name:'默认语法', limit:0, isDefault:true},
   {id:'default-other', category:'其它', name:'默认其它', limit:0, isDefault:true}
 ];
@@ -674,7 +681,7 @@ function persistWords(){
 ========================================================= */
 function init(){
   $('apiKeyInput').value = apiKey;
-  ensureCardGroups(); seedDailyWords(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
+  migrateDailyGroups(); ensureCardGroups(); seedDailyWords(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
   renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
   renderRecognitionStatus('粘贴内容后，点击放大镜进行 AI 识别');
   setInterval(() => { if ($('tab-checklist').classList.contains('active')) renderRestUI(); }, 1000);
@@ -1070,7 +1077,7 @@ function archiveExpiredCards(){
   words.forEach(card => {
     if (!Number.isFinite(Number(card.createdAt)) || Number(card.createdAt) <= 0) { card.createdAt = inferCardCreatedAt(card); changed = true; }
     /* 内置卡片永不归档 */
-    if (!card.builtin && !card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
+    if (!card.builtin && !card.pinned && !card.archived && Number(card.createdAt) < cutoff) { card.archived = true; card.archivedAt = Date.now(); changed = true; }
   });
   if (changed) persistWords();
 }
@@ -1080,7 +1087,7 @@ function defaultGroupId(category){
 function ensureCardGroups(){
   if (!Array.isArray(cardGroups)) cardGroups = [];
   cardGroups = cardGroups.filter(g => g && g.id && CARD_CATEGORIES.includes(g.category));
-  DEFAULT_GROUPS.forEach((g, i) => {
+  getDefaultGroups().forEach((g, i) => {
     const ex = cardGroups.find(x => x.id === g.id);
     if (ex) { ex.isDefault = true; return; }
     /* 保持默认分组在各自类别中的相对顺序 */
@@ -1378,8 +1385,10 @@ function cardDirectoryEntry(w){
   const selecting = inSelectMode();
   const check = selecting ? `<input class="card-select" type="checkbox" tabindex="-1" ${sel ? 'checked' : ''} aria-label="选择 ${esc(w.word)}">` : '';
   const arrow = selecting ? '' : '<div class="card-directory-arrow">›</div>';
+  const nClick = Number(w.clicks) || 0;
+  const badge = `<span class="click-badge" title="已点击 ${nClick} 次">👆${nClick}</span>`;
   const desc = plain(w.cn || w.summary || w.definition || w.usage || w.collins || w.example).replace(/\n/g, ' ') || '点击查看卡片内容';
-  return `<div class="card-directory-item ${selecting ? 'select-mode' : ''} ${selecting && sel ? 'selected' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${arrow}</div>`;
+  return `<div class="card-directory-item ${selecting ? 'select-mode' : ''} ${selecting && sel ? 'selected' : ''}" role="button" tabindex="0" onclick="handleCardDirectoryClick(${id})" onkeydown="if(event.key==='Enter')handleCardDirectoryClick(${id})">${check}<div class="card-directory-main"><div class="card-directory-word">${esc(w.word)}</div><div class="card-directory-desc">${esc(desc)}</div></div>${badge}${arrow}</div>`;
 }
 function setCardFilter(f){ cardFilter = f; renderCards(); }
 function renderCatFilter(active){
@@ -1406,7 +1415,7 @@ function renderCards(){
     const groupHtml = groupsFor(category).map(group => {
       const entries = categoryCards.filter(w => (w.groupId || defaultGroupId(category)) === group.id).slice().reverse();
       if (!entries.length) return '';
-      const open = groupOpen[group.id] !== undefined ? groupOpen[group.id] : entries.length <= 30;
+      const open = groupOpen[group.id] !== undefined ? groupOpen[group.id] : (!String(group.id).startsWith('daily-') && entries.length <= 30);
       return `<details class="card-group" ${open ? 'open' : ''} ontoggle="setGroupOpen('${esc(group.id)}',this.open)"><summary>${esc(group.name)} <span class="card-count">${entries.length}${group.limit ? '/' + group.limit : ''}</span></summary>${entries.map(cardDirectoryEntry).join('')}</details>`;
     }).join('');
     return `<section class="card-category"><div class="card-category-head">${category}<span>${categoryCards.length} 张</span></div>${groupHtml}</section>`;
@@ -1420,7 +1429,7 @@ function renderCards(){
   updateBulkDeleteUI();
   scrollHost.scrollTop = prevTop;
 }
-function handleCardDirectoryClick(id){ if (inSelectMode()) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else openCardDetail(id); }
+function handleCardDirectoryClick(id){ if (inSelectMode()) toggleCardSelection(id, !selectedCardIds.has(Number(id))); else { bumpClicks(id); openCardDetail(id); renderCards(); } }
 function cancelBatchMode(){ batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); renderCards(); }
 function toggleBatchDeleteMode(force){
   batchDeleteMode = typeof force === 'boolean' ? force : !batchDeleteMode;
@@ -1520,12 +1529,52 @@ function cardsInSameGroup(card){
 }
 function cardPageHtml(card, n, total){
   const current = card.groupId || defaultGroupId(card.category || '单词');
-  return `<div class="card-page rd" data-id="${Number(card.id)}">
-    ${renderCardHeader(card)}
+  const nClick = Number(card.clicks) || 0;
+  return `<div class="card-page rd" data-id="${Number(card.id)}" data-n="${n}" data-total="${total}">
+    ${renderCardHeader(card, `<span class="click-badge" title="已点击 ${nClick} 次">👆${nClick}</span>`)}
     <div class="card-body">${renderSections(card) || '<div class="sec-body" style="color:#9aa5a0">暂无详细内容</div>'}</div>
+    <div class="card-ai-row"><button type="button" class="card-ai-btn" onclick="refreshCardAI(${Number(card.id)},this)">${card.aiAt ? '✓ 已由 AI 生成 · 重新生成' : '✨ AI 生成并刷新此卡片'}</button></div>
     <div class="card-detail-group"><span>分类分组</span><select aria-label="更改卡片分组" onchange="changeCardGroup(${Number(card.id)},this.value)">${groupOptionsHtml(current, card.id)}</select></div>
     <div class="card-footer">${n} / ${total}${card.time ? ' · ' + esc(card.time) : ''}</div>
   </div>`;
+}
+function bumpClicks(id){
+  const card = words.find(w => Number(w.id) === Number(id)); if (!card) return;
+  card.clicks = (Number(card.clicks) || 0) + 1;
+  persistWords();
+}
+function aiCardPrompt(card){
+  const cat = card.category || '单词', t = card.word;
+  if (cat === '语法') return `请用中文为英语学习者讲解英语语法知识点“${t}”，内容准确、实用。只输出 JSON 对象，字段：usage（主要用法，分点，每点先规则后说明）、pitfalls（易错点，错误 → 正确及原因）、compare（相同/相似用法比较，格式 A vs B：区别）、example（至少 4 个英文例句，每句附中文翻译，每句一行）、definition（一两句定义）、structure（核心结构/公式）、keywords（关键词，逗号分隔）。所有字段值必须是字符串，多条用换行分隔，关键用法用 **双星号** 包裹。`;
+  if (cat === '其它') return `请用中文整理英语学习知识点“${t}”。只输出 JSON 对象，字段：summary（概要）、usage（用法）、structure（结构）、example（英文例句附中文翻译，每句一行）、notes（注意事项）。所有字段值必须是字符串，关键内容用 **双星号** 包裹。`;
+  return `请为英文单词/短语 "${t}"${card.cn ? `（已知中文释义：${card.cn}）` : ''} 生成详细记忆卡片。只输出 JSON 对象，字段：phonetic（音标）、syllable（音节拆分，用点连接）、collins（柯林斯英文释义）、cn（中文释义）、example（英文例句，每句附中文翻译，每句一行）、syn（同义词）、ant（反义词）、usage（常见搭配与用法）。所有字段值必须是字符串，没有内容用空字符串；例句中的关键词用 **双星号** 包裹。`;
+}
+async function refreshCardAI(id, btn){
+  const card = words.find(w => Number(w.id) === Number(id)); if (!card || !btn) return;
+  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  if (btn.dataset.busy) return;
+  btn.dataset.busy = '1'; btn.disabled = true; btn.textContent = 'AI 生成中…';
+  try{
+    const raw = await callAI([{role:'user', content:aiCardPrompt(card)}]);
+    const gen = parseAIJson(raw)[0] || {};
+    const keep = ['id','word','category','groupId','createdAt','time','clicks','archived','archivedAt','pinned','builtin','aiAt'];
+    let changed = 0;
+    Object.keys(gen).forEach(k => {
+      if (keep.includes(k)) return;
+      const v = toText(gen[k]);
+      if (v) { card[k] = v; changed++; }
+    });
+    if (!changed) throw new Error('AI 没有返回有效内容，请重试');
+    card.builtin = false; card.aiAt = Date.now();
+    persistWords();
+    const page = btn.closest ? btn.closest('.card-page') : null;
+    if (page && document.body.contains(page)) page.outerHTML = cardPageHtml(card, Number(page.dataset.n) || 1, Number(page.dataset.total) || 1);
+    renderCards();
+    showToast('已生成并保存到本地，下次无需再刷新');
+  }catch(e){
+    showToast(e.message || 'AI 生成失败');
+    if (document.body.contains(btn)) { btn.disabled = false; btn.textContent = card.aiAt ? '✓ 已由 AI 生成 · 重新生成' : '✨ AI 生成并刷新此卡片'; }
+  }finally{ delete btn.dataset.busy; }
 }
 function openCardDetail(id){
   const card = words.find(w => Number(w.id) === Number(id)); if (!card) return;
@@ -1863,20 +1912,37 @@ const DAILY_RAW = [
 ['银行邮政',`bank account=银行账户;deposit=存款;withdraw=取款;transfer=转账;balance=余额;ATM=自动取款机;loan=贷款;interest=利息;rent=租金;tax=税;insurance=保险;savings=储蓄;package=包裹;parcel=邮包;mail=邮件;stamp=邮票;envelope=信封;courier=快递员;delivery=送货`],
 ['颜色方位',`red=红色;blue=蓝色;green=绿色;yellow=黄色;black=黑色;white=白色;gray=灰色;pink=粉色;purple=紫色;brown=棕色;left=左;right=右;up=上;down=下;front=前面;behind=后面;near=近的;far=远的;inside=里面`]
 ];
+function getDefaultGroups(){
+  return DEFAULT_GROUPS.concat(DAILY_RAW.map(([scene], i) => ({id:'daily-' + i, category:'单词', name:'日常 · ' + scene, limit:0, isDefault:true})));
+}
+/* 旧版「日常生活」总分组 → 按场景拆分到各自分组 */
+function migrateDailyGroups(){
+  let changed = false;
+  words.forEach(w => {
+    if (w.groupId !== 'default-daily') return;
+    const m = w.builtin ? String(w.usage || '').match(/^场景：(.+)$/) : null;
+    const i = m ? DAILY_RAW.findIndex(s => s[0] === m[1]) : -1;
+    w.groupId = i >= 0 ? 'daily-' + i : 'default-word';
+    if (w.builtin) w.pinned = true;
+    changed = true;
+  });
+  if (Array.isArray(cardGroups)) cardGroups = cardGroups.filter(g => g && g.id !== 'default-daily');
+  if (changed) persistWords();
+}
 const DAILY_SEED_KEY = 'wm_daily_seed_v1';
 function seedDailyWords(){
   if (localStorage.getItem(DAILY_SEED_KEY)) return;
   const have = new Set(words.filter(w => (w.category || '单词') === '单词').map(w => String(w.word).toLowerCase()));
   const base = Date.now() * 10, t = Date.now();
   const added = [];
-  DAILY_RAW.forEach(([scene, str]) => {
+  DAILY_RAW.forEach(([scene, str], si) => {
     str.split(';').forEach(item => {
       const i = item.indexOf('='); if (i < 1) return;
       const word = item.slice(0, i).trim(), cn = item.slice(i + 1).trim();
       const key = word.toLowerCase();
       if (!word || !cn || have.has(key)) return;
       have.add(key);
-      added.push({id: base + added.length, word, category:'单词', groupId:'default-daily', cn, usage:'场景：' + scene, builtin:true, createdAt:t, archived:false});
+      added.push({id: base + added.length, word, category:'单词', groupId:'daily-' + si, cn, usage:'场景：' + scene, builtin:true, pinned:true, clicks:0, createdAt:t, archived:false});
     });
   });
   if (!added.length) { safeSet(DAILY_SEED_KEY, '1'); return; }
@@ -1956,7 +2022,7 @@ function importData(event){
         sleepRecords = Array.isArray(data.sleepRecords) ? data.sleepRecords : sleepRecords;
         cardGroups = Array.isArray(data.cardGroups) ? data.cardGroups : cardGroups;
         batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); groupOpen = {};
-        ensureCardGroups(); cleanupPhotos(); archiveExpiredCards();
+        migrateDailyGroups(); ensureCardGroups(); cleanupPhotos(); archiveExpiredCards();
         safeSet('wm_checklist', JSON.stringify(checklist)); safeSet('wm_stats', JSON.stringify(stats)); safeSet('wm_attendance', JSON.stringify(attendance)); safeSet('wm_sleep_records', JSON.stringify(sleepRecords));
         renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
         showToast('数据恢复成功');
