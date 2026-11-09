@@ -35,8 +35,8 @@ async function webSearch(q,n){if(!S.api)throw Error('请先在设置页填写 AP
 }
 function parse(raw){let t=String(raw||'').trim().replace(/^\x60{3}(?:json)?\s*/i,'').replace(/\s*\x60{3}$/,'');try{return JSON.parse(t)}catch(e){}const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a){try{return JSON.parse(t.slice(a,b+1))}catch(e){}}throw Error('AI 返回 JSON 格式不正确')}
 function renderStats(){['calls','prompt','completion','total'].forEach(k=>$('#stat-'+k).textContent=Number(S.stats[k]||0).toLocaleString())}
-function switchTab(name){$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));$('#reader-actions').classList.toggle('visible',name==='read');$('#app-content').scrollTo({top:0,behavior:'auto'});if(name==='favorites')renderFavorites();if(name==='read'){updateFavBtn();requestAnimationFrame(scheduleReadingFocus)}}
-$$('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+function switchTab(name){$$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$$('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));$('#reader-actions').classList.toggle('visible',name==='read');$('#app-content').scrollTo({top:0,behavior:'auto'});if(name==='favorites')renderFavorites();if(name==='read'){updateFavBtn();requestAnimationFrame(scheduleReadingFocus)}}
+$$$('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
 function channel(c){S.channel=c;$$('[data-channel]').forEach(b=>b.classList.toggle('active',b.dataset.channel===c));$('#history-controls').hidden=c!=='history';$('#category-picker').style.display=c==='history'?'none':'block';$('#btn-fetch-news').textContent=c==='history'?'搜索历史知识':'生成热点新闻';$('#source-note').textContent=['weibo','douyin','x'].includes(c)?'公开网页索引结果，不等同于平台官方实时热榜排名。':'实时网页检索，提供来源链接及可用原文。'}
 $$('[data-channel]').forEach(b=>b.addEventListener('click',()=>channel(b.dataset.channel)));
 function picker(trigger,menu,selector,cb){const t=$(trigger),m=$(menu);t.addEventListener('click',e=>{e.stopPropagation();const open=m.hidden;$$('.picker-menu').forEach(x=>x.hidden=true);$$('.picker-trigger').forEach(x=>x.setAttribute('aria-expanded','false'));m.hidden=!open;t.setAttribute('aria-expanded',String(open))});$$(selector).forEach(b=>b.addEventListener('click',()=>{cb(b);m.hidden=true;t.setAttribute('aria-expanded','false')}))}
@@ -128,7 +128,7 @@ $('#btn-favorite-current').addEventListener('click',()=>{
 });
 function renderFavorites(){
  const box=$('#favorite-list');box.innerHTML='';$('#favorite-count').textContent=S.favorites.length+' 篇';
- $('#favorite-filters [data-fav-filter]').forEach(b=>b.classList.toggle('active',b.dataset.favFilter===S.favoriteFilter));
+ $$('#favorite-filters [data-fav-filter]').forEach(b=>b.classList.toggle('active',b.dataset.favFilter===S.favoriteFilter));
  if(!S.favorites.length){box.innerHTML='<div class="empty-state">收藏的文章会保存在这台设备上。</div>';return}
  const visible=S.favorites.filter(a=>S.favoriteFilter==='全部'||(a.category||inferFavoriteCategory(a))===S.favoriteFilter);
  if(!visible.length){box.innerHTML='<div class="favorite-empty-filter">这个分类还没有文章。</div>';return}
@@ -142,15 +142,15 @@ function renderFavorites(){
   const trigger=document.createElement('button');trigger.className='favorite-category-trigger';trigger.type='button';trigger.textContent=(a.category||inferFavoriteCategory(a))+' ⌄';
   const menu=document.createElement('div');menu.className='favorite-category-menu';menu.hidden=true;
   FAV_CATEGORIES.forEach(cat=>{const pick=document.createElement('button');pick.type='button';pick.textContent=cat;pick.addEventListener('click',()=>{a.category=cat;put(K.favorites,S.favorites);renderFavorites()});menu.appendChild(pick)});
-  trigger.addEventListener('click',e=>{e.stopPropagation();const open=menu.hidden;$('.favorite-category-menu').forEach(m=>m.hidden=true);menu.hidden=!open});
+  trigger.addEventListener('click',e=>{e.stopPropagation();const open=menu.hidden;$$('.favorite-category-menu').forEach(m=>m.hidden=true);menu.hidden=!open});
   wrap.append(trigger,menu);
   const rm=document.createElement('button');rm.className='favorite-remove';rm.textContent='移除';
   rm.addEventListener('click',()=>{S.favorites.splice(realIndex,1);put(K.favorites,S.favorites);renderFavorites();updateFavBtn()});
   tools.append(wrap,rm);row.append(main,tools);box.appendChild(row);
  });
 }
-$('#favorite-filters [data-fav-filter]').forEach(b=>b.addEventListener('click',()=>{S.favoriteFilter=b.dataset.favFilter;renderFavorites()}));
-document.addEventListener('pointerdown',e=>{if(!e.target.closest('.favorite-category-wrap'))$('.favorite-category-menu').forEach(m=>m.hidden=true)});
+$$('#favorite-filters [data-fav-filter]').forEach(b=>b.addEventListener('click',()=>{S.favoriteFilter=b.dataset.favFilter;renderFavorites()}));
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.favorite-category-wrap'))$$('.favorite-category-menu').forEach(m=>m.hidden=true)});
 function pasteArticle(t){openArticle({id:'paste-'+Date.now(),title:'我的阅读文章',kind:'pasted',channel:'粘贴导入',content:t,originalText:t})}
 $('#btn-clean').addEventListener('click',async()=>{const t=$('#raw-input').value.trim();if(!t){$('#clean-status').textContent='请先粘贴英文内容';return}const b=$('#btn-clean');b.disabled=true;$('#clean-status').textContent='AI 正在整理…';$('#clean-status').className='status';try{const out=await ai([{role:'system',content:'清理英文网页内容，删除导航、广告、评论、版权声明；保留标题、原文、段落、句子和引号，不要总结、翻译或改写，只返回正文。'},{role:'user',content:t}],{temperature:.1,maxTokens:10000});if(!out.trim())throw Error('没有提取到正文');$('#clean-status').textContent='整理完成';$('#clean-status').className='status ok';$('#clean-stats').textContent=out.split(/\s+/).length+' words · '+out.length+' characters';pasteArticle(out)}catch(e){$('#clean-status').textContent=e.message;$('#clean-status').className='status bad'}finally{b.disabled=false}});
 $('#raw-input').addEventListener('input',()=>$('#input-counter').textContent=$('#raw-input').value.length.toLocaleString()+' / 120,000');$('#btn-clear-input').addEventListener('click',()=>{$('#raw-input').value='';$('#input-counter').textContent='0 / 120,000';$('#clean-status').textContent='';$('#clean-stats').textContent=''});
