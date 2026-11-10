@@ -32,11 +32,11 @@
 </script>
 <meta name="theme-color" content="#101312">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="DICTIONARY">
+<meta name="apple-mobile-web-app-title" content="LKP">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="./manifest.webmanifest?v=5">
-<link rel="icon" type="image/svg+xml" href="./icon.svg?v=5">
-<link rel="apple-touch-icon" sizes="192x192" href="./dict-icon-192.png?v=5">
+<link rel="manifest" href="./manifest.webmanifest?v=6">
+<link rel="icon" type="image/svg+xml" href="./icon.svg?v=6">
+<link rel="apple-touch-icon" sizes="192x192" href="./dict-icon-192.png?v=6">
 <title>DICTIONARY · 单词记忆助手</title>
 <style>
 :root{
@@ -83,7 +83,7 @@ button{font-family:inherit;}
 .content.active{display:block;}
 #tab-cards{padding:0 14px 100px;}
 #tab-grammar{padding:14px 16px 100px;}
-#tab-checklist{padding:14px 16px 110px;}
+#tab-settings{padding:14px 16px 110px;}
 
 /* ============ 通用按钮 ============ */
 .btn-primary{
@@ -484,7 +484,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 /* 主屏幕图标安装入口 */
 .install-home-card{display:flex;align-items:center;gap:10px;padding:11px;margin:3px 0 14px;border:1px solid #e6eeea;border-radius:15px;background:#fbfcfb;}
 .install-app-icon{width:54px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:13px;background:#000000;color:#ffffff;box-shadow:0 3px 9px rgba(0,0,0,.32);}
-.install-app-icon span{font-size:6.5px;letter-spacing:.15px;font-weight:900;white-space:nowrap;}
+.install-app-icon span{font-size:8px;letter-spacing:.2px;font-weight:900;white-space:nowrap;}
 .install-home-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
 .install-home-copy strong{font-size:13px;color:#30443a;}
 .install-home-copy span{font-size:10px;color:var(--text-muted);}
@@ -718,27 +718,8 @@ html[data-theme="dark"] .app-dialog-confirm{
     <div id="cardsContainer"></div>
   </div>
 
-  <!-- ================= TAB 4 清单 ================= -->
-  <div class="content" id="tab-checklist">
-    <div class="rest-card">
-      <div class="rest-head"><div><div class="rest-title">休息与睡眠</div><div class="rest-sub" id="restStatus">今天还没有记录</div></div><span class="rest-icon">☕🌙</span></div>
-      <div class="rest-summary" id="restSummary"></div>
-      <div class="rest-actions">
-        <button class="rest-action" id="restButton" type="button" onclick="toggleBreak()">开始休息</button>
-        <button class="rest-action sleep" id="sleepButton" type="button" onclick="toggleSleepRecording()">开始睡眠</button>
-      </div>
-      <div class="rest-history" id="restHistory"></div>
-      <button class="w-ai" type="button" onclick="analyzeRestSleep()">AI 分析休息与睡眠</button>
-    </div>
-    <div class="add-check-row">
-      <input type="text" id="checkInput" placeholder="添加清单事项，如：带钥匙 / 做 20 个单词…" onkeypress="if(event.key==='Enter')addCheckItem()">
-      <button onclick="addCheckItem()">添加</button>
-    </div>
-    <div class="check-toolbar">
-      <button onclick="resetChecklist()">一键循环刷新</button>
-      <button class="ghost" onclick="analyzeChecklist()">AI 分析</button>
-    </div>
-    <div id="checklistContainer"></div>
+  <!-- ================= TAB 4 设置 ================= -->
+  <div class="content" id="tab-settings">
     <details class="fold" id="settingsFold">
       <summary>设置与统计</summary>
       <div class="theme-setting-row" aria-label="外观模式">
@@ -752,7 +733,6 @@ html[data-theme="dark"] .app-dialog-confirm{
         <div class="stats-row"><span>API 调用次数</span><span class="stats-val" id="stat-api-calls">0</span></div>
         <div class="stats-row"><span>估算 TOKEN 量</span><span class="stats-val" id="stat-tokens">0</span></div>
         <div class="stats-row"><span>卡片总数</span><span class="stats-val" id="stat-words">0</span></div>
-        <div class="stats-row"><span>清单事项数</span><span class="stats-val" id="stat-checks">0</span></div>
       </div>
       <div class="setting-item">
         <label>DeepSeek API Key（仅本地存储）</label>
@@ -760,8 +740,8 @@ html[data-theme="dark"] .app-dialog-confirm{
       </div>
       <button class="btn-primary" onclick="saveApiKey()" style="width:100%; margin-bottom:12px;">保存 API Key</button>
       <div class="install-home-card">
-        <div class="install-app-icon"><span>DICT</span></div>
-        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>黑底白字 DICT 应用图标</span></div>
+        <div class="install-app-icon"><span>LKP</span></div>
+        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>黑底白字 LKP 应用图标</span></div>
         <button type="button" class="install-home-button" onclick="addToHomeScreen()">添加</button>
       </div>
       <div style="display:flex; gap:10px;">
@@ -777,12 +757,11 @@ html[data-theme="dark"] .app-dialog-confirm{
     <div class="nav-item active" data-tab="input" onclick="switchTab('input')">录入</div>
     <div class="nav-item" data-tab="cards" onclick="switchTab('cards')">卡片</div>
     <div class="nav-item" data-tab="grammar" onclick="switchTab('grammar')">GR</div>
-    <div class="nav-item" data-tab="checklist" onclick="switchTab('checklist')">清单</div>
+    <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">设置</div>
   </div>
 
   <!-- 隐藏的文件输入 -->
   <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-  <input type="file" id="checklistCamera" accept="image/*" capture="environment" style="display:none;" onchange="handleChecklistPhoto(event)" oncancel="handleChecklistPhotoCancel()">
   <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
 
   <!-- 选中单词浮动工具条 -->
@@ -790,23 +769,6 @@ html[data-theme="dark"] .app-dialog-confirm{
     <button onclick="lookupWord()">查询</button>
     <button onclick="speak(selWord,2)">美音</button>
     <button onclick="speak(selWord,1)">英音</button>
-  </div>
-
-  <!-- 清单拍照主题弹窗：完成事项必须拍照 -->
-  <div class="modal" id="photoModal" onclick="if(event.target===this)closePhotoTaskDialog()">
-    <div class="modal-content" style="max-height:none;">
-      <div class="modal-header"><span id="photoModalTitle">拍照记录</span></div>
-      <div class="modal-body" id="photoModalBody">完成清单事项前必须拍照记录。</div>
-      <div class="modal-footer">
-        <button class="btn-outline" onclick="closePhotoTaskDialog()">取消</button>
-        <button class="btn-primary" onclick="takeChecklistPhoto()">拍照</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="photo-preview-overlay" id="photoPreviewModal" style="display:none;" onclick="closePhotoPreview()">
-    <button type="button" class="photo-preview-close" onclick="closePhotoPreview()" aria-label="关闭">×</button>
-    <img id="photoPreviewImage" alt="清单照片放大预览" onclick="event.stopPropagation()">
   </div>
 
   <!-- 卡片详情：整张卡片横向滑动 -->
@@ -854,8 +816,6 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const escRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const nowStr = () => new Date().toLocaleString('zh-CN',
-  {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function load(key, fallback){
@@ -871,14 +831,9 @@ function safeSet(key, val){
    状态
 ========================================================= */
 let words      = load('wm_words', []);
-let checklist  = load('wm_checklist', []);
 let stats      = load('wm_stats', {apiCalls:0, tokens:0});
-let attendance = load('wm_attendance', {});
-let sleepRecords = load('wm_sleep_records', []);
-let workStart  = localStorage.getItem('wm_work_start') || '09:00';
 let apiKey     = localStorage.getItem('wm_api_key') || '';
 let batchRunning = false;
-let pendingPhotoTask = null;
 let cardGroups = load('wm_card_groups', []);
 let previews = {inline: [], modal: []};
 let batchDeleteMode = false;
@@ -891,9 +846,6 @@ let cardFilter = '全部';
 let groupOpen = {};
 
 if (!Array.isArray(words)) words = [];
-if (!Array.isArray(checklist)) checklist = [];
-if (!Array.isArray(sleepRecords)) sleepRecords = [];
-if (!attendance || typeof attendance !== 'object') attendance = {};
 
 const CARD_CATEGORIES = ['单词','语法','其它'];
 const DEFAULT_GROUPS = [
@@ -923,10 +875,9 @@ function init(){
   }
   localStorage.removeItem('wm_daily_seed_v1');
 
-  ensureCardGroups(); cleanupPhotos(); archiveExpiredCards(); renderGrammarTopics();
-  renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
+  ensureCardGroups(); archiveExpiredCards(); renderGrammarTopics();
+  renderCards(); renderGroupManager(); updateStatsUI();
   renderRecognitionStatus('粘贴内容后，点击放大镜进行 AI 识别');
-  setInterval(() => { if ($('tab-checklist').classList.contains('active')) renderRestUI(); }, 1000);
   setInterval(() => {
     const before = words.filter(w => w.archived).length;
     archiveExpiredCards();
@@ -945,10 +896,8 @@ function init(){
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     if ($('appDialog').classList.contains('active')) resolveAppDialog(false);
-    else if ($('photoPreviewModal').style.display !== 'none') closePhotoPreview();
     else if ($('infoModal').classList.contains('active')) closeInfoModal();
     else if ($('cardModal').classList.contains('active')) closeCardModal();
-    else if ($('photoModal').classList.contains('active')) closePhotoTaskDialog();
   });
 }
 
@@ -962,7 +911,6 @@ function switchTab(tabId){
   if (tabId !== 'cards' && (batchDeleteMode || batchClassifyMode)) { batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); }
   if (tabId === 'cards') { archiveExpiredCards(); renderCards(); renderGroupManager(); }
   if (tabId === 'grammar') renderGrammarTopics();
-  if (tabId === 'checklist') { cleanupPhotos(); renderChecklist(); renderRestUI(); updateStatsUI(); }
 }
 
 function showToast(message){
@@ -1061,7 +1009,7 @@ function compressImage(file, maxW = 800, quality = 0.7){
 async function handleImageUpload(event){
   const file = event.target.files[0]; event.target.value = '';
   if (!file) return;
-  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  if (!apiKey) { showToast('请先在设置页的设置与统计中填写 API Key'); return; }
   if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
   batchRunning = true;
   renderRecognitionStatus('正在读取图片…', 'loading');
@@ -1419,7 +1367,7 @@ async function analyzeInput(){
   const input = $('batchInput').value.trim();
   if (!input) { showToast('请先粘贴或输入学习内容'); renderRecognitionStatus('没有输入内容', true); return; }
   if (batchRunning) { showToast('AI 正在处理，请勿重复点击'); return; }
-  if (!apiKey) { renderRecognitionStatus('请先在清单底部设置 DeepSeek API Key', true); showToast('请先填写 API Key'); return; }
+  if (!apiKey) { renderRecognitionStatus('请先在设置页设置 DeepSeek API Key', true); showToast('请先填写 API Key'); return; }
   batchRunning = true; previews.inline = [];
   $('recognitionPreview').innerHTML = '<div class="empty-hint">正在分析内容，请稍候…</div>';
   renderRecognitionStatus('正在调用 AI，整理单词、语法及其它知识点', 'loading');
@@ -1580,7 +1528,7 @@ function renderGrammarTopics(){
 }
 async function generateGrammarTopic(topic){
   if (batchRunning) { showToast('AI 正在处理，请稍候'); return; }
-  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  if (!apiKey) { showToast('请先在设置页的设置与统计中填写 API Key'); return; }
   batchRunning = true;
   $('infoModal').classList.remove('preview-mode'); $('infoTitle').style.display = ''; $('infoTitle').textContent = topic;
   $('infoBody').classList.add('rd');
@@ -1786,7 +1734,7 @@ function aiCardPrompt(card){
 }
 async function refreshCardAI(id, btn){
   const card = words.find(w => Number(w.id) === Number(id)); if (!card || !btn) return;
-  if (!apiKey) { showToast('请先在清单底部的设置与统计中填写 API Key'); return; }
+  if (!apiKey) { showToast('请先在设置页的设置与统计中填写 API Key'); return; }
   if (btn.dataset.busy) return;
   btn.dataset.busy = '1'; btn.disabled = true; btn.textContent = 'AI 生成中…';
   try{
@@ -1864,262 +1812,6 @@ function closeInfoModal(){
 }
 
 /* =========================================================
-   清单：完成必须拍照；每项最多保留四张
-========================================================= */
-function cleanupPhotos(){
-  let changed = false;
-  checklist.forEach(item => {
-    if (!Array.isArray(item.photos)) {
-      item.photos = item.photo ? [{src:item.photo, ts:item.photoTs || Date.now()}] : [];
-      changed = true;
-    }
-    item.photos = item.photos.filter(p => p && typeof p.src === 'string').slice(-4);
-    if ('photo' in item) { delete item.photo; changed = true; }
-    if ('photoTs' in item) { delete item.photoTs; changed = true; }
-  });
-  if (changed) safeSet('wm_checklist', JSON.stringify(checklist));
-}
-function renderChecklist(){
-  const container = $('checklistContainer');
-  if (checklist.length === 0){ container.innerHTML = '<div class="empty-hint" style="padding:24px 0;">暂无清单，添加一项吧</div>'; return; }
-  container.innerHTML = checklist.map(item => {
-    const photos = Array.isArray(item.photos) ? item.photos : [];
-    const photoHtml = `<div class="check-photo-grid">${photos.map((p, i) => `<div class="check-photo-wrap" role="button" tabindex="0" aria-label="查看清单照片 ${i+1}" title="点击查看照片" onclick="openPhotoPreview(this.querySelector('img').src)" onkeydown="if(event.key==='Enter')openPhotoPreview(this.querySelector('img').src)"><img src="${esc(p.src)}" class="check-photo" alt="清单照片 ${i+1}"></div>`).join('')}${photos.length < 4 ? `<button type="button" class="check-photo-add" onclick="addChecklistPhoto(${item.id})">＋照片<br>${photos.length}/4</button>` : ''}</div>`;
-    const metaHtml = item.doneTime ? `<div class="check-meta">完成于 ${esc(item.doneTime)}</div>` : '';
-    return `
-    <div class="check-item">
-      <div class="check-box ${item.done ? 'done' : ''}" role="button" tabindex="0" aria-label="${item.done ? '重新打开' : '完成事项'}" onclick="toggleCheck(${item.id})" onkeydown="if(event.key==='Enter')toggleCheck(${item.id})">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <div class="check-main">
-        <div class="check-text ${item.done ? 'done' : ''}">${esc(item.text)}</div>
-        ${photoHtml}${metaHtml}
-      </div>
-      <button class="delete-btn" onclick="deleteCheckItem(${item.id})">删除</button>
-    </div>`;
-  }).join('');
-}
-function openPhotoPreview(src){ if (!src) return; $('photoPreviewImage').src = src; $('photoPreviewModal').style.display = 'flex'; }
-function closePhotoPreview(){ $('photoPreviewModal').style.display = 'none'; $('photoPreviewImage').removeAttribute('src'); }
-function addCheckItem(){
-  const text = $('checkInput').value.trim(); if (!text) return;
-  checklist.push({id: Date.now(), text, done:false, photos:[]});
-  $('checkInput').value = ''; saveChecklist(); renderChecklist();
-}
-function deleteCheckItem(id){
-  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
-  showAppDialog('删除清单事项', `确定删除“${item.text}”吗？该事项及其照片都会被删除。`, () => {
-    checklist = checklist.filter(i => Number(i.id) !== Number(id)); saveChecklist(); renderChecklist();
-  });
-}
-function toggleCheck(id){
-  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
-  if (item.done){
-    showAppDialog('重新打开事项', '将此事项恢复为待办状态？已保存的照片会保留。', () => {
-      item.done = false; delete item.doneTime; saveChecklist(); renderChecklist();
-    });
-  } else {
-    requestChecklistPhoto(id, true);
-  }
-}
-function requestChecklistPhoto(id, complete){
-  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item) return;
-  const photos = Array.isArray(item.photos) ? item.photos : [];
-  if (!complete && photos.length >= 4) { showToast('每项最多保存 4 张照片'); return; }
-  pendingPhotoTask = {id:Number(id), complete:!!complete};
-  $('photoModalTitle').textContent = complete ? '完成前拍照' : '添加清单照片';
-  $('photoModalBody').textContent = complete
-    ? `“${item.text}”完成前必须拍照。拍摄成功后才会标记为完成。`
-    : `为“${item.text}”添加照片。每项最多保存 4 张，目前已有 ${photos.length} 张。`;
-  $('photoModal').classList.add('active');
-}
-function closePhotoTaskDialog(){
-  $('photoModal').classList.remove('active');
-  pendingPhotoTask = null;
-}
-function takeChecklistPhoto(){
-  if (!pendingPhotoTask) { $('photoModal').classList.remove('active'); return; }
-  $('checklistCamera').click();
-}
-function handleChecklistPhotoCancel(){
-  if (pendingPhotoTask) $('photoModal').classList.add('active');
-}
-function saveChecklist(){
-  if (!safeSet('wm_checklist', JSON.stringify(checklist))) showToast('本地存储空间不足，建议减少照片或导出备份');
-  updateStatsUI();
-}
-function resetChecklist(){
-  showAppDialog('一键循环刷新', '开始新一轮清单？所有事项将恢复为待办，并清除上一轮任务留下的照片。', () => {
-    checklist.forEach(item => {
-      item.done = false; delete item.doneTime;
-      item.photos = [];
-      delete item.photo; delete item.photoTs;
-    });
-    saveChecklist(); renderChecklist(); showToast('新一轮清单已刷新，旧照片已清除');
-  });
-}
-function completeItem(id, photo){
-  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item || !photo) return false;
-  if (!Array.isArray(item.photos)) item.photos = [];
-  if (item.photos.length >= 4) item.photos.shift();
-  item.photos.push({src:photo, ts:Date.now()});
-  item.done = true; item.doneTime = nowStr();
-  saveChecklist(); renderChecklist();
-  return true;
-}
-function addPhotoToChecklistItem(id, photo){
-  const item = checklist.find(i => Number(i.id) === Number(id)); if (!item || !photo) return false;
-  if (!Array.isArray(item.photos)) item.photos = [];
-  if (item.photos.length >= 4) { showToast('每项最多保存 4 张照片'); return false; }
-  item.photos.push({src:photo, ts:Date.now()});
-  saveChecklist(); renderChecklist(); return true;
-}
-function addChecklistPhoto(id){ requestChecklistPhoto(id, false); }
-async function handleChecklistPhoto(event){
-  const file = event.target.files[0]; event.target.value = '';
-  if (!file) {
-    if (pendingPhotoTask) $('photoModal').classList.add('active');
-    return;
-  }
-  const task = pendingPhotoTask;
-  if (!task) return;
-  $('photoModal').classList.remove('active');
-  try{
-    const photo = await compressImage(file, 800, .66);
-    const saved = task.complete ? completeItem(task.id, photo) : addPhotoToChecklistItem(task.id, photo);
-    if (saved) showToast(task.complete ? '已拍照并完成事项' : '照片已添加');
-    pendingPhotoTask = null;
-  }catch(e){
-    $('photoModal').classList.add('active');
-    showToast('照片处理失败，请重新拍摄');
-  }
-}
-async function analyzeChecklist(){
-  const pending = checklist.filter(i => !i.done), done = checklist.filter(i => i.done);
-  if (checklist.length === 0) { showToast('清单为空'); return; }
-  showInfo('AI 清单分析', '<div style="text-align:center;padding:20px;color:#888;">正在分析...</div>');
-  if (!apiKey){
-    showInfo('AI 清单分析', `
-      <p><strong>本地统计：</strong></p>
-      <p>您共有 ${done.length} 项已完成，${pending.length} 项待办。</p>
-      <p>${pending.length > 0 ? '未完成事项：' + esc(pending.map(p => p.text).join('、')) : '所有事项均已完成，太棒了！'}</p>
-      <p style="color:#999;font-size:12px;margin-top:10px;">(未配置 API Key，未调用 AI)</p>`);
-    return;
-  }
-  const prompt = `我有一份出行清单，状态如下：
-已完成：${done.map(d => d.text).join('、') || '无'}
-待办：${pending.map(p => p.text).join('、') || '无'}
-请给我一段简短的分析或提醒（100字以内），纯文本输出。`;
-  try{
-    const res = await callAI([{role:'user', content:prompt}]);
-    showInfo('AI 清单分析', esc(res).replace(/\n/g, '<br>'));
-  }catch(e){ showInfo('AI 清单分析', `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
-}
-
-/* =========================================================
-   休息与睡眠（同一行双按钮，统一 AI 分析）
-========================================================= */
-const dayKey = (d = new Date()) =>
-  d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-const fmtHM = ts => ts ? new Date(ts).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit', hour12:false}) : '--:--';
-const fmtDur = min => {
-  min = Math.max(0, Math.round(min));
-  const h = Math.floor(min / 60), m = min % 60;
-  return h ? `${h}小时${m}分` : `${m}分钟`;
-};
-const openBreak = rec => {
-  const l = rec && rec.breaks && rec.breaks[rec.breaks.length - 1];
-  return l && !l.e ? l : null;
-};
-function saveAtt(){ if (!safeSet('wm_attendance', JSON.stringify(attendance))) showToast('本地存储空间不足，建议导出备份'); }
-function saveSleep(){ if (!safeSet('wm_sleep_records', JSON.stringify(sleepRecords))) showToast('本地存储空间不足，建议导出备份'); }
-function breakTotals(rec, now){
-  let n = 0, ms = 0, max = 0;
-  (rec.breaks || []).forEach(b => { const d = Math.max(0, (b.e || now) - b.s); n++; ms += d; if (d > max) max = d; });
-  return {n, ms, max};
-}
-function getTodayAttendance(){
-  const key = dayKey();
-  if (!attendance[key]) attendance[key] = {in:null, out:null, sched:null, late:0, breaks:[]};
-  if (!Array.isArray(attendance[key].breaks)) attendance[key].breaks = [];
-  return attendance[key];
-}
-function activeSleepRecord(){ return sleepRecords.findLast ? sleepRecords.findLast(r => !r.e) : [...sleepRecords].reverse().find(r => !r.e); }
-function toggleBreak(){
-  const rec = getTodayAttendance(); const active = openBreak(rec);
-  const sleeping = activeSleepRecord();
-  if (sleeping) { sleeping.e = Date.now(); saveSleep(); showToast('已先结束睡眠记录'); }
-  if (active) active.e = Date.now(); else rec.breaks.push({s: Date.now()});
-  saveAtt(); renderRestUI();
-}
-function toggleSleepRecording(){
-  const active = activeSleepRecord();
-  const rec = attendance[dayKey()], br = rec ? openBreak(rec) : null;
-  if (br) { br.e = Date.now(); saveAtt(); showToast('已先结束休息记录'); }
-  if (active) active.e = Date.now(); else sleepRecords.push({s:Date.now(), e:null});
-  saveSleep(); renderRestUI();
-}
-function renderRestUI(){
-  const status = $('restStatus'); if (!status) return;
-  const now = Date.now(), today = dayKey();
-  const rec = attendance[today];
-  const breaks = rec && Array.isArray(rec.breaks) ? rec.breaks : [];
-  const activeB = rec ? openBreak(rec) : null, activeS = activeSleepRecord();
-  let restMs = 0; breaks.forEach(b => { restMs += Math.max(0, (b.e || now) - b.s); });
-  const sleepToday = sleepRecords.filter(r => r.s && r.e && r.e > r.s && dayKey(new Date(r.e)) === today);
-  const sleepMs = sleepToday.reduce((s, r) => s + (r.e - r.s), 0);
-  $('restSummary').innerHTML = `<div>☕ 今日休息 ${breaks.length} 次 · 共 ${esc(fmtDur(restMs / 60000))}</div><div>🌙 今日睡眠 ${sleepToday.length} 次 · 共 ${esc(fmtDur(sleepMs / 60000))}</div>`;
-  if (activeS) status.textContent = `正在睡眠 · 已 ${fmtDur((now - activeS.s) / 60000)}`;
-  else if (activeB) status.textContent = `正在休息 · 已 ${fmtDur((now - activeB.s) / 60000)}`;
-  else if (breaks.length) status.textContent = `最近休息 ${fmtHM(breaks[breaks.length - 1].e || breaks[breaks.length - 1].s)}`;
-  else status.textContent = '今天还没有记录';
-  const rb = $('restButton'), sb = $('sleepButton');
-  rb.textContent = activeB ? '结束休息' : '开始休息'; rb.classList.toggle('running', !!activeB);
-  sb.textContent = activeS ? '结束睡眠' : '开始睡眠'; sb.classList.toggle('running', !!activeS);
-  const lines = [];
-  if (breaks.length) lines.push('休息：' + breaks.map((b, i) => `${i + 1}. ${fmtHM(b.s)}–${b.e ? fmtHM(b.e) : '进行中'}（${fmtDur(((b.e || now) - b.s) / 60000)}）`).join('　'));
-  const recentSleep = sleepRecords.filter(r => r.s).slice(-3).reverse();
-  if (recentSleep.length) lines.push('睡眠：' + recentSleep.map(r => `${fmtHM(r.s)}–${r.e ? fmtHM(r.e) : '进行中'}${r.e ? `（${fmtDur((r.e - r.s) / 60000)}）` : ''}`).join('　'));
-  $('restHistory').textContent = lines.length ? lines.join('\n') : '点击“开始休息”或“开始睡眠”，结束时再点一次即可记录时长。';
-}
-function buildAttendanceLines(){
-  const keys = Object.keys(attendance).sort().slice(-30); const now = Date.now();
-  return keys.map(k => { const rec = attendance[k]; const bt = breakTotals(rec, rec.out || now); return {day:k, n:bt.n, min:Math.round(bt.ms / 60000), max:Math.round(bt.max / 60000)}; }).filter(x => x.n > 0);
-}
-async function analyzeRestSleep(){
-  const restDays = buildAttendanceLines();
-  const sleeps = sleepRecords.filter(r => r.s && r.e && r.e > r.s).slice(-30);
-  const activeS = activeSleepRecord();
-  if (!restDays.length && !sleeps.length && !activeS){ showInfo('AI 休息与睡眠分析', '目前还没有记录。点击“开始休息”或“开始睡眠”，结束时再点一次即可。'); return; }
-  const kind = restDays.length && sleeps.length ? '休息与睡眠' : sleeps.length || activeS ? '睡眠' : '休息';
-  const title = `AI ${kind}分析`;
-  const restLines = restDays.map(d => `${d.day}：休息 ${d.n} 次，共 ${d.min} 分钟，最长一次 ${d.max} 分钟`);
-  const sleepLines = sleeps.map((r, i) => `${i + 1}. ${new Date(r.s).toLocaleString('zh-CN')} 至 ${new Date(r.e).toLocaleString('zh-CN')}，${fmtDur((r.e - r.s) / 60000)}`);
-  if (activeS) sleepLines.push(`当前睡眠进行中：开始于 ${new Date(activeS.s).toLocaleString('zh-CN')}`);
-  showInfo(title, '<div style="text-align:center;padding:20px;color:#888;">正在分析…</div>');
-  if (!apiKey){
-    const restTotal = restDays.reduce((s, d) => s + d.min, 0), restCount = restDays.reduce((s, d) => s + d.n, 0);
-    const sleepTotal = sleeps.reduce((s, r) => s + (r.e - r.s), 0) / 60000;
-    let h = '';
-    if (restDays.length) h += `<p>休息：${restDays.length} 天共 ${restCount} 次，累计 ${esc(fmtDur(restTotal))}，平均每次 ${esc(fmtDur(restTotal / Math.max(1, restCount)))}。</p>`;
-    if (sleeps.length) h += `<p>睡眠：已完成 ${sleeps.length} 次，累计 ${esc(fmtDur(sleepTotal))}，平均每次 ${esc(fmtDur(sleepTotal / sleeps.length))}。</p>`;
-    if (activeS) h += '<p>当前有一段睡眠正在记录中。</p>';
-    showInfo(title, h + '<p style="color:#999;font-size:12px;">未配置 API Key，以上为本地统计。</p>');
-    return;
-  }
-  try{
-    const prompt = `请分析以下我的休息与睡眠记录。先根据实际数据判断有哪些内容可分析（只有休息、只有睡眠或两者都有），只分析有数据的部分；指出时长与规律、可能的不足，并给出简短可执行建议。如发现疑似异常记录（如休息超过 3 小时、睡眠短于 2 小时或超过 14 小时，可能是忘记结束），请提醒。不要作医疗诊断。
-休息记录（按天）：
-${restLines.join('\n') || '无'}
-睡眠记录：
-${sleepLines.join('\n') || '无'}
-中文输出，纯文本，控制在 200 字以内。`;
-    const res = await callAI([{role:'user', content:prompt}]);
-    showInfo(title, esc(res).replace(/\n/g, '<br>'));
-  }catch(e){ showInfo(title, `<span style="color:red;">分析失败：${esc(e.message)}</span>`); }
-}
-
-/* =========================================================
    设置、安装与导入导出
 ========================================================= */
 function saveApiKey(){
@@ -2132,28 +1824,27 @@ function updateStatsUI(){
   if ($('stat-api-calls')) $('stat-api-calls').innerText = stats.apiCalls || 0;
   if ($('stat-tokens')) $('stat-tokens').innerText = stats.tokens || 0;
   if ($('stat-words')) $('stat-words').innerText = words.length;
-  if ($('stat-checks')) $('stat-checks').innerText = checklist.length;
 }
 
 window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstallPrompt = event; });
-window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; showToast('DICTIONARY 已添加到主屏幕'); });
+window.addEventListener('appinstalled', () => { deferredInstallPrompt = null; showToast('LKP 已添加到主屏幕'); });
 async function addToHomeScreen(){
   if (deferredInstallPrompt){
     deferredInstallPrompt.prompt();
     try{
       const choice = await deferredInstallPrompt.userChoice;
-      showToast(choice && choice.outcome === 'accepted' ? '正在添加 DICTIONARY' : '已取消添加');
+      showToast(choice && choice.outcome === 'accepted' ? '正在添加 LKP' : '已取消添加');
     }catch(e){ showToast('暂时无法打开安装窗口'); }
     deferredInstallPrompt = null;
     return;
   }
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   if (location.protocol === 'file:'){
-    showInfo('添加 DICTIONARY 到主屏幕', '<p>请先将应用文件夹部署到支持 HTTPS 的静态网站，再使用浏览器打开。</p><p>部署时请同时保留 index.html、manifest.webmanifest、sw.js 和 icon-192.png / icon-512.png。</p>');
+    showInfo('添加 LKP 到主屏幕', '<p>请先将应用文件夹部署到支持 HTTPS 的静态网站，再使用浏览器打开。</p><p>部署时请同时保留 index.html、manifest.webmanifest、sw.js 和 icon-192.png / icon-512.png。</p>');
   } else if (isIOS){
-    showInfo('添加 DICTIONARY 到主屏幕', '<p>请使用 Safari 打开本应用。</p><p>1. 点击底部或顶部的<strong>分享</strong>图标。</p><p>2. 在分享菜单中选择<strong>添加到主屏幕</strong>。</p><p>3. 确认名称为 <strong>DICTIONARY</strong>，点击添加。</p><p>主屏幕将使用绿色底色、白色 DICTIONARY 字样图标。</p>');
+    showInfo('添加 LKP 到主屏幕', '<p>请使用 Safari 打开本应用。</p><p>1. 点击底部或顶部的<strong>分享</strong>图标。</p><p>2. 在分享菜单中选择<strong>添加到主屏幕</strong>。</p><p>3. 确认名称为 <strong>LKP</strong>，点击添加。</p><p>主屏幕将使用黑色底色、白色 LKP 字样图标。</p>');
   } else {
-    showInfo('添加 DICTIONARY 到主屏幕', '<p>请打开浏览器右上角菜单，选择<strong>安装应用</strong>或<strong>添加到主屏幕</strong>。</p><p>如未显示安装选项，请确认应用通过 HTTPS 访问，并且 PWA 文件与 HTML 位于同一目录。</p>');
+    showInfo('添加 LKP 到主屏幕', '<p>请打开浏览器右上角菜单，选择<strong>安装应用</strong>或<strong>添加到主屏幕</strong>。</p><p>如未显示安装选项，请确认应用通过 HTTPS 访问，并且 PWA 文件与 HTML 位于同一目录。</p>');
   }
 }
 async function refreshAppPage(){
@@ -2172,7 +1863,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:'){
 }
 
 function exportData(){
-  const data = {words, checklist, stats, attendance, sleepRecords, workStart, cardGroups, exportTime:new Date().toISOString()};
+  const data = {words, stats, cardGroups, exportTime:new Date().toISOString()};
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob); const a = document.createElement('a');
   a.href = url; a.download = `word_memory_backup_${Date.now()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -2183,11 +1874,9 @@ function importData(event){
   reader.onload = function(e){
     try{
       const data = JSON.parse(e.target.result);
-      if (data.words && data.checklist){
-        words = Array.isArray(data.words) ? data.words : []; checklist = Array.isArray(data.checklist) ? data.checklist : [];
-        stats = data.stats || {apiCalls:0, tokens:0}; if (data.attendance && typeof data.attendance === 'object') attendance = data.attendance;
-        if (data.workStart) { workStart = data.workStart; safeSet('wm_work_start', workStart); }
-        sleepRecords = Array.isArray(data.sleepRecords) ? data.sleepRecords : sleepRecords;
+      if (Array.isArray(data.words)){
+        words = data.words;
+        stats = data.stats || {apiCalls:0, tokens:0};
         cardGroups = Array.isArray(data.cardGroups) ? data.cardGroups : cardGroups;
         batchDeleteMode = false; batchClassifyMode = false; selectedCardIds.clear(); groupOpen = {};
         
@@ -2195,9 +1884,9 @@ function importData(event){
         cardGroups = cardGroups.filter(g => g && g.id && !g.id.startsWith('daily-'));
         words = words.filter(w => !w.groupId || !w.groupId.startsWith('daily-'));
 
-        ensureCardGroups(); cleanupPhotos(); archiveExpiredCards();
-        safeSet('wm_checklist', JSON.stringify(checklist)); safeSet('wm_stats', JSON.stringify(stats)); safeSet('wm_attendance', JSON.stringify(attendance)); safeSet('wm_sleep_records', JSON.stringify(sleepRecords));
-        renderCards(); renderGroupManager(); renderChecklist(); renderRestUI(); updateStatsUI();
+        ensureCardGroups(); archiveExpiredCards();
+        safeSet('wm_stats', JSON.stringify(stats));
+        renderCards(); renderGroupManager(); updateStatsUI();
         showToast('数据恢复成功');
       } else showToast('文件格式不正确');
     }catch(err){ showToast('读取文件失败'); }

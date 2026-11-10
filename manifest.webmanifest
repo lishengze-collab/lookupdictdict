@@ -1,7 +1,7 @@
 {
   "id":"./",
-  "name":"DICTIONARY",
-  "short_name":"DICT",
+  "name":"LKP",
+  "short_name":"LKP",
   "description":"英语单词与语法学习卡片",
   "start_url":"./index.html",
   "scope":"./",
