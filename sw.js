@@ -1,4 +1,4 @@
-const CACHE_NAME='dictionary-shell-v7';
+const CACHE_NAME='dictionary-shell-v8';
 const APP_SHELL=['./index.html','./manifest.webmanifest','./icon.svg','./dict-icon-192.png','./dict-icon-512.png','./checklist.html','./checklist.webmanifest','./checklist-icon.svg','./checklist-icon-180.png','./checklist-icon-192.png','./checklist-icon-512.png','./reading/index.html','./reading/app.css','./reading/app.js','./reading/apple-touch-icon.png','./reading/icon.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
