@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=yes">
-<meta name="theme-color" content="#eef2ee"><meta name="description" content="英文阅读、实时资讯、历史知识与朗读助手">
-<meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=2">
+<html lang="zh-CN" data-theme="dark"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=yes"><script>
+(function(){
+  const KEY='wm_ui_theme';
+  function current(){try{return localStorage.getItem(KEY)==='light'?'light':'dark'}catch(e){return 'dark'}}
+  function apply(mode){
+    const theme=mode==='light'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',theme);
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.setAttribute('content',theme==='dark'?'#101312':'#f5f7f6');
+    const status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if(status)status.setAttribute('content',theme==='dark'?'black-translucent':'default');
+    document.querySelectorAll('[data-theme-choice]').forEach(btn=>{
+      const active=btn.getAttribute('data-theme-choice')===theme;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',String(active));
+    });
+  }
+  window.setUiTheme=function(mode){
+    const theme=mode==='light'?'light':'dark';
+    try{localStorage.setItem(KEY,theme)}catch(e){}
+    apply(theme);
+  };
+  window.addEventListener('storage',e=>{if(e.key===KEY)apply(current())});
+  apply(current());
+  document.addEventListener('DOMContentLoaded',()=>apply(current()));
+})();
+</script>
+<meta name="theme-color" content="#101312"><meta name="description" content="英文阅读、实时资讯、历史知识与朗读助手">
+<meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=3">
+<link rel="icon" type="image/svg+xml" href="./icon.svg?v=1">
 <meta name="apple-mobile-web-app-title" content="阅读资讯"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=14"></head><body>
+<title>阅读 · 资讯</title><link rel="stylesheet" href="./app.css?v=15"></head><body>
 <header class="bottom-nav"><nav class="tabs" aria-label="主要功能">
 <button class="tab-btn active" data-tab="home">生成</button><button class="tab-btn" data-tab="read">阅读</button><button class="tab-btn" data-tab="quiz">问题</button><button class="tab-btn" data-tab="favorites">收藏</button><button class="tab-btn" data-tab="settings">设置</button>
 </nav></header>
@@ -49,6 +76,13 @@
 <div id="favorite-list" class="favorites-list"><div class="empty-state">收藏的文章会保存在这台设备上。</div></div></section>
 
 <section id="tab-settings" class="tab-panel"><section class="panel-card settings-card"><h2>API 设置</h2>
+<div class="theme-setting-row" aria-label="外观模式">
+  <div class="theme-setting-copy"><strong>外观模式</strong><span>默认深色，可随时切换</span></div>
+  <div class="theme-toggle" role="group" aria-label="切换外观">
+    <button type="button" data-theme-choice="dark" onclick="setUiTheme('dark')">深色</button>
+    <button type="button" data-theme-choice="light" onclick="setUiTheme('light')">浅色</button>
+  </div>
+</div>
 <label class="field-label" for="api-key">DeepSeek API Key</label><input id="api-key" type="password" autocomplete="off" placeholder="sk-…">
 <div class="settings-grid"><div><label class="field-label" for="base-url">接口地址</label><input id="base-url" value="https://api.deepseek.com"></div><div><label class="field-label">模型</label><div class="picker-wrap model-picker">
 <button class="picker-trigger" id="model-trigger" type="button" aria-expanded="false">deepseek-flash <span>⌄</span></button><div class="picker-menu" id="model-menu" hidden><button data-model="deepseek-flash">deepseek-flash · 推荐</button><button data-model="deepseek-v4-pro">deepseek-v4-pro · 高质量</button></div></div></div></div>

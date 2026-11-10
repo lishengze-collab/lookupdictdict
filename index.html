@@ -1,15 +1,42 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#f5f7f6">
+<script>
+(function(){
+  const KEY='wm_ui_theme';
+  function current(){try{return localStorage.getItem(KEY)==='light'?'light':'dark'}catch(e){return 'dark'}}
+  function apply(mode){
+    const theme=mode==='light'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',theme);
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.setAttribute('content',theme==='dark'?'#101312':'#f5f7f6');
+    const status=document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if(status)status.setAttribute('content',theme==='dark'?'black-translucent':'default');
+    document.querySelectorAll('[data-theme-choice]').forEach(btn=>{
+      const active=btn.getAttribute('data-theme-choice')===theme;
+      btn.classList.toggle('active',active);
+      btn.setAttribute('aria-pressed',String(active));
+    });
+  }
+  window.setUiTheme=function(mode){
+    const theme=mode==='light'?'light':'dark';
+    try{localStorage.setItem(KEY,theme)}catch(e){}
+    apply(theme);
+  };
+  window.addEventListener('storage',e=>{if(e.key===KEY)apply(current())});
+  apply(current());
+  document.addEventListener('DOMContentLoaded',()=>apply(current()));
+})();
+</script>
+<meta name="theme-color" content="#101312">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="DICTIONARY">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="./manifest.webmanifest?v=4">
-<link rel="icon" type="image/svg+xml" href="./icon.svg?v=4">
-<link rel="apple-touch-icon" sizes="192x192" href="./dict-icon-192.png?v=4">
+<link rel="manifest" href="./manifest.webmanifest?v=5">
+<link rel="icon" type="image/svg+xml" href="./icon.svg?v=5">
+<link rel="apple-touch-icon" sizes="192x192" href="./dict-icon-192.png?v=5">
 <title>DICTIONARY · 单词记忆助手</title>
 <style>
 :root{
@@ -456,7 +483,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
 
 /* 主屏幕图标安装入口 */
 .install-home-card{display:flex;align-items:center;gap:10px;padding:11px;margin:3px 0 14px;border:1px solid #e6eeea;border-radius:15px;background:#fbfcfb;}
-.install-app-icon{width:54px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:13px;background:#2c5e4f;color:#fff;box-shadow:0 3px 9px rgba(44,94,79,.22);}
+.install-app-icon{width:54px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:13px;background:#000000;color:#ffffff;box-shadow:0 3px 9px rgba(0,0,0,.32);}
 .install-app-icon span{font-size:6.5px;letter-spacing:.15px;font-weight:900;white-space:nowrap;}
 .install-home-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
 .install-home-copy strong{font-size:13px;color:#30443a;}
@@ -471,6 +498,128 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
   .cards-toolbar-row{gap:4px;}
   .cards-toolbar-row button{font-size:11px;}
 }
+
+/* ============ 深色 / 浅色主题 ============ */
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --primary:#9bcfb0;--primary-dark:#76b58f;--primary-soft:#263b31;
+  --primary-light:#1d2a23;--bg-color:#101312;--card:#1a201d;
+  --text-main:#edf2ee;--text-sub:#bac5be;--text-muted:#87958d;
+  --line:#303a34;--white:#1a201d;--red:#ff7777;--amber:#efbd72;
+  --amber-soft:#40311d;--blue:#8bb6f0;--blue-soft:#202f45;
+  --green:#6bd39d;--shadow:0 2px 14px rgba(0,0,0,.30);
+}
+html[data-theme="light"]{color-scheme:light;}
+html[data-theme="dark"] body,
+html[data-theme="dark"] #app{background:var(--bg-color)!important;color:var(--text-main);}
+html[data-theme="dark"] .fold,
+html[data-theme="dark"] .recognize-status-bar,
+html[data-theme="dark"] .input-composer,
+html[data-theme="dark"] .preview-card,
+html[data-theme="dark"] .grammar-section,
+html[data-theme="dark"] .card-directory-item,
+html[data-theme="dark"] .bulk-panel,
+html[data-theme="dark"] .card-page,
+html[data-theme="dark"] .rest-card,
+html[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .check-item,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .app-dialog-card{
+  background:var(--card)!important;color:var(--text-main);border-color:var(--line);
+}
+html[data-theme="dark"] .recognition-preview,
+html[data-theme="dark"] .history-section,
+html[data-theme="dark"] .install-home-card,
+html[data-theme="dark"] .empty-hint{
+  background:#151b18!important;border-color:var(--line);color:var(--text-sub);
+}
+html[data-theme="dark"] .stats-box,
+html[data-theme="dark"] .rest-summary{background:#151b18;color:var(--text-sub);}
+html[data-theme="dark"] .rd .card-body,
+html[data-theme="dark"] .rd .sec-body,
+html[data-theme="dark"] .rd .sec-body.en,
+html[data-theme="dark"] .modal-body{color:var(--text-main);}
+html[data-theme="dark"] .rd .word-phonetic,
+html[data-theme="dark"] .grammar-group-title,
+html[data-theme="dark"] .group-manager-row,
+html[data-theme="dark"] .card-group>summary,
+html[data-theme="dark"] .history-category-title,
+html[data-theme="dark"] .card-directory-desc{color:var(--text-muted);}
+html[data-theme="dark"] .rd .sec.def .sec-label{background:var(--primary-soft);color:var(--text-sub);}
+html[data-theme="dark"] .rd .sec.emph{border-left-color:#557966;}
+html[data-theme="dark"] .rd .sec.pit{border-left-color:var(--amber);}
+html[data-theme="dark"] .rd .sec.cmp{border-left-color:var(--blue);}
+html[data-theme="dark"] mark.hl{background:linear-gradient(transparent 52%,rgba(220,177,83,.34) 52%);color:#fff0bd;}
+html[data-theme="dark"] .preview-group-select,
+html[data-theme="dark"] .group-create-row input,
+html[data-theme="dark"] .group-create-row select,
+html[data-theme="dark"] .card-detail-group select,
+html[data-theme="dark"] .bulk-classify-controls select,
+html[data-theme="dark"] .setting-item input,
+html[data-theme="dark"] .add-check-row input{
+  background:#121715!important;color:var(--text-main)!important;border-color:var(--line)!important;
+}
+html[data-theme="dark"] .grammar-topic,
+html[data-theme="dark"] .cat-filter button,
+html[data-theme="dark"] .bulk-entry-buttons button,
+html[data-theme="dark"] .bulk-panel button,
+html[data-theme="dark"] .settings-actions button,
+html[data-theme="dark"] .modal-footer button,
+html[data-theme="dark"] .btn-outline,
+html[data-theme="dark"] .pron-btn,
+html[data-theme="dark"] .check-toolbar button,
+html[data-theme="dark"] .w-ai{
+  background:#202824;color:var(--text-main);border-color:var(--line);
+}
+html[data-theme="dark"] .grammar-topic:active,
+html[data-theme="dark"] .card-directory-item:active,
+html[data-theme="dark"] .check-toolbar button:active{background:#29362e;}
+html[data-theme="dark"] .cat-filter button.on,
+html[data-theme="dark"] .bulk-entry-buttons button.bulk-classify-entry,
+html[data-theme="dark"] .bulk-panel button.bulk-apply,
+html[data-theme="dark"] .modal-footer button.primary,
+html[data-theme="dark"] .settings-actions button.solid{
+  background:var(--primary);border-color:var(--primary);color:#102017;
+}
+html[data-theme="dark"] .card-directory-item.selected{background:#22352b;box-shadow:inset 0 0 0 1.5px #5c8e72;}
+html[data-theme="dark"] .card-directory-word{color:var(--text-main);}
+html[data-theme="dark"] .click-badge{background:#29332e;color:var(--text-muted);}
+html[data-theme="dark"] .pv-saved{background:#203b2d;color:#8be0ae;}
+html[data-theme="dark"] .bulk-panel button.bulk-danger{background:#b84845;border-color:#b84845;color:#fff;}
+html[data-theme="dark"] .card-modal-close{background:#252d28;color:var(--text-main);}
+html[data-theme="dark"] .app-dialog-cancel{background:#202824;color:var(--text-sub);border-color:var(--line)!important;}
+html[data-theme="dark"] .check-box{border-color:#65736a;}
+html[data-theme="dark"] .check-text.done{color:#7e8a82;}
+html[data-theme="dark"] .check-photo-wrap{background:#27312b;}
+html[data-theme="dark"] .check-photo-add{background:#202a24;color:var(--primary);border-color:#496556;}
+html[data-theme="dark"] .check-meta{color:var(--text-muted);}
+html[data-theme="dark"] .install-app-icon{background:#000;color:#fff;box-shadow:0 3px 9px rgba(0,0,0,.4);}
+html[data-theme="dark"] .install-home-copy strong{color:var(--text-main);}
+html[data-theme="dark"] .theme-setting-row{border-color:var(--line);}
+html[data-theme="dark"] .theme-toggle{background:#111714;border-color:var(--line);}
+html[data-theme="dark"] .theme-toggle button{color:var(--text-sub);}
+html[data-theme="dark"] .theme-toggle button.active{background:var(--primary);color:#102017;}
+html[data-theme="dark"] .bottom-nav{
+  background:rgba(23,29,25,.96);border:1px solid #303a34;
+  box-shadow:0 4px 22px rgba(0,0,0,.38);
+}
+html[data-theme="dark"] .nav-item{color:#89968e;}
+html[data-theme="dark"] .nav-item.active{color:var(--primary);}
+html[data-theme="dark"] .app-dialog-message{color:var(--text-sub);}
+html[data-theme="dark"] .modal-close{color:var(--text-muted);}
+html[data-theme="dark"] [style*="color:#888"],
+html[data-theme="dark"] [style*="color:#999"],
+html[data-theme="dark"] [style*="color:#666"],
+html[data-theme="dark"] [style*="color:#333"],
+html[data-theme="dark"] [style*="color:#87958d"]{color:var(--text-sub)!important;}
+.theme-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;margin:0 0 12px;border-bottom:1px solid var(--line);}
+.theme-setting-copy{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.theme-setting-copy strong{font-size:14px;color:var(--text-main);}
+.theme-setting-copy span{font-size:11px;color:var(--text-muted);}
+.theme-toggle{display:inline-flex;flex:none;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--bg-color);}
+.theme-toggle button{border:0;border-radius:8px;padding:7px 12px;background:transparent;color:var(--text-sub);font-size:12px;font-weight:700;}
+.theme-toggle button.active{background:var(--primary);color:#fff;}
+
 </style>
 </head>
 <body>
@@ -576,6 +725,13 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
     <div id="checklistContainer"></div>
     <details class="fold" id="settingsFold">
       <summary>设置与统计</summary>
+      <div class="theme-setting-row" aria-label="外观模式">
+  <div class="theme-setting-copy"><strong>外观模式</strong><span>默认深色，可随时切换</span></div>
+  <div class="theme-toggle" role="group" aria-label="切换外观">
+    <button type="button" data-theme-choice="dark" onclick="setUiTheme('dark')">深色</button>
+    <button type="button" data-theme-choice="light" onclick="setUiTheme('light')">浅色</button>
+  </div>
+</div>
       <div class="stats-box">
         <div class="stats-row"><span>API 调用次数</span><span class="stats-val" id="stat-api-calls">0</span></div>
         <div class="stats-row"><span>估算 TOKEN 量</span><span class="stats-val" id="stat-tokens">0</span></div>
@@ -589,7 +745,7 @@ mark.hl{background:linear-gradient(transparent 52%,#ffe28a 52%);color:#1f4a3d;fo
       <button class="btn-primary" onclick="saveApiKey()" style="width:100%; margin-bottom:12px;">保存 API Key</button>
       <div class="install-home-card">
         <div class="install-app-icon"><span>DICT</span></div>
-        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>绿色 DICT 应用图标</span></div>
+        <div class="install-home-copy"><strong>添加到主屏幕</strong><span>黑底白字 DICT 应用图标</span></div>
         <button type="button" class="install-home-button" onclick="addToHomeScreen()">添加</button>
       </div>
       <div style="display:flex; gap:10px;">

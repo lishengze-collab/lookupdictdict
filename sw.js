@@ -1,12 +1,12 @@
-const CACHE_NAME='dictionary-shell-v5';
-const APP_SHELL=['./index.html','./manifest.webmanifest','./icon.svg','./dict-icon-192.png','./dict-icon-512.png','./checklist.html','./checklist.webmanifest','./checklist-icon.svg','./checklist-icon-180.png','./checklist-icon-192.png','./checklist-icon-512.png'];
+const CACHE_NAME='dictionary-shell-v6';
+const APP_SHELL=['./index.html','./manifest.webmanifest','./icon.svg','./dict-icon-192.png','./dict-icon-512.png','./checklist.html','./checklist.webmanifest','./checklist-icon.svg','./checklist-icon-180.png','./checklist-icon-192.png','./checklist-icon-512.png','./reading/index.html','./reading/app.css','./reading/app.js','./reading/apple-touch-icon.png','./reading/icon.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{
  const request=event.request,url=new URL(request.url);
  if(request.method!=='GET'||url.origin!==self.location.origin)return;
  if(request.mode==='navigate'){
-  event.respondWith(fetch(request).then(response=>{const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(request,copy));return response;}).catch(()=>caches.match(request).then(cached=>cached||caches.match(url.pathname.endsWith('/checklist.html')?'./checklist.html':'./index.html'))));
+  event.respondWith(fetch(request).then(response=>{const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put(request,copy));return response;}).catch(()=>caches.match(request).then(cached=>cached||caches.match(url.pathname.includes('/reading/')?'./reading/index.html':(url.pathname.endsWith('/checklist.html')?'./checklist.html':'./index.html')))));
   return;
  }
  event.respondWith(caches.match(request).then(cached=>cached||fetch(request)));
